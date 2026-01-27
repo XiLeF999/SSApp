@@ -9,9 +9,9 @@ import android.view.View;
 public class RadioScaleView extends View {
 
     // 频率范围
-    private float mMinFrequency = 87.5f;  // 最小频率
+    private float mMinFrequency = 88f;  // 最小频率
     private float mMaxFrequency = 108.0f; // 最大频率
-    private float mCurrentFrequency = 94.5f; // 当前频率
+    private float mCurrentFrequency = 98f; // 当前频率
 
     // 绘制工具
     private Paint mScalePaint;
