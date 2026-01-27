@@ -21,19 +21,26 @@ class MainActivity : FragmentActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.bt.setOnClickListener {
-            // 最简单的协程使用
-            lifecycleScope.launch {
-                val complexResult = withContext(Dispatchers.Default) {
-                    // 模拟耗时计算
-                    delay(2000)  // 1秒计算
-                    2 + 2
+        binding.bt.apply {
+
+            setOnClickListener {
+                // 最简单的协程使用
+                lifecycleScope.launch {
+                    val complexResult = withContext(Dispatchers.Default) {
+                        // 模拟耗时计算
+                        delay(2000)  // 1秒计算
+                        2 + 2
+                    }
+
+                    text = "$complexResult"
+
+                    hide()
+
                 }
-
-                binding.bt.text = "$complexResult"
-
-                binding.bt.hide()
             }
+
+
+
         }
 
 
