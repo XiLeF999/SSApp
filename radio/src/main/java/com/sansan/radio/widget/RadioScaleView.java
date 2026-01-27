@@ -8,10 +8,10 @@ import android.view.View;
 
 public class RadioScaleView extends View {
 
-    // 频率范围
-    private float mMinFrequency = 88f;  // 最小频率
+    // 频率范围 - 标准FM广播范围
+    private float mMinFrequency = 87.5f;  // 最小频率
     private float mMaxFrequency = 108.0f; // 最大频率
-    private float mCurrentFrequency = 98f; // 当前频率
+    private float mCurrentFrequency = 97.5f; // 当前频率
 
     // 绘制工具
     private Paint mScalePaint;
@@ -57,7 +57,8 @@ public class RadioScaleView extends View {
         mIndicatorPaint.setStrokeWidth(4);
 
         // 初始偏移量，让当前频率在中间
-        mOffsetX = (mCurrentFrequency - (mMinFrequency + mMaxFrequency) / 2) * 100;
+        float centerFrequency = (mMinFrequency + mMaxFrequency) / 2; // 计算中心频率
+        mOffsetX = (mCurrentFrequency - centerFrequency) * 100;
     }
 
     @Override
@@ -86,33 +87,38 @@ public class RadioScaleView extends View {
     }
 
     private void drawAllScales(Canvas canvas) {
-        // 每MHz对应的像素数（可以调整这个值来改变刻度密度）
+        // 每MHz对应的像素数
         float pixelsPerMHz = 100;
+        float pixelsPerSmallScale = pixelsPerMHz * SMALL_SCALE_SPACING; // 每个小刻度的像素间距
 
         // 中心点对应的频率
-        float centerFrequency = (mMinFrequency + mMaxFrequency) / 2;
+        float centerFrequency = (mMinFrequency + mMaxFrequency) / 2; // 约为97.75MHz
 
-        // 绘制大刻度（每隔1MHz）
-        for (float freq = mMinFrequency; freq <= mMaxFrequency; freq += LARGE_SCALE_SPACING) {
-            // 计算刻度位置：中心 + 频率差对应的像素 - 偏移量
+        // 1. 首先绘制所有小刻度（从87.5开始，每0.1MHz一个）
+        for (float freq = mMinFrequency; freq <= mMaxFrequency; freq += SMALL_SCALE_SPACING) {
+            // 计算刻度位置
             float x = mCenterX + (freq - centerFrequency) * pixelsPerMHz - mOffsetX;
 
-            // 绘制大刻度线
-            mScalePaint.setStrokeWidth(3);
-            canvas.drawLine(x, mHeight - 100, x, mHeight - 50, mScalePaint);
+            // 只绘制在可见范围内的刻度
+            if (x >= -10 && x <= mWidth + 10) {
+                // 判断是否为整数MHz（大刻度位置）
+                boolean isInteger = Math.abs(freq - Math.round(freq)) < 0.001f;
 
-            // 绘制频率数字
-            canvas.drawText(String.format("%.0f", freq), x, mHeight - 120, mTextPaint);
+                if (isInteger) {
+                    // 绘制大刻度线
+                    mScalePaint.setStrokeWidth(3);
+                    canvas.drawLine(x, mHeight - 100, x, mHeight - 50, mScalePaint);
 
-            // 绘制小刻度（每个大刻度之间有10个小刻度）
-            for (int i = 1; i < 10; i++) {
-                float smallFreq = freq + i * 0.1f;
-                if (smallFreq > mMaxFrequency) break;
-
-                float smallX = mCenterX + (smallFreq - centerFrequency) * pixelsPerMHz - mOffsetX;
-
-                mScalePaint.setStrokeWidth(1);
-                canvas.drawLine(smallX, mHeight - 100, smallX, mHeight - 70, mScalePaint);
+                    // 绘制频率数字
+                    canvas.drawText(String.format("%.0f", freq), x, mHeight - 120, mTextPaint);
+                } else {
+                    // 绘制小刻度线
+                    mScalePaint.setStrokeWidth(1);
+                    // 区分0.5的刻度（比普通小刻度长一些）
+                    boolean isHalf = Math.abs(freq - Math.floor(freq) - 0.5) < 0.001f;
+                    float endY = isHalf ? mHeight - 70 : mHeight - 80;
+                    canvas.drawLine(x, mHeight - 100, x, endY, mScalePaint);
+                }
             }
         }
     }
@@ -158,12 +164,12 @@ public class RadioScaleView extends View {
 
                 // 限制偏移范围
                 float pixelsPerMHz = 100;
-                float maxOffset = (mMaxFrequency - (mMinFrequency + mMaxFrequency) / 2) * pixelsPerMHz;
-                float minOffset = (mMinFrequency - (mMinFrequency + mMaxFrequency) / 2) * pixelsPerMHz;
+                float centerFrequency = (mMinFrequency + mMaxFrequency) / 2;
+                float maxOffset = (mMaxFrequency - centerFrequency) * pixelsPerMHz;
+                float minOffset = (mMinFrequency - centerFrequency) * pixelsPerMHz;
                 mOffsetX = Math.max(minOffset, Math.min(maxOffset, mOffsetX));
 
                 // 计算当前频率
-                float centerFrequency = (mMinFrequency + mMaxFrequency) / 2;
                 mCurrentFrequency = centerFrequency + mOffsetX / pixelsPerMHz;
                 mCurrentFrequency = Math.max(mMinFrequency, Math.min(mMaxFrequency, mCurrentFrequency));
 
@@ -173,7 +179,7 @@ public class RadioScaleView extends View {
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                // 这里可以添加刻度对齐逻辑
+                // 对齐到最近的小刻度
                 alignToNearestScale();
                 return true;
         }
@@ -181,7 +187,7 @@ public class RadioScaleView extends View {
     }
 
     private void alignToNearestScale() {
-        // 对齐到最近的小刻度
+        // 对齐到最近的小刻度（0.1MHz）
         float alignedFreq = Math.round(mCurrentFrequency * 10) / 10.0f;
         alignedFreq = Math.max(mMinFrequency, Math.min(mMaxFrequency, alignedFreq));
 
@@ -192,6 +198,11 @@ public class RadioScaleView extends View {
         mCurrentFrequency = alignedFreq;
 
         invalidate();
+
+        // 触发频率变化回调
+        if (mOnFrequencyChangeListener != null) {
+            mOnFrequencyChangeListener.onFrequencyChanged(mCurrentFrequency);
+        }
     }
 
     // 设置频率
@@ -221,5 +232,16 @@ public class RadioScaleView extends View {
         mOffsetX = (mCurrentFrequency - centerFrequency) * pixelsPerMHz;
 
         invalidate();
+    }
+
+    // 频率变化监听器接口
+    public interface OnFrequencyChangeListener {
+        void onFrequencyChanged(float frequency);
+    }
+
+    private OnFrequencyChangeListener mOnFrequencyChangeListener;
+
+    public void setOnFrequencyChangeListener(OnFrequencyChangeListener listener) {
+        mOnFrequencyChangeListener = listener;
     }
 }
