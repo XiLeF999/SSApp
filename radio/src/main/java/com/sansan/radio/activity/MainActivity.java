@@ -9,8 +9,11 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.sansan.radio.R;
+import com.sansan.radio.widget.RadioScaleView;
 
 public class MainActivity extends FragmentActivity {
+
+    private RadioScaleView radioScaleView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +21,16 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         setTransparentStatusBar();
+
+
+
+
+        radioScaleView = findViewById(R.id.radioScaleView);
+
+
+
+
+
 
     }
 
