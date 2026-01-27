@@ -46,7 +46,7 @@ class MainActivity : FragmentActivity() {
                                 }
                             }
 
-                            delay(10)
+                            delay(20)
                         }
 
 
