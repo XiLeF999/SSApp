@@ -16,6 +16,9 @@ class MainActivity : FragmentActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private var testFrequency = 87.5f
+    private var g = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -27,9 +30,26 @@ class MainActivity : FragmentActivity() {
                 // 最简单的协程使用
                 lifecycleScope.launch {
                     val complexResult = withContext(Dispatchers.Default) {
-                        // 模拟耗时计算
-                        delay(2000)  // 1秒计算
-                        2 + 2
+
+                        while (true){
+
+                            binding.radioScaleView.setFrequency(testFrequency)
+                            if(g){
+                                testFrequency += 0.1f
+                                if(testFrequency > 108){
+                                    g = false
+                                }
+                            } else {
+                                testFrequency -= 0.1f
+                                if(testFrequency < 87.5){
+                                    g = true
+                                }
+                            }
+
+                            delay(10)
+                        }
+
+
                     }
 
                     text = "$complexResult"
