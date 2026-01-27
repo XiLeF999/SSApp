@@ -9,4 +9,10 @@
         android:layout_centerInParent="true"
         android:background="#F5F5F5"/>
 
+    <Button
+        android:id="@+id/bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="点我"/>
+
 </RelativeLayout>
