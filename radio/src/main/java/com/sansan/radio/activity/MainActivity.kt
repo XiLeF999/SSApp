@@ -1,14 +1,11 @@
 package com.sansan.radio.activity
 
-import android.content.Context
-import android.hardware.radio.RadioManager
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.sansan.radio.databinding.ActivityMainBinding
-import com.sansan.radio.utils.FmNative
+import com.android.fmradio.FmNative
 import com.sansan.radio.utils.hide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

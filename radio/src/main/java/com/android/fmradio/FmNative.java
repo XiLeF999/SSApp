@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sansan.radio.utils;
+package com.android.fmradio;
 
 /**
  * This class define FM native interface, will description FM native interface
