@@ -28,11 +28,7 @@ class MainActivity : FragmentActivity() {
 
             setOnClickListener {
 
-
-
-                Log.e("ww","FFFFFFF:" + FmNative.openDev())
-
-
+                testTune()
 
                 // 最简单的协程使用
                 lifecycleScope.launch {
@@ -71,6 +67,23 @@ class MainActivity : FragmentActivity() {
         }
 
 
+    }
+
+
+    // 测试调频
+    fun testTune() {
+
+        Log.e("ww","FFFFFFF111:" + FmNative.openDev())
+
+        Log.e("ww","FFFFFFF222:" + FmNative.powerUp(98.5f))
+
+        val result = FmNative.tune(98.5f)  // 调到98.5MHz
+        Log.e("ww", "FFFFFFF333: $result")
+
+
+        // 获取信号强度
+        val rssi = FmNative.readRssi()
+        Log.e("ww", "FFFFFFF444: $rssi")
     }
 
 
