@@ -17,18 +17,25 @@ public class RadioScaleView extends View {
     private Paint mScalePaint;
     private Paint mTextPaint;
     private Paint mIndicatorPaint;
+    private Paint mPointerPaint;
 
     // 尺寸
     private int mWidth, mHeight;
-    private int mCenterX;
+    private float mScaleStartX;  // 刻度开始位置
+    private float mScaleEndX;    // 刻度结束位置
+    private float mScaleLength;  // 刻度总长度
 
     // 刻度相关
     private static final float SMALL_SCALE_SPACING = 0.1f;  // 小刻度间隔
-    private static final float LARGE_SCALE_SPACING = 1.0f;   // 大刻度间隔
+    private static final float LARGE_SCALE_SPACING = 1.0f;  // 大刻度间隔
 
-    // 触摸相关
-    private float mLastTouchX;
-    private float mOffsetX = 0;  // 滚动偏移量
+    // 指针相关
+    private float mPointerX;  // 指针的水平位置
+    private boolean mIsDragging = false;
+    private float mPointerTouchOffset = 0;  // 触摸点与指针中心的偏移
+
+    // 每MHz对应的像素数
+    private float mPixelsPerMHz;
 
     public RadioScaleView(Context context) {
         this(context, null);
@@ -56,9 +63,10 @@ public class RadioScaleView extends View {
         mIndicatorPaint.setColor(Color.RED);
         mIndicatorPaint.setStrokeWidth(4);
 
-        // 初始偏移量，让当前频率在中间
-        float centerFrequency = (mMinFrequency + mMaxFrequency) / 2; // 计算中心频率
-        mOffsetX = (mCurrentFrequency - centerFrequency) * 100;
+        // 初始化指针画笔
+        mPointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPointerPaint.setColor(Color.RED);
+        mPointerPaint.setStyle(Paint.Style.FILL);
     }
 
     @Override
@@ -66,7 +74,24 @@ public class RadioScaleView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         mWidth = w;
         mHeight = h;
-        mCenterX = w / 2;
+
+        // 计算刻度区域
+        int padding = 50;  // 左右边距
+        mScaleStartX = padding;
+        mScaleEndX = w - padding;
+        mScaleLength = mScaleEndX - mScaleStartX;
+
+        // 计算每MHz对应的像素数
+        float frequencyRange = mMaxFrequency - mMinFrequency;
+        mPixelsPerMHz = mScaleLength / frequencyRange;
+
+        // 初始化指针位置
+        updatePointerPosition();
+    }
+
+    private void updatePointerPosition() {
+        // 根据当前频率计算指针位置
+        mPointerX = mScaleStartX + (mCurrentFrequency - mMinFrequency) * mPixelsPerMHz;
     }
 
     @Override
@@ -76,66 +101,72 @@ public class RadioScaleView extends View {
         // 绘制背景
         canvas.drawColor(Color.WHITE);
 
+        // 绘制刻度背景区域
+        Paint bgPaint = new Paint();
+        bgPaint.setColor(Color.parseColor("#F5F5F5"));
+        canvas.drawRect(mScaleStartX, mHeight - 150, mScaleEndX, mHeight - 20, bgPaint);
+
         // 绘制所有刻度
         drawAllScales(canvas);
 
-        // 绘制中心指示线
-        drawIndicator(canvas);
+        // 绘制指针
+        drawPointer(canvas);
 
         // 绘制当前频率
         drawCurrentFrequency(canvas);
+
+        // 绘制最小和最大频率标签
+        drawFrequencyRangeLabels(canvas);
     }
 
     private void drawAllScales(Canvas canvas) {
-        // 每MHz对应的像素数
-        float pixelsPerMHz = 100;
-        float pixelsPerSmallScale = pixelsPerMHz * SMALL_SCALE_SPACING; // 每个小刻度的像素间距
-
-        // 中心点对应的频率
-        float centerFrequency = (mMinFrequency + mMaxFrequency) / 2; // 约为97.75MHz
-
-        // 1. 首先绘制所有小刻度（从87.5开始，每0.1MHz一个）
+        // 绘制刻度线
         for (float freq = mMinFrequency; freq <= mMaxFrequency; freq += SMALL_SCALE_SPACING) {
-            // 计算刻度位置
-            float x = mCenterX + (freq - centerFrequency) * pixelsPerMHz - mOffsetX;
+            float x = mScaleStartX + (freq - mMinFrequency) * mPixelsPerMHz;
 
-            // 只绘制在可见范围内的刻度
-            if (x >= -10 && x <= mWidth + 10) {
-                // 判断是否为整数MHz（大刻度位置）
-                boolean isInteger = Math.abs(freq - Math.round(freq)) < 0.001f;
+            // 判断是否为整数MHz（大刻度位置）
+            boolean isInteger = Math.abs(freq - Math.round(freq)) < 0.001f;
 
-                if (isInteger) {
-                    // 绘制大刻度线
-                    mScalePaint.setStrokeWidth(3);
-                    canvas.drawLine(x, mHeight - 100, x, mHeight - 50, mScalePaint);
+            if (isInteger) {
+                // 绘制大刻度线
+                mScalePaint.setStrokeWidth(3);
+                canvas.drawLine(x, mHeight - 100, x, mHeight - 50, mScalePaint);
 
-                    // 绘制频率数字
-                    canvas.drawText(String.format("%.0f", freq), x, mHeight - 120, mTextPaint);
-                } else {
-                    // 绘制小刻度线
-                    mScalePaint.setStrokeWidth(1);
-                    // 区分0.5的刻度（比普通小刻度长一些）
-                    boolean isHalf = Math.abs(freq - Math.floor(freq) - 0.5) < 0.001f;
-                    float endY = isHalf ? mHeight - 70 : mHeight - 80;
-                    canvas.drawLine(x, mHeight - 100, x, endY, mScalePaint);
-                }
+                // 绘制频率数字
+                canvas.drawText(String.format("%.0f", freq), x, mHeight - 120, mTextPaint);
+            } else {
+                // 绘制小刻度线
+                mScalePaint.setStrokeWidth(1);
+                // 区分0.5的刻度（比普通小刻度长一些）
+                boolean isHalf = Math.abs(freq - Math.floor(freq) - 0.5) < 0.001f;
+                float endY = isHalf ? mHeight - 70 : mHeight - 80;
+                canvas.drawLine(x, mHeight - 100, x, endY, mScalePaint);
             }
         }
+
+//        // 绘制刻度两端的竖线
+//        mScalePaint.setStrokeWidth(2);
+//        canvas.drawLine(mScaleStartX, mHeight - 100, mScaleStartX, mHeight - 50, mScalePaint);
+//        canvas.drawLine(mScaleEndX, mHeight - 100, mScaleEndX, mHeight - 50, mScalePaint);
     }
 
-    private void drawIndicator(Canvas canvas) {
-        // 绘制中心红色指示线
-        canvas.drawLine(mCenterX, 0, mCenterX, mHeight, mIndicatorPaint);
+    private void drawPointer(Canvas canvas) {
+        // 绘制指针竖线
+        mIndicatorPaint.setStrokeWidth(4);
+        canvas.drawLine(mPointerX, 0, mPointerX, mHeight - 100, mIndicatorPaint);
 
-        // 绘制三角形指示器
+        // 绘制指针三角形
         Path triangle = new Path();
-        triangle.moveTo(mCenterX - 20, mHeight - 100);
-        triangle.lineTo(mCenterX + 20, mHeight - 100);
-        triangle.lineTo(mCenterX, mHeight - 60);
+        triangle.moveTo(mPointerX - 20, mHeight - 100);
+        triangle.lineTo(mPointerX + 20, mHeight - 100);
+        triangle.lineTo(mPointerX, mHeight - 60);
         triangle.close();
 
-        mIndicatorPaint.setStyle(Paint.Style.FILL);
-        canvas.drawPath(triangle, mIndicatorPaint);
+        canvas.drawPath(triangle, mPointerPaint);
+
+        // 绘制指针顶部的圆点
+        mPointerPaint.setColor(Color.RED);
+        canvas.drawCircle(mPointerX, 20, 10, mPointerPaint);
     }
 
     private void drawCurrentFrequency(Canvas canvas) {
@@ -143,45 +174,83 @@ public class RadioScaleView extends View {
         textPaint.setColor(Color.RED);
         textPaint.setTextSize(40);
         textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTypeface(Typeface.DEFAULT_BOLD);
 
         String freqText = String.format("%.1f MHz", mCurrentFrequency);
-        canvas.drawText(freqText, mCenterX, 100, textPaint);
+        canvas.drawText(freqText, mWidth / 2, 80, textPaint);
+    }
+
+    private void drawFrequencyRangeLabels(Canvas canvas) {
+        Paint labelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        labelPaint.setColor(Color.parseColor("#666666"));
+        labelPaint.setTextSize(24);
+        labelPaint.setTextAlign(Paint.Align.CENTER);
+
+        // 绘制最小频率
+        String minFreq = String.format("%.1f", mMinFrequency);
+        canvas.drawText(minFreq, mScaleStartX, mHeight - 20, labelPaint);
+
+        // 绘制最大频率
+        String maxFreq = String.format("%.1f", mMaxFrequency);
+        canvas.drawText(maxFreq, mScaleEndX, mHeight - 20, labelPaint);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mLastTouchX = event.getX();
-                return true;
+                // 检查是否点击了指针区域
+                float pointerRadius = 30;  // 指针点击敏感区域半径
+                if (Math.abs(x - mPointerX) < pointerRadius && y > mHeight - 150) {
+                    mIsDragging = true;
+                    mPointerTouchOffset = x - mPointerX;
+                    return true;
+                }
+                return false;
 
             case MotionEvent.ACTION_MOVE:
-                float currentX = event.getX();
-                float deltaX = currentX - mLastTouchX;
+                if (mIsDragging) {
+                    // 计算新的指针位置
+                    float newX = x - mPointerTouchOffset;
 
-                // 更新偏移量
-                mOffsetX -= deltaX;
+                    // 限制指针在刻度范围内
+                    newX = Math.max(mScaleStartX, Math.min(mScaleEndX, newX));
 
-                // 限制偏移范围
-                float pixelsPerMHz = 100;
-                float centerFrequency = (mMinFrequency + mMaxFrequency) / 2;
-                float maxOffset = (mMaxFrequency - centerFrequency) * pixelsPerMHz;
-                float minOffset = (mMinFrequency - centerFrequency) * pixelsPerMHz;
-                mOffsetX = Math.max(minOffset, Math.min(maxOffset, mOffsetX));
+                    // 更新指针位置
+                    mPointerX = newX;
 
-                // 计算当前频率
-                mCurrentFrequency = centerFrequency + mOffsetX / pixelsPerMHz;
-                mCurrentFrequency = Math.max(mMinFrequency, Math.min(mMaxFrequency, mCurrentFrequency));
+                    // 计算对应的频率
+                    mCurrentFrequency = mMinFrequency + (mPointerX - mScaleStartX) / mPixelsPerMHz;
+                    mCurrentFrequency = Math.max(mMinFrequency, Math.min(mMaxFrequency, mCurrentFrequency));
 
-                mLastTouchX = currentX;
-                invalidate();  // 重绘视图
-                return true;
+                    invalidate();
+
+                    // 实时回调频率变化
+                    if (mOnFrequencyChangeListener != null) {
+                        mOnFrequencyChangeListener.onFrequencyChanging(mCurrentFrequency);
+                    }
+                    return true;
+                }
+                return false;
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                // 对齐到最近的小刻度
-                alignToNearestScale();
-                return true;
+                if (mIsDragging) {
+                    mIsDragging = false;
+
+                    // 对齐到最近的小刻度
+                    alignToNearestScale();
+
+                    // 触发最终频率变化回调
+                    if (mOnFrequencyChangeListener != null) {
+                        mOnFrequencyChangeListener.onFrequencyChanged(mCurrentFrequency);
+                    }
+                    return true;
+                }
+                return false;
         }
         return super.onTouchEvent(event);
     }
@@ -191,28 +260,15 @@ public class RadioScaleView extends View {
         float alignedFreq = Math.round(mCurrentFrequency * 10) / 10.0f;
         alignedFreq = Math.max(mMinFrequency, Math.min(mMaxFrequency, alignedFreq));
 
-        // 计算对应的偏移量
-        float pixelsPerMHz = 100;
-        float centerFrequency = (mMinFrequency + mMaxFrequency) / 2;
-        mOffsetX = (alignedFreq - centerFrequency) * pixelsPerMHz;
         mCurrentFrequency = alignedFreq;
-
+        updatePointerPosition();
         invalidate();
-
-        // 触发频率变化回调
-        if (mOnFrequencyChangeListener != null) {
-            mOnFrequencyChangeListener.onFrequencyChanged(mCurrentFrequency);
-        }
     }
 
     // 设置频率
     public void setFrequency(float frequency) {
         mCurrentFrequency = Math.max(mMinFrequency, Math.min(mMaxFrequency, frequency));
-
-        float pixelsPerMHz = 100;
-        float centerFrequency = (mMinFrequency + mMaxFrequency) / 2;
-        mOffsetX = (mCurrentFrequency - centerFrequency) * pixelsPerMHz;
-
+        updatePointerPosition();
         invalidate();
     }
 
@@ -227,16 +283,20 @@ public class RadioScaleView extends View {
         mMaxFrequency = max;
         mCurrentFrequency = Math.max(min, Math.min(max, mCurrentFrequency));
 
-        float pixelsPerMHz = 100;
-        float centerFrequency = (mMinFrequency + mMaxFrequency) / 2;
-        mOffsetX = (mCurrentFrequency - centerFrequency) * pixelsPerMHz;
+        // 重新计算刻度密度
+        if (mScaleLength > 0) {
+            float frequencyRange = mMaxFrequency - mMinFrequency;
+            mPixelsPerMHz = mScaleLength / frequencyRange;
+        }
 
+        updatePointerPosition();
         invalidate();
     }
 
     // 频率变化监听器接口
     public interface OnFrequencyChangeListener {
-        void onFrequencyChanged(float frequency);
+        void onFrequencyChanging(float frequency);  // 正在拖动时调用
+        void onFrequencyChanged(float frequency);    // 拖动结束时调用
     }
 
     private OnFrequencyChangeListener mOnFrequencyChangeListener;
