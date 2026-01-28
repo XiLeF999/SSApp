@@ -16,19 +16,55 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs{
+        signConfig {
+            storeFile file ('../platform.jks')//签名文件路径，
+            //keystore的路径通常使用项目根目录的相对路径，但也可以是使用绝对路径，尽管这不推荐
+            storePassword '123456' //密码
+            keyAlias 'platform_key'
+            keyPassword '123456'  //密码
+        }
+    }
+
     buildTypes {
         release {
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.signConfig
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
+            zipAlignEnabled false
+        }
+        debug {
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.signConfig
+            minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled false
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            Set<File> fileSet = options.bootstrapClasspath.getFiles()
+            List<File> newFileList = new ArrayList<>();
+            newFileList.add(new File("../libs/framework.jar"))
+            newFileList.addAll(fileSet)
+            options.bootstrapClasspath = files(
+                    newFileList.toArray()
+            )
+        }
+    }
+
 }
 
 dependencies {
+
+    compileOnly files('../libs/framework.jar')
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.12.0'
