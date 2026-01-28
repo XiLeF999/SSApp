@@ -15,7 +15,20 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            // 指定支持的 ABI
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
+        }
     }
+
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
+
 
     signingConfigs{
         signConfig {
@@ -56,6 +69,12 @@ android {
         variant.outputs.all { output ->
             def newName = "SSRadio.apk"
             output.outputFileName = new File(newName)
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "SSRadio.apk"
         }
     }
 
