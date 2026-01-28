@@ -25,9 +25,8 @@ public class RadioScaleView extends View {
     private float mScaleEndX;    // 刻度结束位置
     private float mScaleLength;  // 刻度总长度
 
-    // 刻度相关
-    private static final float SMALL_SCALE_SPACING = 0.1f;  // 小刻度间隔
-    private static final float LARGE_SCALE_SPACING = 1.0f;  // 大刻度间隔
+    // 刻度间隔
+    private static final float SMALL_SCALE_SPACING = 0.5f;  // 小刻度间隔 0.5MHz
 
     // 指针相关
     private float mPointerX;  // 指针的水平位置
@@ -114,9 +113,6 @@ public class RadioScaleView extends View {
 
         // 绘制当前频率
         drawCurrentFrequency(canvas);
-
-        // 绘制最小和最大频率标签
-        drawFrequencyRangeLabels(canvas);
     }
 
     private void drawAllScales(Canvas canvas) {
@@ -124,28 +120,44 @@ public class RadioScaleView extends View {
         for (float freq = mMinFrequency; freq <= mMaxFrequency; freq += SMALL_SCALE_SPACING) {
             float x = mScaleStartX + (freq - mMinFrequency) * mPixelsPerMHz;
 
-            // 判断是否为整数MHz（大刻度位置）
+            // 判断是否为整数MHz
             boolean isInteger = Math.abs(freq - Math.round(freq)) < 0.001f;
 
             if (isInteger) {
-                // 绘制大刻度线
-                mScalePaint.setStrokeWidth(3);
-                canvas.drawLine(x, mHeight - 100, x, mHeight - 50, mScalePaint);
+                int intFreq = Math.round(freq);
 
-                // 绘制频率数字
-                canvas.drawText(String.format("%.0f", freq), x, mHeight - 120, mTextPaint);
+                if (intFreq % 2 == 0) {
+                    // 每2MHz的大刻度
+                    mScalePaint.setStrokeWidth(3);
+                    mScalePaint.setColor(Color.parseColor("#333333"));
+                    canvas.drawLine(x, mHeight - 100, x, mHeight - 50, mScalePaint);
+
+                    // 绘制大刻度频率数字
+                    mTextPaint.setTextSize(30);
+                    mTextPaint.setColor(Color.BLACK);
+                    canvas.drawText(String.format("%.0f", freq), x, mHeight - 120, mTextPaint);
+                } else {
+                    // 奇数MHz的刻度
+                    mScalePaint.setStrokeWidth(2);
+                    mScalePaint.setColor(Color.parseColor("#666666"));
+                    canvas.drawLine(x, mHeight - 100, x, mHeight - 70, mScalePaint);
+
+                    // 绘制小数字
+                    mTextPaint.setTextSize(24);
+                    mTextPaint.setColor(Color.parseColor("#666666"));
+                    canvas.drawText(String.format("%.0f", freq), x, mHeight - 35, mTextPaint);
+                }
             } else {
-                // 绘制小刻度线
+                // 0.5MHz的小刻度
                 mScalePaint.setStrokeWidth(1);
-                // 区分0.5的刻度（比普通小刻度长一些）
-                boolean isHalf = Math.abs(freq - Math.floor(freq) - 0.5) < 0.001f;
-                float endY = isHalf ? mHeight - 70 : mHeight - 80;
-                canvas.drawLine(x, mHeight - 100, x, endY, mScalePaint);
+                mScalePaint.setColor(Color.parseColor("#999999"));
+                canvas.drawLine(x, mHeight - 100, x, mHeight - 80, mScalePaint);
             }
         }
 
 //        // 绘制刻度两端的竖线
 //        mScalePaint.setStrokeWidth(2);
+//        mScalePaint.setColor(Color.parseColor("#333333"));
 //        canvas.drawLine(mScaleStartX, mHeight - 100, mScaleStartX, mHeight - 50, mScalePaint);
 //        canvas.drawLine(mScaleEndX, mHeight - 100, mScaleEndX, mHeight - 50, mScalePaint);
     }
@@ -178,21 +190,11 @@ public class RadioScaleView extends View {
 
         String freqText = String.format("%.1f MHz", mCurrentFrequency);
         canvas.drawText(freqText, mWidth / 2, 80, textPaint);
-    }
 
-    private void drawFrequencyRangeLabels(Canvas canvas) {
-        Paint labelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        labelPaint.setColor(Color.parseColor("#666666"));
-        labelPaint.setTextSize(24);
-        labelPaint.setTextAlign(Paint.Align.CENTER);
-
-        // 绘制最小频率
-        String minFreq = String.format("%.1f", mMinFrequency);
-        canvas.drawText(minFreq, mScaleStartX, mHeight - 20, labelPaint);
-
-        // 绘制最大频率
-        String maxFreq = String.format("%.1f", mMaxFrequency);
-        canvas.drawText(maxFreq, mScaleEndX, mHeight - 20, labelPaint);
+        // 在指针下方也显示当前频率
+        textPaint.setTextSize(24);
+        textPaint.setColor(Color.parseColor("#333333"));
+        canvas.drawText(freqText, mPointerX, mHeight - 20, textPaint);
     }
 
     @Override
@@ -203,7 +205,7 @@ public class RadioScaleView extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // 检查是否点击了指针区域
-                float pointerRadius = 30;  // 指针点击敏感区域半径
+                float pointerRadius = 40;
                 if (Math.abs(x - mPointerX) < pointerRadius && y > mHeight - 150) {
                     mIsDragging = true;
                     mPointerTouchOffset = x - mPointerX;
@@ -241,8 +243,13 @@ public class RadioScaleView extends View {
                 if (mIsDragging) {
                     mIsDragging = false;
 
-                    // 对齐到最近的小刻度
-                    alignToNearestScale();
+                    // 对齐到最近的0.1MHz刻度
+                    float alignedFreq = Math.round(mCurrentFrequency * 10) / 10.0f;
+                    alignedFreq = Math.max(mMinFrequency, Math.min(mMaxFrequency, alignedFreq));
+
+                    mCurrentFrequency = alignedFreq;
+                    updatePointerPosition();
+                    invalidate();
 
                     // 触发最终频率变化回调
                     if (mOnFrequencyChangeListener != null) {
@@ -253,16 +260,6 @@ public class RadioScaleView extends View {
                 return false;
         }
         return super.onTouchEvent(event);
-    }
-
-    private void alignToNearestScale() {
-        // 对齐到最近的小刻度（0.1MHz）
-        float alignedFreq = Math.round(mCurrentFrequency * 10) / 10.0f;
-        alignedFreq = Math.max(mMinFrequency, Math.min(mMaxFrequency, alignedFreq));
-
-        mCurrentFrequency = alignedFreq;
-        updatePointerPosition();
-        invalidate();
     }
 
     // 设置频率
@@ -283,7 +280,6 @@ public class RadioScaleView extends View {
         mMaxFrequency = max;
         mCurrentFrequency = Math.max(min, Math.min(max, mCurrentFrequency));
 
-        // 重新计算刻度密度
         if (mScaleLength > 0) {
             float frequencyRange = mMaxFrequency - mMinFrequency;
             mPixelsPerMHz = mScaleLength / frequencyRange;
@@ -295,8 +291,8 @@ public class RadioScaleView extends View {
 
     // 频率变化监听器接口
     public interface OnFrequencyChangeListener {
-        void onFrequencyChanging(float frequency);  // 正在拖动时调用
-        void onFrequencyChanged(float frequency);    // 拖动结束时调用
+        void onFrequencyChanging(float frequency);
+        void onFrequencyChanged(float frequency);
     }
 
     private OnFrequencyChangeListener mOnFrequencyChangeListener;
