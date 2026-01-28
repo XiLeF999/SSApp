@@ -2,17 +2,60 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:sharedUserId="android.uid.system" >
 
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:usesCleartextTraffic="false" />
+
+    <!-- 1. FM核心权限 -->
+    <uses-permission android:name="android.permission.ACCESS_BROADCAST_RADIO" />
+    <uses-permission android:name="android.permission.ACCESS_FM_RADIO" />
+
+    <!-- 2. 音频权限 -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_ROUTING" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- 3. 文件系统权限（解决 /dev/fm 访问问题） -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+
+    <!-- 4. 蓝牙权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!-- 5. 其他必要权限 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- 系统权限 -->
+    <uses-permission android:name="android.permission.ACCESS_SURFACE_FLINGER"/>
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+
+    <!-- 位置权限 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- Android 10+ 需要 -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
-    <!-- 添加系统权限 -->
-    <uses-permission android:name="android.permission.ACCESS_SURFACE_FLINGER"/>
+    <!-- ========== 根据错误日志添加 ========== -->
+    <uses-permission android:name="android.permission.ACCESS_DEVICE_PROPERTIES" />
+    <uses-permission android:name="android.permission.DEVICE_POWER" />
 
-    <!-- 必须的系统权限 -->
-    <uses-permission android:name="android.permission.ACCESS_FM_RADIO" />
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+    <!-- ========== 其他可能需要的 ========== -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- 硬件特性声明 -->
+    <uses-feature
+        android:name="android.hardware.fm"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
 
     <application
         android:name=".SSApplication"
