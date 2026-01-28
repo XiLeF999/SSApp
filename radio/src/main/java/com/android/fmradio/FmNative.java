@@ -18,6 +18,10 @@ package com.android.fmradio;
 
 /**
  * This class define FM native interface, will description FM native interface
+ *
+ *
+ * 这个类必须要放在这个目录下，因为jni中有专门写死com.android.fmradio路径
+ *
  */
 public class FmNative {
     static {
