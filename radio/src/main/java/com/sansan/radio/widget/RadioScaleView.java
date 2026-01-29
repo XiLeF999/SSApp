@@ -10,6 +10,8 @@ import com.sansan.radio.R;
 
 public class RadioScaleView extends View {
 
+    private Context mContext;
+
     // 频率范围 - 标准FM广播范围
     private float mMinFrequency = 87.5f;  // 最小频率
     private float mMaxFrequency = 108.5f; // 最大频率
@@ -46,6 +48,7 @@ public class RadioScaleView extends View {
 
     public RadioScaleView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         init();
     }
 
@@ -132,7 +135,7 @@ public class RadioScaleView extends View {
                 if (intFreq % 2 == 0) {
                     // 每2MHz的大刻度
                     mScalePaint.setStrokeWidth(6);
-                    mScalePaint.setColor(Color.parseColor("#333333"));
+                    mScalePaint.setColor(mContext.getColor(R.color.color_92A7BF));
                     canvas.drawLine(x, 28, x, 28 + 52, mScalePaint);
 
                     // 绘制大刻度频率数字

@@ -3,7 +3,7 @@
     android:sharedUserId="android.uid.system" >
 
     <uses-sdk
-        android:minSdkVersion="21"
+        android:minSdkVersion="30"
         android:usesCleartextTraffic="false" />
 
     <!-- 1. FM核心权限 -->
