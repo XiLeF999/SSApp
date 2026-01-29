@@ -54,6 +54,7 @@ public class RadioScaleView extends View {
         mScalePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mScalePaint.setColor(Color.parseColor("#666666"));
         mScalePaint.setStrokeWidth(2);
+        mScalePaint.setStrokeCap(Paint.Cap.ROUND);  // 设置为圆形端部
 
         // 初始化文字画笔
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
