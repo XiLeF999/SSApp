@@ -145,14 +145,14 @@ public class RadioScaleView extends View {
                 } else {
                     // 奇数MHz的刻度
                     mScalePaint.setStrokeWidth(4);
-                    mScalePaint.setColor(Color.parseColor("#999999"));
+                    mScalePaint.setColor(mContext.getColor(R.color.color_B6D1EE));
                     canvas.drawLine(x, 46, x, 46 + 34, mScalePaint);
 
                 }
             } else {
                 // 0.5MHz的小刻度
                 mScalePaint.setStrokeWidth(4);
-                mScalePaint.setColor(Color.parseColor("#999999"));
+                mScalePaint.setColor(mContext.getColor(R.color.color_B6D1EE));
                 canvas.drawLine(x, 46, x, 46 + 34, mScalePaint);
             }
         }
