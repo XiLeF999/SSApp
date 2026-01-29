@@ -163,7 +163,7 @@ public class RadioScaleView extends View {
         if (mBitmap == null) {
             return;
         }
-        canvas.drawBitmap(mBitmap, mPointerX - mBitmap.getWidth() / 2f, 0, mBitmapPaint);
+        canvas.drawBitmap(mBitmap, mPointerX - mBitmap.getWidth() / 2f, 4, mBitmapPaint);
     }
 
 
@@ -258,6 +258,15 @@ public class RadioScaleView extends View {
         updatePointerPosition();
         invalidate();
     }
+
+
+
+    public void startScan(){
+
+    }
+
+
+
 
     // 频率变化监听器接口
     public interface OnFrequencyChangeListener {
