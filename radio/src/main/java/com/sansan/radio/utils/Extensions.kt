@@ -8,6 +8,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
+import kotlin.math.roundToInt
 
 /**  扩展函数  */
 
@@ -30,6 +31,11 @@ fun String?.isNotNullOrEmpty() = !this.isNullOrEmpty()
 inline fun <reified T : Activity> Context.startActivity() {
     startActivity(Intent(this, T::class.java))
 }
+
+/**
+ * 保留一位小数
+ */
+fun Float.roundToOneDecimal(): Float = (this * 10).roundToInt() / 10f
 
 
 /**

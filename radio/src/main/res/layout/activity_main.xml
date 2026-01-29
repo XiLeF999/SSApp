@@ -39,6 +39,7 @@
                 android:text="FM" />
 
             <TextView
+                android:id="@+id/tv_frequency"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16px"

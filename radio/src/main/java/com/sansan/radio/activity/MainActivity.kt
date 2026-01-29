@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import com.sansan.radio.databinding.ActivityMainBinding
 import com.android.fmradio.FmNative
 import com.sansan.radio.utils.hide
+import com.sansan.radio.utils.roundToOneDecimal
 import com.sansan.radio.utils.setTransparentStatusBar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -39,6 +40,9 @@ class MainActivity : FragmentActivity() {
                     while (true) {
                         // 1. 执行UI更新（在主线程）
                         binding.viewRadioScale.setFrequency(testFrequency)
+
+                        binding.tvFrequency.text = testFrequency.roundToOneDecimal().toString()
+
                         if(g){
                             testFrequency += 0.1f
                             if(testFrequency > 108.5){
@@ -52,7 +56,7 @@ class MainActivity : FragmentActivity() {
                         }
 
                         //delay() 挂起协程，不阻塞线程
-                        delay(30)  // 挂起50ms，主线程可以处理其他消息
+                        delay(20)  // 挂起50ms，主线程可以处理其他消息
                     }
                 }
 
