@@ -34,36 +34,28 @@ class MainActivity : FragmentActivity() {
 
 //                testTune()
 
-                // 最简单的协程使用
-                lifecycleScope.launch {
-                    val complexResult = withContext(Dispatchers.Default) {
 
-                        while (true){
-
-                            binding.viewRadioScale.setFrequency(testFrequency)
-                            if(g){
-                                testFrequency += 0.1f
-                                if(testFrequency > 108.5){
-                                    g = false
-                                }
-                            } else {
-                                testFrequency -= 0.1f
-                                if(testFrequency < 87.5){
-                                    g = true
-                                }
+                lifecycleScope.launch {  // 在主线程启动协程
+                    while (true) {
+                        // 1. 执行UI更新（在主线程）
+                        binding.viewRadioScale.setFrequency(testFrequency)
+                        if(g){
+                            testFrequency += 0.1f
+                            if(testFrequency > 108.5){
+                                g = false
                             }
-
-                            delay(20)
+                        } else {
+                            testFrequency -= 0.1f
+                            if(testFrequency < 87.5){
+                                g = true
+                            }
                         }
 
-
+                        //delay() 挂起协程，不阻塞线程
+                        delay(30)  // 挂起50ms，主线程可以处理其他消息
                     }
-
-//                    text = "$complexResult"
-//
-//                    hide()
-
                 }
+
             }
 
 
