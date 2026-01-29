@@ -55,9 +55,9 @@ class MainActivity : FragmentActivity() {
 
                     }
 
-                    text = "$complexResult"
-
-                    hide()
+//                    text = "$complexResult"
+//
+//                    hide()
 
                 }
             }
@@ -73,17 +73,29 @@ class MainActivity : FragmentActivity() {
     // 测试调频
     fun testTune() {
 
-        Log.e("ww","FFFFFFF111:" + FmNative.openDev())
+        // 步骤1：打开设备
+        val openResult = FmNative.openDev()
+        if (!openResult) {
+            Log.e("ww", "打开设备失败")
+            return
+        }
 
-        Log.e("ww","FFFFFFF222:" + FmNative.powerUp(98.5f))
+        // 步骤2：设备上电（必须！）
+        // 需要指定一个初始频率，建议用87.5MHz
+        val powerResult = FmNative.powerUp(87.5f)
+        if (!powerResult) {
+            Log.e("ww", "设备上电失败")
+            FmNative.closeDev()  // 记得关闭设备
+            return
+        }
 
-        val result = FmNative.tune(98.5f)  // 调到98.5MHz
-        Log.e("ww", "FFFFFFF333: $result")
+        // 步骤3：现在可以调用autoScan
+        val stations = FmNative.autoScan()
 
+        Log.e("ww", "扫描FM电台:$stations")
 
-        // 获取信号强度
-        val rssi = FmNative.readRssi()
-        Log.e("ww", "FFFFFFF444: $rssi")
+        binding.bt.text = "扫描FM电台:$stations"
+
     }
 
 

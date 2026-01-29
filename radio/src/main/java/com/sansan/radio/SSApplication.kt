@@ -2,6 +2,8 @@ package com.sansan.radio
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
+import com.sansan.radio.service.SSRadioService
 
 class SSApplication : Application() {
 
@@ -16,6 +18,8 @@ class SSApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+
+        startService(Intent(this, SSRadioService::class.java))
     }
 
     override fun attachBaseContext(base: Context) {
