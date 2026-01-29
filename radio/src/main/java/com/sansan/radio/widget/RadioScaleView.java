@@ -3,6 +3,7 @@ package com.sansan.radio.widget;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -130,9 +131,9 @@ public class RadioScaleView extends View {
 
                 if (intFreq % 2 == 0) {
                     // 每2MHz的大刻度
-                    mScalePaint.setStrokeWidth(3);
+                    mScalePaint.setStrokeWidth(6);
                     mScalePaint.setColor(Color.parseColor("#333333"));
-                    canvas.drawLine(x, mHeight - 100, x, mHeight - 50, mScalePaint);
+                    canvas.drawLine(x, 28, x, 28 + 52, mScalePaint);
 
                     // 绘制大刻度频率数字
                     mTextPaint.setTextSize(20);
@@ -140,16 +141,16 @@ public class RadioScaleView extends View {
                     canvas.drawText(String.format("%.0f", freq), x, mHeight - 10, mTextPaint);
                 } else {
                     // 奇数MHz的刻度
-                    mScalePaint.setStrokeWidth(1);
+                    mScalePaint.setStrokeWidth(4);
                     mScalePaint.setColor(Color.parseColor("#999999"));
-                    canvas.drawLine(x, mHeight - 100, x, mHeight - 80, mScalePaint);
+                    canvas.drawLine(x, 46, x, 46 + 34, mScalePaint);
 
                 }
             } else {
                 // 0.5MHz的小刻度
-                mScalePaint.setStrokeWidth(1);
+                mScalePaint.setStrokeWidth(4);
                 mScalePaint.setColor(Color.parseColor("#999999"));
-                canvas.drawLine(x, mHeight - 100, x, mHeight - 80, mScalePaint);
+                canvas.drawLine(x, 46, x, 46 + 34, mScalePaint);
             }
         }
 
@@ -160,7 +161,6 @@ public class RadioScaleView extends View {
             return;
         }
         canvas.drawBitmap(mBitmap, mPointerX - mBitmap.getWidth() / 2f, 0, mBitmapPaint);
-
     }
 
 
