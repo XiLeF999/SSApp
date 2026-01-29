@@ -80,8 +80,8 @@
 
         <com.sansan.radio.widget.RadioScaleView
             android:id="@+id/view_radio_scale"
-            android:layout_width="1000px"
-            android:layout_height="200px"
+            android:layout_width="1154px"
+            android:layout_height="120px"
             android:layout_gravity="center_horizontal"
             android:background="@color/color_C5DBF2"/>
 
