@@ -32,7 +32,7 @@ class MainActivity : FragmentActivity() {
 
             setOnClickListener {
 
-                testTune()
+//                testTune()
 
                 // 最简单的协程使用
                 lifecycleScope.launch {
@@ -40,10 +40,10 @@ class MainActivity : FragmentActivity() {
 
                         while (true){
 
-                            binding.radioScaleView.setFrequency(testFrequency)
+                            binding.viewRadioScale.setFrequency(testFrequency)
                             if(g){
                                 testFrequency += 0.1f
-                                if(testFrequency > 108){
+                                if(testFrequency > 108.5){
                                     g = false
                                 }
                             } else {
@@ -98,7 +98,6 @@ class MainActivity : FragmentActivity() {
 
         Log.e("ww", "扫描FM电台:$stations")
 
-        binding.bt.text = "扫描FM电台:$stations"
 
     }
 

@@ -10,8 +10,8 @@ public class RadioScaleView extends View {
 
     // 频率范围 - 标准FM广播范围
     private float mMinFrequency = 87.5f;  // 最小频率
-    private float mMaxFrequency = 108.0f; // 最大频率
-    private float mCurrentFrequency = 97.5f; // 当前频率
+    private float mMaxFrequency = 108.5f; // 最大频率
+    private float mCurrentFrequency = 98f; // 当前频率
 
     // 绘制工具
     private Paint mScalePaint;
@@ -97,22 +97,12 @@ public class RadioScaleView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // 绘制背景
-        canvas.drawColor(Color.WHITE);
-
-        // 绘制刻度背景区域
-        Paint bgPaint = new Paint();
-        bgPaint.setColor(Color.parseColor("#F5F5F5"));
-        canvas.drawRect(mScaleStartX, mHeight - 150, mScaleEndX, mHeight - 20, bgPaint);
-
         // 绘制所有刻度
         drawAllScales(canvas);
 
         // 绘制指针
         drawPointer(canvas);
 
-        // 绘制当前频率
-        drawCurrentFrequency(canvas);
     }
 
     private void drawAllScales(Canvas canvas) {
@@ -133,19 +123,15 @@ public class RadioScaleView extends View {
                     canvas.drawLine(x, mHeight - 100, x, mHeight - 50, mScalePaint);
 
                     // 绘制大刻度频率数字
-                    mTextPaint.setTextSize(30);
+                    mTextPaint.setTextSize(20);
                     mTextPaint.setColor(Color.BLACK);
-                    canvas.drawText(String.format("%.0f", freq), x, mHeight - 120, mTextPaint);
+                    canvas.drawText(String.format("%.0f", freq), x, mHeight - 10, mTextPaint);
                 } else {
                     // 奇数MHz的刻度
-                    mScalePaint.setStrokeWidth(2);
-                    mScalePaint.setColor(Color.parseColor("#666666"));
-                    canvas.drawLine(x, mHeight - 100, x, mHeight - 70, mScalePaint);
+                    mScalePaint.setStrokeWidth(1);
+                    mScalePaint.setColor(Color.parseColor("#999999"));
+                    canvas.drawLine(x, mHeight - 100, x, mHeight - 80, mScalePaint);
 
-                    // 绘制小数字
-                    mTextPaint.setTextSize(24);
-                    mTextPaint.setColor(Color.parseColor("#666666"));
-                    canvas.drawText(String.format("%.0f", freq), x, mHeight - 35, mTextPaint);
                 }
             } else {
                 // 0.5MHz的小刻度
@@ -155,11 +141,6 @@ public class RadioScaleView extends View {
             }
         }
 
-//        // 绘制刻度两端的竖线
-//        mScalePaint.setStrokeWidth(2);
-//        mScalePaint.setColor(Color.parseColor("#333333"));
-//        canvas.drawLine(mScaleStartX, mHeight - 100, mScaleStartX, mHeight - 50, mScalePaint);
-//        canvas.drawLine(mScaleEndX, mHeight - 100, mScaleEndX, mHeight - 50, mScalePaint);
     }
 
     private void drawPointer(Canvas canvas) {
@@ -181,21 +162,6 @@ public class RadioScaleView extends View {
         canvas.drawCircle(mPointerX, 20, 10, mPointerPaint);
     }
 
-    private void drawCurrentFrequency(Canvas canvas) {
-        Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        textPaint.setColor(Color.RED);
-        textPaint.setTextSize(40);
-        textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setTypeface(Typeface.DEFAULT_BOLD);
-
-        String freqText = String.format("%.1f MHz", mCurrentFrequency);
-        canvas.drawText(freqText, mWidth / 2, 80, textPaint);
-
-        // 在指针下方也显示当前频率
-        textPaint.setTextSize(24);
-        textPaint.setColor(Color.parseColor("#333333"));
-        canvas.drawText(freqText, mPointerX, mHeight - 20, textPaint);
-    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
