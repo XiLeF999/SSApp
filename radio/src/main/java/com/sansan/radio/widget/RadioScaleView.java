@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.sansan.radio.R;
+
 public class RadioScaleView extends View {
 
     // 频率范围 - 标准FM广播范围
@@ -18,6 +20,7 @@ public class RadioScaleView extends View {
     private Paint mTextPaint;
     private Paint mIndicatorPaint;
     private Paint mPointerPaint;
+    private Paint mBitmapPaint;
 
     // 尺寸
     private int mWidth, mHeight;
@@ -32,6 +35,7 @@ public class RadioScaleView extends View {
     private float mPointerX;  // 指针的水平位置
     private boolean mIsDragging = false;
     private float mPointerTouchOffset = 0;  // 触摸点与指针中心的偏移
+    private Bitmap mBitmap;
 
     // 每MHz对应的像素数
     private float mPixelsPerMHz;
@@ -66,6 +70,14 @@ public class RadioScaleView extends View {
         mPointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPointerPaint.setColor(Color.RED);
         mPointerPaint.setStyle(Paint.Style.FILL);
+
+        // 初始化图片指针画笔
+        mBitmapPaint = new Paint();
+        mBitmapPaint.setAntiAlias(true);
+        mBitmapPaint.setFilterBitmap(true);
+
+        // 从资源加载指针片
+        mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.img_raido_hand);
     }
 
     @Override
@@ -144,22 +156,11 @@ public class RadioScaleView extends View {
     }
 
     private void drawPointer(Canvas canvas) {
-        // 绘制指针竖线
-        mIndicatorPaint.setStrokeWidth(4);
-        canvas.drawLine(mPointerX, 0, mPointerX, mHeight - 100, mIndicatorPaint);
+        if (mBitmap == null) {
+            return;
+        }
+        canvas.drawBitmap(mBitmap, mPointerX - mBitmap.getWidth() / 2f, 0, mBitmapPaint);
 
-        // 绘制指针三角形
-        Path triangle = new Path();
-        triangle.moveTo(mPointerX - 20, mHeight - 100);
-        triangle.lineTo(mPointerX + 20, mHeight - 100);
-        triangle.lineTo(mPointerX, mHeight - 60);
-        triangle.close();
-
-        canvas.drawPath(triangle, mPointerPaint);
-
-        // 绘制指针顶部的圆点
-        mPointerPaint.setColor(Color.RED);
-        canvas.drawCircle(mPointerX, 20, 10, mPointerPaint);
     }
 
 
