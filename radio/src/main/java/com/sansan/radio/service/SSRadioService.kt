@@ -15,7 +15,7 @@ class SSRadioService : Service() {
 
         Log.e("ww","启动收音机服务RadioService");
 
-        ssRadioController = SSRadioController()
+        ssRadioController = SSRadioController(this)
 
 
     }

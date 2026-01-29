@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import com.sansan.radio.databinding.ActivityMainBinding
 import com.android.fmradio.FmNative
 import com.sansan.radio.utils.hide
+import com.sansan.radio.utils.setTransparentStatusBar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,6 +22,9 @@ class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setTransparentStatusBar()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

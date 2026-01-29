@@ -3,7 +3,9 @@ package com.sansan.radio.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.view.View
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
 
@@ -27,4 +29,25 @@ fun String?.isNotNullOrEmpty() = !this.isNullOrEmpty()
 
 inline fun <reified T : Activity> Context.startActivity() {
     startActivity(Intent(this, T::class.java))
+}
+
+
+/**
+ * 设置状态栏沉浸式透明
+ */
+fun Activity.setTransparentStatusBar() {
+    window.apply {
+        // 清除半透明标志
+        clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        // 允许绘制系统栏背景
+        addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        // 设置状态栏颜色为透明
+        statusBarColor = Color.TRANSPARENT
+
+        decorView.apply {
+            systemUiVisibility = systemUiVisibility or
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        }
+    }
 }
