@@ -3,7 +3,6 @@ package com.sansan.radio.widget;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -78,7 +77,7 @@ public class RadioScaleView extends View {
         mBitmapPaint.setFilterBitmap(true);
 
         // 从资源加载指针片
-        mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.img_raido_hand);
+        mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.img_radio_hand);
     }
 
     @Override

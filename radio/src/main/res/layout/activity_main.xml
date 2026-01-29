@@ -31,49 +31,57 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_49535F"
-                android:textSize="18sp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="0dp"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="FM" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10px"
+                android:layout_marginStart="16px"
+                android:layout_marginEnd="16px"
                 android:textColor="@color/black"
-                android:textSize="36sp"
+                android:textSize="58sp"
                 android:textStyle="bold"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="0dp"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="92.8" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10px"
                 android:textColor="@color/color_8593A2"
-                android:textSize="18sp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="0dp"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="MHz" />
 
         </LinearLayout>
         
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="1000px"
+            android:layout_width="1104px"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal" >
 
             <ImageView
-                android:layout_width="50px"
-                android:layout_height="50px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:src="@mipmap/ic_launcher"/>
+                android:src="@drawable/selector_radio_btn_sub"/>
 
             <ImageView
-                android:layout_width="50px"
-                android:layout_height="50px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:src="@mipmap/ic_launcher"/>
+                android:src="@drawable/selector_radio_btn_add"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -83,7 +91,7 @@
             android:layout_width="1154px"
             android:layout_height="120px"
             android:layout_gravity="center_horizontal"
-            android:background="@color/color_C5DBF2"/>
+            android:layout_marginTop="10px" />
 
         <LinearLayout
             android:layout_width="wrap_content"
