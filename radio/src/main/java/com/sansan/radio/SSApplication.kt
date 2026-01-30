@@ -19,7 +19,6 @@ class SSApplication : Application() {
         super.onCreate()
         instance = this
 
-        startService(Intent(this, SSRadioService::class.java))
     }
 
     override fun attachBaseContext(base: Context) {

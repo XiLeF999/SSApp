@@ -1,5 +1,6 @@
 package com.sansan.radio.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,6 +10,7 @@ import com.sansan.radio.databinding.ActivityMainBinding
 import com.android.fmradio.FmNative
 import com.sansan.radio.R
 import com.sansan.radio.manager.SSRadioManager
+import com.sansan.radio.service.SSRadioService
 import com.sansan.radio.utils.hide
 import com.sansan.radio.utils.roundToOneDecimal
 import com.sansan.radio.utils.setTransparentStatusBar
@@ -30,6 +32,8 @@ class MainActivity : FragmentActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        startService(Intent(this, SSRadioService::class.java))
 
         binding.ivSearch.setOnClickListener(clickListener)
         changeRadio()
@@ -107,6 +111,11 @@ class MainActivity : FragmentActivity() {
                 isScanning = false
                 scanJob?.cancel()  // 取消之前的协程
                 scanJob = null
+
+
+                currentFrequency = 87.5f
+                binding.viewRadioScale.setFrequency(currentFrequency)
+                binding.tvFrequency.text = currentFrequency.roundToOneDecimal().toString()
 
 
             }
