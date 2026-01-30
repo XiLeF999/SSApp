@@ -12,17 +12,17 @@ import com.sansan.radio.manager.SSRadioManager
 import com.sansan.radio.utils.hide
 import com.sansan.radio.utils.roundToOneDecimal
 import com.sansan.radio.utils.setTransparentStatusBar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class MainActivity : FragmentActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
     private var currentFrequency = 87.5f
+    private var isScanning = false
     private var animGoOrBack = true
+
+    private var scanJob: Job? = null  // 保存协程引用
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,9 +46,12 @@ class MainActivity : FragmentActivity() {
         when (view.id) {
             R.id.iv_search -> {
 
-                if(binding.ivSearch.isSelected){
+                if(isScanning){
 
                     binding.ivSearch.isSelected = false
+                    isScanning = false
+                    scanJob?.cancel()  // 取消之前的协程
+                    scanJob = null
 
                     currentFrequency = 87.5f
                     binding.viewRadioScale.setFrequency(currentFrequency)
@@ -57,9 +60,13 @@ class MainActivity : FragmentActivity() {
                 } else {
 
                     binding.ivSearch.isSelected = true
+                    isScanning = true
 
-                    lifecycleScope.launch {  // 在主线程启动协程
-                        while (binding.ivSearch.isSelected) {
+                    // 取消之前的扫描任务
+                    scanJob?.cancel()
+
+                    scanJob = lifecycleScope.launch(Dispatchers.Main) {  // 在主线程启动协程
+                        while (isScanning && isActive) {
                             // 执行UI更新（在主线程）
                             binding.viewRadioScale.setFrequency(currentFrequency)
 
@@ -98,6 +105,15 @@ class MainActivity : FragmentActivity() {
                 // 处理其他情况
             }
         }
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.ivSearch.isSelected = false
+        isScanning = false
+        scanJob?.cancel()
+        scanJob = null
     }
 
 
