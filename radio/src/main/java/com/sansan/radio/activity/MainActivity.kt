@@ -21,8 +21,8 @@ class MainActivity : FragmentActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private var testFrequency = 87.5f
-    private var g = true
+    private var currentFrequency = 87.5f
+    private var animGoOrBack = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +31,7 @@ class MainActivity : FragmentActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.ivSearch.setOnClickListener {clickListener}
+        binding.ivSearch.setOnClickListener (clickListener)
 
     }
 
@@ -45,31 +45,49 @@ class MainActivity : FragmentActivity() {
     private val clickListener = View.OnClickListener { view ->
         when (view.id) {
             R.id.iv_search -> {
-                lifecycleScope.launch {  // 在主线程启动协程
-                    while (true) {
-                        // 1. 执行UI更新（在主线程）
-                        binding.viewRadioScale.setFrequency(testFrequency)
 
-                        binding.tvFrequency.text = testFrequency.roundToOneDecimal().toString()
+                if(binding.ivSearch.isSelected){
 
-                        if(g){
-                            testFrequency += 0.1f
-                            if(testFrequency > 108.5){
-                                g = false
+                    binding.ivSearch.isSelected = false
+
+                    currentFrequency = 87.5f
+                    binding.viewRadioScale.setFrequency(currentFrequency)
+                    binding.tvFrequency.text = currentFrequency.roundToOneDecimal().toString()
+
+                } else {
+
+                    binding.ivSearch.isSelected = true
+
+                    lifecycleScope.launch {  // 在主线程启动协程
+                        while (binding.ivSearch.isSelected) {
+                            // 执行UI更新（在主线程）
+                            binding.viewRadioScale.setFrequency(currentFrequency)
+
+                            binding.tvFrequency.text = currentFrequency.roundToOneDecimal().toString()
+
+                            if(animGoOrBack){
+                                currentFrequency += 0.1f
+                                if(currentFrequency > 108.5){
+                                    animGoOrBack = false
+                                }
+                            } else {
+                                currentFrequency -= 0.1f
+                                if(currentFrequency < 87.5){
+                                    animGoOrBack = true
+                                }
                             }
-                        } else {
-                            testFrequency -= 0.1f
-                            if(testFrequency < 87.5){
-                                g = true
-                            }
+
+                            //delay() 挂起协程，不阻塞线程
+                            delay(20)  // 挂起50ms，主线程可以处理其他消息
                         }
-
-                        //delay() 挂起协程，不阻塞线程
-                        delay(20)  // 挂起50ms，主线程可以处理其他消息
                     }
+
+
+//                    SSRadioManager.autoScan()
+
                 }
 
-                SSRadioManager.autoScan()
+
 
             }
 
