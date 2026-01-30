@@ -101,12 +101,6 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center_vertical" >
 
-            <Button
-                android:id="@+id/bt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="扫描"/>
-
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -115,6 +109,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="80px"
                 android:src="@drawable/selector_radio_previous"/>
 
             <RelativeLayout
@@ -122,6 +117,7 @@
                 android:layout_width="80px"
                 android:layout_height="80px"
                 android:layout_marginLeft="80px"
+                android:layout_marginRight="80px"
                 android:background="@mipmap/img_radio_play_bg" >
 
                 <ImageView
@@ -136,9 +132,11 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="80px"
                 android:src="@drawable/selector_radio_next"/>
 
             <ImageView
+                android:id="@+id/iv_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/selector_radio_btn_search"/>

@@ -29,7 +29,7 @@ class MainActivity : FragmentActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.bt.apply {
+        binding.ivSearch.apply {
 
             setOnClickListener {
 
