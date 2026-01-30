@@ -100,6 +100,9 @@ class MainActivity : FragmentActivity() {
 
         SSRadioManager.addOnRadioChangeListener(object : SSRadioManager.OnRadioChangeListener {
             override fun setAutoScan(stations: ShortArray) {   //扫描结束
+
+                Log.e("ww", "扫描到 ${stations.size} 个电台")
+
                 binding.ivSearch.isSelected = false
                 isScanning = false
                 scanJob?.cancel()  // 取消之前的协程
@@ -109,6 +112,9 @@ class MainActivity : FragmentActivity() {
             }
 
             override fun setStopScan(stop: Boolean) {
+
+                Log.e("ww", "停止扫描: $stop")
+
                 if (stop) {   //主动停止扫描成功
                     binding.ivSearch.isSelected = false
                     isScanning = false

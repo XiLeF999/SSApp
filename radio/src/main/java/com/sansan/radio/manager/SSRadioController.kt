@@ -56,8 +56,6 @@ class SSRadioController(private val context: Context) {
                         FmNative.autoScan()
                     }
 
-                    Log.e("ww", "扫描到 ${stations.size} 个电台")
-
                     SSRadioManager.setAutoScan(stations)
 
                 }
@@ -70,8 +68,6 @@ class SSRadioController(private val context: Context) {
                     val stop = withContext(Dispatchers.IO) {
                         FmNative.stopScan()
                     }
-
-                    Log.e("ww", "停止扫描: $stop")
 
                     SSRadioManager.setStopScan(stop)
 
