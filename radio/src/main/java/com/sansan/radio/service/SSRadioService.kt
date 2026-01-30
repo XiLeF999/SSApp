@@ -29,5 +29,8 @@ class SSRadioService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        ssRadioController.release()
+
     }
 }

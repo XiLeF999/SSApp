@@ -2,10 +2,12 @@ package com.sansan.radio.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.sansan.radio.databinding.ActivityMainBinding
 import com.android.fmradio.FmNative
+import com.sansan.radio.R
 import com.sansan.radio.utils.hide
 import com.sansan.radio.utils.roundToOneDecimal
 import com.sansan.radio.utils.setTransparentStatusBar
@@ -28,11 +30,6 @@ class MainActivity : FragmentActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
-        initRadioDev()
-
-
 
 
 
@@ -69,67 +66,26 @@ class MainActivity : FragmentActivity() {
 
 
 
-    private fun initRadioDev(){
-        lifecycleScope.launch {
-            val isSuccess = withContext(Dispatchers.IO) {
-                // 执行耗时操作
-                val isOpenSuccess = FmNative.openDev()
-                if (!isOpenSuccess) {
-                    return@withContext false
-                }
 
-                val isPowerSuccess = FmNative.powerUp(87.5f)
-                if (!isPowerSuccess) {
-                    FmNative.closeDev()
-                    return@withContext false
-                }
 
-                return@withContext true
-            }
 
-            // 这里自动回到主线程，可以安全更新UI
-            if (isSuccess) {
 
-                Log.e("ww","Radio初始化成功");
 
-            } else {
-
-                Log.e("ww","Radio初始化失败");
+    val clickListener = View.OnClickListener { view ->
+        when (view.id) {
+            R.id.iv_search -> {
 
             }
-        }
 
+            R.id.iv_play -> {
+
+            }
+            else -> {
+                // 处理其他情况
+            }
+        }
     }
 
-
-
-
-    // 测试调频
-    fun testTune() {
-
-        // 步骤1：打开设备
-        val openResult = FmNative.openDev()
-        if (!openResult) {
-            Log.e("ww", "打开设备失败")
-            return
-        }
-
-        // 步骤2：设备上电（必须！）
-        // 需要指定一个初始频率，建议用87.5MHz
-        val powerResult = FmNative.powerUp(87.5f)
-        if (!powerResult) {
-            Log.e("ww", "设备上电失败")
-            FmNative.closeDev()  // 记得关闭设备
-            return
-        }
-
-        // 步骤3：现在可以调用autoScan
-        val stations = FmNative.autoScan()
-
-        Log.e("ww", "扫描FM电台:$stations")
-
-
-    }
 
 
 }
