@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.sansan.radio.databinding.ActivityMainBinding
 import com.android.fmradio.FmNative
 import com.sansan.radio.R
+import com.sansan.radio.manager.SSRadioManager
 import com.sansan.radio.utils.hide
 import com.sansan.radio.utils.roundToOneDecimal
 import com.sansan.radio.utils.setTransparentStatusBar
@@ -25,42 +26,12 @@ class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setTransparentStatusBar()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
-        binding.ivSearch.setOnClickListener {
-
-            lifecycleScope.launch {  // 在主线程启动协程
-                while (true) {
-                    // 1. 执行UI更新（在主线程）
-                    binding.viewRadioScale.setFrequency(testFrequency)
-
-                    binding.tvFrequency.text = testFrequency.roundToOneDecimal().toString()
-
-                    if(g){
-                        testFrequency += 0.1f
-                        if(testFrequency > 108.5){
-                            g = false
-                        }
-                    } else {
-                        testFrequency -= 0.1f
-                        if(testFrequency < 87.5){
-                            g = true
-                        }
-                    }
-
-                    //delay() 挂起协程，不阻塞线程
-                    delay(20)  // 挂起50ms，主线程可以处理其他消息
-                }
-            }
-
-        }
-
+        binding.ivSearch.setOnClickListener {clickListener}
 
     }
 
@@ -71,9 +42,34 @@ class MainActivity : FragmentActivity() {
 
 
 
-    val clickListener = View.OnClickListener { view ->
+    private val clickListener = View.OnClickListener { view ->
         when (view.id) {
             R.id.iv_search -> {
+                lifecycleScope.launch {  // 在主线程启动协程
+                    while (true) {
+                        // 1. 执行UI更新（在主线程）
+                        binding.viewRadioScale.setFrequency(testFrequency)
+
+                        binding.tvFrequency.text = testFrequency.roundToOneDecimal().toString()
+
+                        if(g){
+                            testFrequency += 0.1f
+                            if(testFrequency > 108.5){
+                                g = false
+                            }
+                        } else {
+                            testFrequency -= 0.1f
+                            if(testFrequency < 87.5){
+                                g = true
+                            }
+                        }
+
+                        //delay() 挂起协程，不阻塞线程
+                        delay(20)  // 挂起50ms，主线程可以处理其他消息
+                    }
+                }
+
+                SSRadioManager.autoScan()
 
             }
 

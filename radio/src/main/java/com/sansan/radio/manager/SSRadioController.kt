@@ -14,6 +14,8 @@ class SSRadioController(private val context: Context) {
 
         initRadio()
 
+        controlRadio()
+
     }
 
     private fun initRadio() {
@@ -43,16 +45,27 @@ class SSRadioController(private val context: Context) {
 
 
 
-    fun autoScan(){
-        scope.launch {
-            val stations = withContext(Dispatchers.IO) {
-                FmNative.autoScan()
+    private fun controlRadio() {
+
+        SSRadioManager.addOnRadioControlListener(object : SSRadioManager.OnRadioControlListener {
+
+            override fun autoScan() {
+
+                scope.launch {
+                    val stations = withContext(Dispatchers.IO) {
+                        FmNative.autoScan()
+                    }
+
+                    Log.e("ww", "扫描到 ${stations.size} 个电台")
+
+                }
+
             }
 
-            Log.e("ww", "扫描到 ${stations.size} 个电台")
+        })
 
-        }
     }
+
 
 
 
