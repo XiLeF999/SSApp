@@ -29,45 +29,79 @@ class MainActivity : FragmentActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.ivSearch.apply {
 
-            setOnClickListener {
-
-//                testTune()
+        initRadioDev()
 
 
-                lifecycleScope.launch {  // 在主线程启动协程
-                    while (true) {
-                        // 1. 执行UI更新（在主线程）
-                        binding.viewRadioScale.setFrequency(testFrequency)
 
-                        binding.tvFrequency.text = testFrequency.roundToOneDecimal().toString()
 
-                        if(g){
-                            testFrequency += 0.1f
-                            if(testFrequency > 108.5){
-                                g = false
-                            }
-                        } else {
-                            testFrequency -= 0.1f
-                            if(testFrequency < 87.5){
-                                g = true
-                            }
+
+        binding.ivSearch.setOnClickListener {
+
+            lifecycleScope.launch {  // 在主线程启动协程
+                while (true) {
+                    // 1. 执行UI更新（在主线程）
+                    binding.viewRadioScale.setFrequency(testFrequency)
+
+                    binding.tvFrequency.text = testFrequency.roundToOneDecimal().toString()
+
+                    if(g){
+                        testFrequency += 0.1f
+                        if(testFrequency > 108.5){
+                            g = false
                         }
-
-                        //delay() 挂起协程，不阻塞线程
-                        delay(20)  // 挂起50ms，主线程可以处理其他消息
+                    } else {
+                        testFrequency -= 0.1f
+                        if(testFrequency < 87.5){
+                            g = true
+                        }
                     }
+
+                    //delay() 挂起协程，不阻塞线程
+                    delay(20)  // 挂起50ms，主线程可以处理其他消息
                 }
-
             }
-
-
 
         }
 
 
     }
+
+
+
+    private fun initRadioDev(){
+        lifecycleScope.launch {
+            val isSuccess = withContext(Dispatchers.IO) {
+                // 执行耗时操作
+                val isOpenSuccess = FmNative.openDev()
+                if (!isOpenSuccess) {
+                    return@withContext false
+                }
+
+                val isPowerSuccess = FmNative.powerUp(87.5f)
+                if (!isPowerSuccess) {
+                    FmNative.closeDev()
+                    return@withContext false
+                }
+
+                return@withContext true
+            }
+
+            // 这里自动回到主线程，可以安全更新UI
+            if (isSuccess) {
+
+                Log.e("ww","Radio初始化成功");
+
+            } else {
+
+                Log.e("ww","Radio初始化失败");
+
+            }
+        }
+
+    }
+
+
 
 
     // 测试调频
