@@ -31,31 +31,19 @@ class MainActivity : FragmentActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.ivSearch.setOnClickListener (clickListener)
+        binding.ivSearch.setOnClickListener(clickListener)
+        changeRadio()
 
     }
-
-
-
-
-
-
 
 
     private val clickListener = View.OnClickListener { view ->
         when (view.id) {
             R.id.iv_search -> {
 
-                if(isScanning){
+                if (isScanning) {
 
-                    binding.ivSearch.isSelected = false
-                    isScanning = false
-                    scanJob?.cancel()  // 取消之前的协程
-                    scanJob = null
-
-                    currentFrequency = 87.5f
-                    binding.viewRadioScale.setFrequency(currentFrequency)
-                    binding.tvFrequency.text = currentFrequency.roundToOneDecimal().toString()
+                    SSRadioManager.stopScan()
 
                 } else {
 
@@ -70,16 +58,17 @@ class MainActivity : FragmentActivity() {
                             // 执行UI更新（在主线程）
                             binding.viewRadioScale.setFrequency(currentFrequency)
 
-                            binding.tvFrequency.text = currentFrequency.roundToOneDecimal().toString()
+                            binding.tvFrequency.text =
+                                currentFrequency.roundToOneDecimal().toString()
 
-                            if(animGoOrBack){
+                            if (animGoOrBack) {
                                 currentFrequency += 0.1f
-                                if(currentFrequency > 108.5){
+                                if (currentFrequency > 108.5) {
                                     animGoOrBack = false
                                 }
                             } else {
                                 currentFrequency -= 0.1f
-                                if(currentFrequency < 87.5){
+                                if (currentFrequency < 87.5) {
                                     animGoOrBack = true
                                 }
                             }
@@ -90,10 +79,9 @@ class MainActivity : FragmentActivity() {
                     }
 
 
-//                    SSRadioManager.autoScan()
+                    SSRadioManager.autoScan()
 
                 }
-
 
 
             }
@@ -108,6 +96,38 @@ class MainActivity : FragmentActivity() {
     }
 
 
+    private fun changeRadio() {
+
+        SSRadioManager.addOnRadioChangeListener(object : SSRadioManager.OnRadioChangeListener {
+            override fun setAutoScan(stations: ShortArray) {   //扫描结束
+                binding.ivSearch.isSelected = false
+                isScanning = false
+                scanJob?.cancel()  // 取消之前的协程
+                scanJob = null
+
+
+            }
+
+            override fun setStopScan(stop: Boolean) {
+                if (stop) {   //主动停止扫描成功
+                    binding.ivSearch.isSelected = false
+                    isScanning = false
+                    scanJob?.cancel()  // 取消之前的协程
+                    scanJob = null
+
+                    currentFrequency = 87.5f
+                    binding.viewRadioScale.setFrequency(currentFrequency)
+                    binding.tvFrequency.text = currentFrequency.roundToOneDecimal().toString()
+                }
+
+            }
+
+
+        })
+
+    }
+
+
     override fun onDestroy() {
         super.onDestroy()
         binding.ivSearch.isSelected = false
@@ -115,7 +135,6 @@ class MainActivity : FragmentActivity() {
         scanJob?.cancel()
         scanJob = null
     }
-
 
 
 }

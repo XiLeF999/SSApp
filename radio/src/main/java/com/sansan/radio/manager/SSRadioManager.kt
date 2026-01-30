@@ -10,7 +10,17 @@ object SSRadioManager {
         onRadioControlListener?.autoScan()
     }
 
+    fun stopScan() {
+        onRadioControlListener?.stopScan()
+    }
 
+    fun setAutoScan(stations: ShortArray) {
+        onRadioChangeListener?.setAutoScan(stations)
+    }
+
+    fun setStopScan(stop: Boolean) {
+        onRadioChangeListener?.setStopScan(stop)
+    }
 
     fun addOnRadioControlListener(listener: OnRadioControlListener) {
         this.onRadioControlListener = listener
@@ -33,13 +43,21 @@ object SSRadioManager {
      */
     interface OnRadioControlListener {
         fun autoScan()
+        fun stopScan()
     }
 
     /**
      * Activity被动改变接口
      */
     interface OnRadioChangeListener {
-        fun setUsbState(state: Int)
+        /**
+         * 扫描结果，通知Activity
+         */
+        fun setAutoScan(stations: ShortArray)
+        /**
+         * 停止是否成功，通知Activity
+         */
+        fun setStopScan(stop: Boolean)
     }
 
 }
