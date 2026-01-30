@@ -112,6 +112,37 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/selector_radio_btn_fav"/>
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/selector_radio_previous"/>
+
+            <RelativeLayout
+                android:id="@+id/re_play"
+                android:layout_width="80px"
+                android:layout_height="80px"
+                android:layout_marginLeft="80px"
+                android:background="@mipmap/img_radio_play_bg" >
+
+                <ImageView
+                    android:id="@+id/iv_play"
+                    android:layout_width="64px"
+                    android:layout_height="64px"
+                    android:layout_centerInParent="true"
+                    android:src="@mipmap/img_radio_pause" />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/selector_radio_next"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/selector_radio_btn_search"/>
+
 
         </LinearLayout>
 
