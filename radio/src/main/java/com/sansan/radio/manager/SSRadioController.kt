@@ -53,7 +53,7 @@ class SSRadioController(private val context: Context) {
 
                 scope.launch {
                     val stations = withContext(Dispatchers.IO) {
-                        FmNative.autoScan()
+                        FmNative.autoScan()?: shortArrayOf()
                     }
 
                     SSRadioManager.setAutoScan(stations)
