@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
@@ -129,6 +130,7 @@ class MainActivity : FragmentActivity() {
             override fun setAutoScan(stations: ShortArray) {   //扫描结束
 
                 Log.e("ww", "扫描到 ${stations.size} 个电台")
+                Toast.makeText(this@MainActivity,"扫描到 ${stations.size} 个电台", Toast.LENGTH_SHORT).show()
 
                 val stationList = mutableListOf<StationInfo>()
                 stations.forEachIndexed { i, station ->
