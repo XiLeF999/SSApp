@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sansan.radio.R
@@ -33,9 +33,7 @@ class FmAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val bean = fmList[position]
 
-        // 先停止之前的跑马灯
-        holder.tvFrequency.text = bean.frequency.toString()
-
+        holder.tvFrequency.text = bean.frequency.toString() + "MHz"
 
         holder.llItem.setOnClickListener {
             onItemClickListener?.onItemClick(bean, position)
@@ -46,7 +44,7 @@ class FmAdapter(
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val llItem: LinearLayout = itemView.findViewById(R.id.ll_item)
+        val llItem: FrameLayout = itemView.findViewById(R.id.ll_item)
         val tvFrequency: TextView = itemView.findViewById(R.id.tv_frequency)
     }
 

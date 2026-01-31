@@ -40,6 +40,7 @@ class MainActivity : FragmentActivity() {
 
         startService(Intent(this, SSRadioService::class.java))
 
+        binding.ivPlay.setOnClickListener(clickListener)
         binding.ivSearch.setOnClickListener(clickListener)
         binding.tvFmType.setOnClickListener(clickListener)
         binding.tvFavType.setOnClickListener(clickListener)
@@ -54,6 +55,11 @@ class MainActivity : FragmentActivity() {
 
     private val clickListener = View.OnClickListener { view ->
         when (view.id) {
+
+            R.id.iv_play -> {
+
+
+            }
 
             R.id.iv_search -> {
 
