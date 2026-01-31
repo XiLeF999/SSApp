@@ -27,6 +27,9 @@ class MainActivity : FragmentActivity() {
 
     private var scanJob: Job? = null  // 保存协程引用
 
+    private val fmFragment by lazy { FmListFragment() }
+    private val favFragment by lazy { FavListFragment() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTransparentStatusBar()
@@ -39,6 +42,9 @@ class MainActivity : FragmentActivity() {
         binding.ivSearch.setOnClickListener(clickListener)
         binding.tvFmType.setOnClickListener(clickListener)
         binding.tvFavType.setOnClickListener(clickListener)
+
+        binding.tvFmType.isSelected = true
+        changeFragment(1)
 
         changeRadio()
 
@@ -156,43 +162,41 @@ class MainActivity : FragmentActivity() {
      * type:1-FM列表；2-搜藏喜欢的列表
      * 使用 add/hide/show 模式
      */
-    private fun changeFragment(type : Int) {
+    private fun changeFragment(type: Int) {
         val transaction = supportFragmentManager.beginTransaction()
 
-        // 通过tag查找已存在的Fragment
-        val fmFragment = supportFragmentManager.findFragmentByTag("radio_fm")
-        val favFragment = supportFragmentManager.findFragmentByTag("radio_fav")
-
         // 隐藏所有Fragment
-        fmFragment?.let { transaction.hide(it) }
-        favFragment?.let { transaction.hide(it) }
+        if (fmFragment.isAdded) {
+            transaction.hide(fmFragment)
+        }
+        if (favFragment.isAdded) {
+            transaction.hide(favFragment)
+        }
 
         when (type) {
             1 -> {
                 binding.tvFmType.isSelected = true
                 binding.tvFavType.isSelected = false
 
-                if (fmFragment == null) {
-                    transaction.add(R.id.fragment_radio, FmListFragment(), "radio_fm")
-                } else {
+                if (fmFragment.isAdded) {
                     transaction.show(fmFragment)
+                } else {
+                    transaction.add(R.id.fragment_radio, FmListFragment(), "radio_fm")
                 }
             }
             2 -> {
                 binding.tvFmType.isSelected = false
                 binding.tvFavType.isSelected = true
-                if (favFragment == null) {
-                    transaction.add(R.id.fragment_radio, FavListFragment(), "radio_fav")
-                } else {
+                if (favFragment.isAdded) {
                     transaction.show(favFragment)
+                } else {
+                    transaction.add(R.id.fragment_radio, FavListFragment(), "radio_fav")
                 }
             }
         }
 
         transaction.commitAllowingStateLoss()
     }
-
-
 
 
     override fun onDestroy() {
