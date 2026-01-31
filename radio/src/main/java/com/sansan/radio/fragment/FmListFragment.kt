@@ -12,6 +12,7 @@ import com.sansan.radio.R
 import com.sansan.radio.adapter.FmAdapter
 import com.sansan.radio.bean.StationInfo
 import com.sansan.radio.databinding.FragmentFmListBinding
+import com.sansan.radio.manager.SSRadioManager
 
 class FmListFragment : Fragment() {
 
@@ -39,9 +40,9 @@ class FmListFragment : Fragment() {
         mFmAdapter?.setOnItemClickListener(object : FmAdapter.OnItemClickListener {
             override fun onItemClick(bean: StationInfo, position: Int) {
 
-                val s = FmNative.tune(bean.frequency)
 
-                Toast.makeText(context,"是否成功:" + s.toString(),Toast.LENGTH_SHORT).show()
+                SSRadioManager.playStation(bean.frequency)
+
 
             }
         })

@@ -14,6 +14,10 @@ object SSRadioManager {
         onRadioControlListener?.stopScan()
     }
 
+    fun playStation(frequency: Float) {
+        onRadioControlListener?.playStation(frequency)
+    }
+
     fun setAutoScan(stations: ShortArray) {
         onRadioChangeListener?.setAutoScan(stations)
     }
@@ -44,6 +48,7 @@ object SSRadioManager {
     interface OnRadioControlListener {
         fun autoScan()
         fun stopScan()
+        fun playStation(frequency: Float)
     }
 
     /**
