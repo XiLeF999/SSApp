@@ -181,7 +181,7 @@ class MainActivity : FragmentActivity() {
                 if (fmFragment.isAdded) {
                     transaction.show(fmFragment)
                 } else {
-                    transaction.add(R.id.fragment_radio, FmListFragment(), "radio_fm")
+                    transaction.add(R.id.fragment_radio, fmFragment, "radio_fm")
                 }
             }
             2 -> {
@@ -190,7 +190,7 @@ class MainActivity : FragmentActivity() {
                 if (favFragment.isAdded) {
                     transaction.show(favFragment)
                 } else {
-                    transaction.add(R.id.fragment_radio, FavListFragment(), "radio_fav")
+                    transaction.add(R.id.fragment_radio, favFragment, "radio_fav")
                 }
             }
         }
