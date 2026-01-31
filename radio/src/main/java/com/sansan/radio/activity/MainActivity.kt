@@ -4,14 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import com.sansan.radio.databinding.ActivityMainBinding
-import com.android.fmradio.FmNative
 import com.sansan.radio.R
+import com.sansan.radio.databinding.ActivityMainBinding
+import com.sansan.radio.fragment.FavListFragment
+import com.sansan.radio.fragment.FmListFragment
 import com.sansan.radio.manager.SSRadioManager
 import com.sansan.radio.service.SSRadioService
-import com.sansan.radio.utils.hide
 import com.sansan.radio.utils.roundToOneDecimal
 import com.sansan.radio.utils.setTransparentStatusBar
 import kotlinx.coroutines.*
@@ -36,6 +37,9 @@ class MainActivity : FragmentActivity() {
         startService(Intent(this, SSRadioService::class.java))
 
         binding.ivSearch.setOnClickListener(clickListener)
+        binding.tvFmType.setOnClickListener(clickListener)
+        binding.tvFavType.setOnClickListener(clickListener)
+
         changeRadio()
 
     }
@@ -43,6 +47,7 @@ class MainActivity : FragmentActivity() {
 
     private val clickListener = View.OnClickListener { view ->
         when (view.id) {
+
             R.id.iv_search -> {
 
                 if (isScanning) {
@@ -90,9 +95,14 @@ class MainActivity : FragmentActivity() {
 
             }
 
-            R.id.iv_play -> {
-
+            R.id.tv_fm_type -> {
+                changeFragment(1)
             }
+
+            R.id.tv_fav_type -> {
+                changeFragment(2)
+            }
+
             else -> {
                 // 处理其他情况
             }
@@ -141,6 +151,48 @@ class MainActivity : FragmentActivity() {
         })
 
     }
+
+    /**
+     * type:1-FM列表；2-搜藏喜欢的列表
+     * 使用 add/hide/show 模式
+     */
+    private fun changeFragment(type : Int) {
+        val transaction = supportFragmentManager.beginTransaction()
+
+        // 通过tag查找已存在的Fragment
+        val fmFragment = supportFragmentManager.findFragmentByTag("radio_fm")
+        val favFragment = supportFragmentManager.findFragmentByTag("radio_fav")
+
+        // 隐藏所有Fragment
+        fmFragment?.let { transaction.hide(it) }
+        favFragment?.let { transaction.hide(it) }
+
+        when (type) {
+            1 -> {
+                binding.tvFmType.isSelected = true
+                binding.tvFavType.isSelected = false
+
+                if (fmFragment == null) {
+                    transaction.add(R.id.fragment_radio, FmListFragment(), "radio_fm")
+                } else {
+                    transaction.show(fmFragment)
+                }
+            }
+            2 -> {
+                binding.tvFmType.isSelected = false
+                binding.tvFavType.isSelected = true
+                if (favFragment == null) {
+                    transaction.add(R.id.fragment_radio, FavListFragment(), "radio_fav")
+                } else {
+                    transaction.show(favFragment)
+                }
+            }
+        }
+
+        transaction.commitAllowingStateLoss()
+    }
+
+
 
 
     override fun onDestroy() {
