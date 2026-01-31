@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.sansan.radio.R
+import com.sansan.radio.bean.StationInfo
 import com.sansan.radio.databinding.ActivityMainBinding
 import com.sansan.radio.fragment.FavListFragment
 import com.sansan.radio.fragment.FmListFragment
@@ -123,16 +124,27 @@ class MainActivity : FragmentActivity() {
 
                 Log.e("ww", "扫描到 ${stations.size} 个电台")
 
+                val stationList = mutableListOf<StationInfo>()
+                stations.forEachIndexed { i, station ->
+                    stationList.add(
+                        StationInfo(
+                            id = i,
+                            frequency = station / 10f,
+                            isFavorite = false
+                        )
+                    )
+                }
+
+                fmFragment.setRadioScanData(stationList)
+
                 binding.ivSearch.isSelected = false
                 isScanning = false
                 scanJob?.cancel()  // 取消之前的协程
                 scanJob = null
 
-
                 currentFrequency = 87.5f
                 binding.viewRadioScale.setFrequency(currentFrequency)
                 binding.tvFrequency.text = currentFrequency.roundToOneDecimal().toString()
-
 
             }
 
