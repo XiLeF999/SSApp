@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.fmradio.FmNative
 import com.sansan.radio.R
 import com.sansan.radio.adapter.FmAdapter
 import com.sansan.radio.bean.StationInfo
@@ -32,7 +34,20 @@ class FmListFragment : Fragment() {
         mFmAdapter = context?.let { FmAdapter(it) }
         binding.rvFmList.layoutManager = LinearLayoutManager(context)
         binding.rvFmList.adapter = mFmAdapter
+
+
+        mFmAdapter?.setOnItemClickListener(object : FmAdapter.OnItemClickListener {
+            override fun onItemClick(bean: StationInfo, position: Int) {
+
+                val s = FmNative.tune(bean.frequency)
+
+                Toast.makeText(context,"是否成功:" + s.toString(),Toast.LENGTH_SHORT).show()
+
+            }
+        })
+
     }
+
 
 
     fun setRadioScanData(stations: List<StationInfo>) {
