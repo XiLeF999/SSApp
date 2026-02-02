@@ -7,6 +7,8 @@
         android:id="@+id/bt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="36sp"
+        android:layout_centerInParent="true"
         android:text="测试收音机" />
 
 </RelativeLayout>
