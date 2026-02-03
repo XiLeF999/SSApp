@@ -256,7 +256,7 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
          *
          * @return service instance
          */
-        FmService getService() {
+        public FmService getService() {
             return FmService.this;
         }
     }

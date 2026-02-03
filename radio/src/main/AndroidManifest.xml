@@ -82,6 +82,14 @@
             android:configChanges="uiMode"
             android:exported="true" />
 
+        <service
+            android:name=".fm.FmService"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.android.fmradio.IFmRadioService" />
+            </intent-filter>
+        </service>
+
 
     </application>
 
