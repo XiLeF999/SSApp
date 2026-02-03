@@ -1,0 +1,573 @@
+package com.sansan.radio.fm;
+
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.media.MediaRecorder;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Environment;
+import android.os.ParcelFileDescriptor;
+import android.os.SystemClock;
+import android.provider.MediaStore;
+import android.text.format.DateFormat;
+import android.util.Log;
+
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
+
+/**
+ * This class provider interface to recording, stop recording, save recording
+ * file, play recording file
+ */
+public class FmRecorder implements MediaRecorder.OnErrorListener, MediaRecorder.OnInfoListener {
+    private static final String TAG = "FmRecorder";
+    // file prefix
+    public static final String RECORDING_FILE_PREFIX = "FM";
+    // file extension
+    public static final String RECORDING_FILE_EXTENSION = ".3gpp";
+    // Android R Change
+    public static final String RECORDING_FILE_3GGP_3GA_EXTENSION = ".3gpp.3ga";
+    // recording file folder Android R Change
+    public static final String FM_RECORD_FOLDER = "Music";
+    private static final String RECORDING_FILE_TYPE = "audio/3gpp";
+    private static final String RECORDING_FILE_SOURCE = "FM Recordings";
+    // error type no sdcard
+    public static final int ERROR_SDCARD_NOT_PRESENT = 0;
+    // error type sdcard not have enough space
+    public static final int ERROR_SDCARD_INSUFFICIENT_SPACE = 1;
+    // error type can't write sdcard
+    public static final int ERROR_SDCARD_WRITE_FAILED = 2;
+    // error type recorder internal error occur
+    public static final int ERROR_RECORDER_INTERNAL = 3;
+
+    // FM Recorder state not recording and not playing
+    public static final int STATE_IDLE = 5;
+    // FM Recorder state recording
+    public static final int STATE_RECORDING = 6;
+    // FM Recorder state playing
+    public static final int STATE_PLAYBACK = 7;
+    // FM Recorder state invalid, need to check
+    public static final int STATE_INVALID = -1;
+
+    // use to record current FM recorder state
+    public int mInternalState = STATE_IDLE;
+    // the recording time after start recording
+    private long mRecordTime = 0;
+    // record start time
+    private long mRecordStartTime = 0;
+    // current record file Uri
+    private Uri mRecordingFile = null;
+    // current record file
+    private File mRecordFile = null;
+    // record current record file is saved by user
+    private boolean mIsRecordingFileSaved = false;
+    // listener use for notify service the record state or error state
+    private OnRecorderStateChangedListener mStateListener = null;
+    // recorder use for record file
+    private MediaRecorder mRecorder = null;
+
+    private ParcelFileDescriptor mParcelFileFd = null;
+
+    /**
+     * Start recording the voice of FM, also check the pre-conditions, if not
+     * meet, will return an error message to the caller. if can start recording
+     * success, will set FM record state to recording and notify to the caller
+     */
+    public void startRecording(Context context) {
+        Log.d(TAG, "startRecording");
+        mRecordTime = 0;
+
+        // Check external storage
+        if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            Log.e(TAG, "startRecording, no external storage available");
+            setError(ERROR_SDCARD_NOT_PRESENT);
+            return;
+        }
+
+        String recordingSdcard = FmUtils.getDefaultStoragePath();
+        // check whether have sufficient storage space, if not will notify
+        // caller error message
+        if (!FmUtils.hasEnoughSpace(recordingSdcard)) {
+            setError(ERROR_SDCARD_INSUFFICIENT_SPACE);
+            Log.e(TAG, "startRecording, SD card does not have sufficient space!!");
+            return;
+        }
+        // set record parameter and start recording
+        try {
+            mRecorder = new MediaRecorder();
+            mRecorder.setOnErrorListener(this);
+            mRecorder.setOnInfoListener(this);
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.RADIO_TUNER);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            final int samplingRate = 44100;
+            mRecorder.setAudioSamplingRate(samplingRate);
+            final int bitRate = 128000;
+            mRecorder.setAudioEncodingBitRate(bitRate);
+            final int audiochannels = 2;
+            mRecorder.setAudioChannels(audiochannels);
+            mRecorder.setOutputFile(onGetRecordingFileDescriptor(context));
+            mRecorder.prepare();
+            mRecordStartTime = SystemClock.elapsedRealtime();
+            mRecorder.start();
+            setState(STATE_RECORDING);
+            mIsRecordingFileSaved = false;
+        } catch (Exception exception) {
+            Log.e(TAG, "startRecording, encounter exception!");
+            handleException();
+            onRecordingException(context);
+            setError(ERROR_RECORDER_INTERNAL);
+            return;
+        }
+
+    }
+
+    /**
+     * Stop recording, compute recording time and update FM recorder state
+     */
+    public void stopRecording() {
+        Log.d(TAG, "stopRecording, mInternalState = " + mInternalState);
+        if (STATE_RECORDING != mInternalState) {
+            Log.w(TAG, "stopRecording, called in wrong state: state = " + mInternalState);
+            return;
+        }
+        mRecordTime = SystemClock.elapsedRealtime() - mRecordStartTime;
+        stopRecorder();
+        setState(STATE_IDLE);
+    }
+
+    /**
+     * Compute the current record time
+     *
+     * @return The current record time
+     */
+    public long getRecordTime() {
+        if (STATE_RECORDING == mInternalState) {
+            mRecordTime = SystemClock.elapsedRealtime() - mRecordStartTime;
+        }
+        return mRecordTime;
+    }
+
+    /**
+     * Get FM recorder current state
+     *
+     * @return FM recorder current state
+     */
+    public int getState() {
+        return mInternalState;
+    }
+
+    /**
+     * Get current record file name
+     *
+     * @return The current record file name
+     */
+    public String getRecordFileName() {
+        if (mRecordFile != null) {
+            String fileName = mRecordFile.getName();
+            int index = fileName.indexOf(RECORDING_FILE_EXTENSION);
+            if (index > 0) {
+                fileName = fileName.substring(0, index);
+            }
+            return fileName;
+        }
+        return null;
+    }
+
+    /**
+     * Save recording file with the given name, and insert it's info to database
+     *
+     * @param context The context
+     * @param newName The name to override default recording name
+     */
+    public void saveRecording(Context context, String newName) {
+        Log.d(TAG, "saveRecording, newName = " + newName);
+        if (mRecordFile == null) {
+            Log.e(TAG, "saveRecording, recording file is null!");
+            return;
+        }
+
+        if (mIsRecordingFileSaved) {
+            Log.d(TAG, "saveRecording, recording has been saved");
+            return;
+        }
+        String savedRecordingName = newName + RECORDING_FILE_EXTENSION;
+        File newRecordFile = new File(mRecordFile.getParent(), savedRecordingName);
+        boolean succuss = mRecordFile.renameTo(newRecordFile);
+        if (succuss) {
+            mRecordFile = newRecordFile;
+        }
+        mIsRecordingFileSaved = true;
+        // insert recording file info to database
+        addRecordingToDatabase(context, savedRecordingName);
+    }
+
+    /**
+     * Discard current recording file, release recorder and player
+     */
+    public void discardRecording(Context context) {
+        Log.d(TAG, "discardRecording");
+        if ((STATE_RECORDING == mInternalState) && (null != mRecorder)) {
+            stopRecorder();
+        }
+
+        if (mRecordFile != null && !mIsRecordingFileSaved) {
+            if (!mRecordFile.delete()) {
+                // deletion failed, possibly due to hot plug out SD card
+                Log.w(TAG, "discardRecording, delete file failed!");
+            }
+            deleteRecordingfile(context);
+            mRecordFile = null;
+            mRecordStartTime = 0;
+            mRecordTime = 0;
+        }
+        setState(STATE_IDLE);
+    }
+
+    /**
+     * Set the callback use to notify FM recorder state and error message
+     *
+     * @param listener the callback
+     */
+    public void registerRecorderStateListener(OnRecorderStateChangedListener listener) {
+        mStateListener = listener;
+    }
+
+    /**
+     * Interface to notify FM recorder state and error message
+     */
+    public interface OnRecorderStateChangedListener {
+        /**
+         * notify FM recorder state
+         *
+         * @param state current FM recorder state
+         */
+        void onRecorderStateChanged(int state);
+
+        /**
+         * notify FM recorder error message
+         *
+         * @param error error type
+         */
+        void onRecorderError(int error);
+    }
+
+    /**
+     * When recorder occur error, release player, notify error message, and
+     * update FM recorder state to idle
+     *
+     * @param mr The current recorder
+     * @param what The error message type
+     * @param extra The error message extra
+     */
+    @Override
+    public void onError(MediaRecorder mr, int what, int extra) {
+        Log.e(TAG, "onError, what = " + what + ", extra = " + extra);
+        stopRecorder();
+        setError(ERROR_RECORDER_INTERNAL);
+        if (STATE_RECORDING == mInternalState) {
+            setState(STATE_IDLE);
+        }
+    }
+
+    @Override
+    public void onInfo(MediaRecorder mr, int what, int extra) {
+        Log.d(TAG, "onInfo: what=" + what + ", extra=" + extra);
+        if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED ||
+                what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED) {
+            onError(mr, what, extra);
+        }
+    }
+
+    /**
+     * Reset FM recorder
+     */
+    public void resetRecorder() {
+        if (mRecorder != null) {
+            mRecorder.release();
+            mRecorder = null;
+        }
+        mRecordFile = null;
+        mRecordStartTime = 0;
+        mRecordTime = 0;
+        mInternalState = STATE_IDLE;
+    }
+
+    /**
+     * Notify error message to the callback
+     *
+     * @param error FM recorder error type
+     */
+    private void setError(int error) {
+        Log.d(TAG, "setError, error = " + error);
+        if (mStateListener != null) {
+            mStateListener.onRecorderError(error);
+        }
+    }
+
+    /**
+     * Notify FM recorder state message to the callback
+     *
+     * @param state FM recorder current state
+     */
+    private void setState(int state) {
+        Log.d(TAG, "setState, old state = " + mInternalState + ", new_state = " + state);
+        if (mInternalState != state) {
+            mInternalState = state;
+            if (mStateListener != null) {
+                mStateListener.onRecorderStateChanged(state);
+            }
+        } else {
+            Log.w(TAG, "setState, avoid notify state change");
+        }
+    }
+
+    /**
+     * Save recording file info to database
+     *
+     * @param context The context
+     */
+    private void addRecordingToDatabase(final Context context, String name) {
+        Log.d(TAG, "addRecordingToDatabase");
+        long curTime = System.currentTimeMillis();
+        long modDate = mRecordFile.lastModified();
+        Date date = new Date(curTime);
+        java.text.DateFormat dateFormatter = DateFormat.getDateFormat(context);
+        java.text.DateFormat timeFormatter = DateFormat.getTimeFormat(context);
+        String title = getRecordFileName();
+        ContentValues cv = new ContentValues();
+        cv.put(MediaStore.Audio.Media.IS_PENDING, 0);
+        cv.put(MediaStore.Audio.Media.TITLE, title);
+        final int oneSecond = 1000;
+        cv.put(MediaStore.Audio.Media.DATE_ADDED, (int) (curTime / oneSecond));
+        cv.put(MediaStore.Audio.Media.DATE_MODIFIED, (int) (modDate / oneSecond));
+        cv.put(MediaStore.Audio.Media.DURATION, mRecordTime);
+        cv.put(MediaStore.Audio.Media.DISPLAY_NAME, name);
+        ContentResolver resolver = context.getContentResolver();
+        int ret = resolver.update(mRecordingFile, cv, null, null);
+        if (ret == -1) {
+            Log.e(TAG, "update record file info error");
+            closeRecordingFile(context);
+            return;
+        }
+
+        if (getPlaylistId(context) == -1) {
+            createPlaylist(context);
+        }
+        int audioId = Integer.valueOf(mRecordingFile.getLastPathSegment());
+        addToPlaylist(context, audioId, getPlaylistId(context));
+        closeRecordingFile(context);
+    }
+
+    /**
+     * Get the play list ID
+     * @param context Current passed in Context instance
+     * @return The play list ID
+     */
+    public static int getPlaylistId(final Context context) {
+        Cursor playlistCursor = context.getContentResolver().query(
+                MediaStore.Audio.Playlists.getContentUri("external"),
+                new String[] {
+                        MediaStore.Audio.Playlists._ID
+                },
+                MediaStore.Audio.Playlists.NAME + "=?",
+                new String[] {
+                        RECORDING_FILE_SOURCE
+                },
+                null);
+        int playlistId = -1;
+        if (null != playlistCursor) {
+            try {
+                if (playlistCursor.moveToFirst()) {
+                    playlistId = playlistCursor.getInt(0);
+                }
+            } finally {
+                playlistCursor.close();
+            }
+        }
+        return playlistId;
+    }
+
+    private int createPlaylist(final Context context) {
+        final int size = 1;
+        ContentValues cv = new ContentValues(size);
+        cv.put(MediaStore.Audio.Playlists.NAME, RECORDING_FILE_SOURCE);
+        Uri newPlaylistUri = context.getContentResolver().insert(
+                MediaStore.Audio.Playlists.getContentUri("external"), cv);
+        if (newPlaylistUri == null) {
+            Log.d(TAG, "createPlaylist, create playlist failed");
+            return -1;
+        }
+        return Integer.valueOf(newPlaylistUri.getLastPathSegment());
+    }
+
+    private void addToPlaylist(final Context context, final int audioId, final int playlistId) {
+        String[] cols = new String[] { MediaStore.Audio.Playlists.Members.AUDIO_ID };
+        Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
+        ContentResolver resolver = context.getContentResolver();
+        Cursor cur = resolver.query(uri, cols, null, null, null);
+        if (null != cur) {
+            final int base = cur.getCount();
+            cur.close();
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, Integer.valueOf(base + audioId));
+            values.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, audioId);
+            resolver.insert(uri, values);
+        }
+    }
+
+    private void stopRecorder() {
+        Log.d(TAG, "stopRecorder");
+        synchronized (this) {
+            if (mRecorder != null) {
+                try {
+                    mRecorder.stop();
+                } catch (IllegalStateException ex) {
+                    Log.e(TAG, "stopRecorder, IllegalStateException ocurr " + ex);
+                    setError(ERROR_RECORDER_INTERNAL);
+                } catch (RuntimeException e) {
+                    Log.e(TAG, "stopRecorder, IllegalStateException ocurr " + e);
+                    setError(ERROR_RECORDER_INTERNAL);
+                } finally {
+                    mRecorder.release();
+                    setState(STATE_IDLE);
+                    mRecorder = null;
+                }
+            }
+        }
+    }
+    public FileDescriptor onGetRecordingFileDescriptor(Context context) {
+        Log.d(TAG, "onGetRecordingFileDescriptor");
+        long curTime = System.currentTimeMillis();
+        Date date = new Date(curTime);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMddyyyy_HHmmss",
+                Locale.ENGLISH);
+        String time = simpleDateFormat.format(date);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(time).append(RECORDING_FILE_EXTENSION);
+        String name = stringBuilder.toString();
+        ContentValues cv = new ContentValues();
+        cv.put(MediaStore.Audio.Media.DISPLAY_NAME, name);
+        cv.put(MediaStore.Audio.Media.TITLE, name);
+        cv.put(MediaStore.Audio.Media.MIME_TYPE, RECORDING_FILE_TYPE);
+        cv.put(MediaStore.Audio.Media.IS_PENDING, 1);
+        cv.put(MediaStore.Audio.Media.ALBUM, RECORDING_FILE_SOURCE);
+        Uri uri = MediaStore.Audio.Media
+                .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+        ContentResolver resolver = context.getContentResolver();
+        mRecordingFile= resolver.insert(uri, cv);
+        mRecordFile = new File(getExactRecordingPath(context),name);
+        Log.d(TAG, "mRecordingFile: "+ mRecordingFile + ", mRecordFile: "+ mRecordFile);
+        try {
+            mParcelFileFd = resolver.openFileDescriptor(mRecordingFile, "w");
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "open recording file fail");
+        }
+        return mParcelFileFd.getFileDescriptor();
+    }
+
+    public void onRecordingException(Context context) {
+        closeRecordingFile(context);
+        deleteRecordingfile(context);
+    }
+
+    void deleteRecordingfile(Context context) {
+        if(mRecordingFile != null) {
+            ContentResolver resolver = context.getContentResolver();
+            resolver.delete(mRecordingFile, null, null);
+        }
+    }
+
+    private void closeRecordingFile(Context context) {
+        try {
+            if (mParcelFileFd != null) {
+                mParcelFileFd.close();
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "close recording file fail");
+        }
+    }
+
+    private void handleException() {
+        mRecorder.reset();
+        mRecorder.release();
+        mRecorder = null;
+        setState(STATE_IDLE);
+    }
+    /**
+     * A simple utility to do a query into the databases.
+     * @param uri
+     * @param projection
+     * @param selection
+     * @param selectionArgs
+     * @param sortOrder
+     * @return Cursor
+     */
+    private Cursor query(Context context ,Uri uri, String[] projection, String selection, String[] selectionArgs,
+                         String sortOrder) {
+        try {
+            ContentResolver resolver = context.getContentResolver();
+            if (resolver == null) {
+                return null;
+            }
+            return resolver.query(uri, projection, selection, selectionArgs, sortOrder);
+        } catch (UnsupportedOperationException ex) {
+            return null;
+        }
+    }
+    /**
+     * Get exact recording path
+     */
+    protected String getExactRecordingPath(Context context) {
+        final String[] projection = new String[] {
+                MediaStore.Audio.Media.DATA
+        };
+        String path = null;
+        Cursor c = query(context,mRecordingFile, projection, null, null, null);
+        if (c != null) {
+            try {
+                c.moveToFirst();
+                path = c.getString(0);
+            } finally {
+                c.close();
+            }
+        }
+        if (path == null) {
+            return "Unknown Path";
+        }
+        File f = new File(path);
+        path = f.getParent();
+        String exactPath = "";
+        Log.d(TAG,"getExactRecordingPath(): path is: " + path);
+        StorageVolume[] storageVolumeList = ((StorageManager) context
+                .getSystemService(Context.STORAGE_SERVICE)).getVolumeList();
+        if (storageVolumeList != null) {
+            for (StorageVolume volume : storageVolumeList) {
+                String volDescription = volume.getDescription(context);
+                String volPath = volume.getInternalPath() + "/";
+                Log.d(TAG,"getRecordingPath(): volDes is: "
+                        + volDescription + ", volPath is: " + volPath);
+                if (path != null && path.indexOf(volPath) > -1) {
+                    String subPath = path.substring(volPath.length() - 1);
+                    exactPath = volDescription + subPath;
+                    Log.d(TAG,"getExactRecordingPath(): exactPath is: "
+                            + exactPath + ", subPath is: " + subPath);
+                    return exactPath;
+                }
+            }
+        }
+        return exactPath;
+    }
+
+}
