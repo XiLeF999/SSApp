@@ -4,11 +4,19 @@
     android:layout_height="match_parent" >
 
     <Button
-        android:id="@+id/bt"
+        android:id="@+id/bt1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="36sp"
         android:layout_centerInParent="true"
-        android:text="测试收音机" />
+        android:text="播放93.5MHZ" />
+
+    <Button
+        android:id="@+id/bt2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="36sp"
+        android:layout_centerInParent="true"
+        android:text="扫描" />
 
 </RelativeLayout>
