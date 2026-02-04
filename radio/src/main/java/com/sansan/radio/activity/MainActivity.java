@@ -294,7 +294,7 @@ public class MainActivity extends FragmentActivity {
                         }
                     }
 
-                    mHandler.sendEmptyMessageDelayed(5001,50);
+                    mHandler.sendEmptyMessageDelayed(5001,20);
 
                     break;
 
