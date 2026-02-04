@@ -41,7 +41,7 @@ class FmListFragment : Fragment() {
             override fun onItemClick(bean: StationInfo, position: Int) {
 
 
-                SSRadioManager.playStation(bean.frequency)
+//                SSRadioManager.playStation(bean.frequency)
 
 
             }

@@ -5,21 +5,16 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Notification.BigTextStyle;
-import android.app.Notification.Builder;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.media.AudioDeviceInfo;
 import android.media.AudioDevicePort;
 import android.media.AudioDevicePortConfig;
 import android.media.AudioFormat;
@@ -45,12 +40,11 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.SystemProperties;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.fmradio.FmNative;
 import com.sansan.radio.R;
-import com.sansan.radio.activity.MainTestActivity;
+import com.sansan.radio.activity.MainActivity;
 
 import com.sansan.radio.fm.FmStation.Station;
 
@@ -146,7 +140,7 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
     // RT String
     private String mRtTextString = "";
     // Notification target class name
-    private String mTargetClassName = MainTestActivity.class.getName();
+    private String mTargetClassName = MainActivity.class.getName();
     // RDS thread use to receive the information send by station
     private Thread mRdsThread = null;
     // record whether RDS thread exit

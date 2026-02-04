@@ -13,6 +13,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -27,45 +28,30 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainTestActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity {
 
     private int mCurrentStation = FmUtils.DEFAULT_STATION;
 
     private MainHandler mHandler;
 
-    private Button bt1;
-    private Button bt2;
+    private ImageView ivPlay;
+    private ImageView ivSearch;
 
     private FmService mService = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_main);
+        setContentView(R.layout.activity_main);
 
         mHandler = new MainHandler(getMainLooper(), this);
 
-        bindService(new Intent(MainTestActivity.this, FmService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        bindService(new Intent(MainActivity.this, FmService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
 
-        bt1 = findViewById(R.id.bt1);
-        bt1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                mService.powerUpAsync(93.5f);
-
-            }
-        });
-
-        bt2 = findViewById(R.id.bt2);
-        bt2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                mService.startScanAsync();
-
-            }
-        });
+        ivPlay = findViewById(R.id.iv_play);
+        ivPlay.setOnClickListener(onClickListener);
+        ivSearch = findViewById(R.id.iv_search);
+        ivSearch.setOnClickListener(onClickListener);
 
     }
 
@@ -92,6 +78,37 @@ public class MainTestActivity extends FragmentActivity {
     };
 
 
+
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            switch (v.getId()){
+
+                case R.id.iv_play:
+                    mService.powerUpAsync(93.5f);
+                    break;
+
+                case R.id.iv_search:
+                    mService.startScanAsync();
+                    break;
+
+            }
+
+
+
+        }
+    };
+
+
+
+
+
+
+
+
+
     private FmListener mFmRadioListener = new FmListener() {
         @Override
         public void onCallBack(Bundle bundle) {
@@ -112,9 +129,9 @@ public class MainTestActivity extends FragmentActivity {
 
 
     public class MainHandler extends Handler {
-        WeakReference<MainTestActivity> mMainActivity;
+        WeakReference<MainActivity> mMainActivity;
 
-        public MainHandler(Looper looper, MainTestActivity mainActivity) {
+        public MainHandler(Looper looper, MainActivity mainActivity) {
             super(looper);
             mMainActivity = new WeakReference<>(mainActivity);
         }
@@ -125,14 +142,14 @@ public class MainTestActivity extends FragmentActivity {
             switch (msg.what) {
                 case FmListener.MSGID_SCAN_FINISHED:
 
-                    Log.e("ww","FM电台扫描完成");
-
                     bundle = msg.getData();
                     // cancel scan happen
                     boolean isScan = bundle.getBoolean(FmListener.KEY_IS_SCAN);
                     int searchedNum = bundle.getInt(FmListener.KEY_STATION_NUM);
 
+                    Log.e("ww","FM电台扫描完成:" + isScan + ";" + searchedNum);
 
+                    Log.e("ww","FM电台扫描完成111:" + getData().size());
 
                     break;
                 default:
