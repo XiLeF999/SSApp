@@ -66,6 +66,9 @@ public class MainActivity extends FragmentActivity {
 
         mHandler = new MainActivityHandler(getMainLooper(), this);
 
+        // Should start FM service first.
+        //先开始在绑定，退出Activity，Service才会继续工作
+        startService(new Intent(MainActivity.this, FmService.class));
         bindService(new Intent(MainActivity.this, FmService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
 
         fmListFragment = new FmListFragment();
@@ -247,7 +250,7 @@ public class MainActivity extends FragmentActivity {
                     mHandler.removeMessages(5001);
 
                     if(fmListFragment != null){
-                        
+
                         fmListFragment.setRadioScanData(getData());
 
                     }
