@@ -32,7 +32,8 @@ public class MainActivity extends FragmentActivity {
 
     private int mCurrentStation = FmUtils.DEFAULT_STATION;
 
-    private MainHandler mHandler;
+    private MainActivityHandler mHandler;
+
 
     private ImageView ivPlay;
     private ImageView ivSearch;
@@ -44,7 +45,7 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mHandler = new MainHandler(getMainLooper(), this);
+        mHandler = new MainActivityHandler(getMainLooper(), this);
 
         bindService(new Intent(MainActivity.this, FmService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
 
@@ -91,7 +92,21 @@ public class MainActivity extends FragmentActivity {
                     break;
 
                 case R.id.iv_search:
-                    mService.startScanAsync();
+
+                    if (mService.isScanning()) {
+
+                        mService.stopScan();
+
+                    } else {
+                        mService.startScanAsync();
+                    }
+
+
+
+
+
+
+
                     break;
 
             }
@@ -128,10 +143,10 @@ public class MainActivity extends FragmentActivity {
 
 
 
-    public class MainHandler extends Handler {
+    public class MainActivityHandler extends Handler {
         WeakReference<MainActivity> mMainActivity;
 
-        public MainHandler(Looper looper, MainActivity mainActivity) {
+        public MainActivityHandler(Looper looper, MainActivity mainActivity) {
             super(looper);
             mMainActivity = new WeakReference<>(mainActivity);
         }
@@ -143,7 +158,7 @@ public class MainActivity extends FragmentActivity {
                 case FmListener.MSGID_SCAN_FINISHED:
 
                     bundle = msg.getData();
-                    // cancel scan happen
+                    //正常扫描完成true,中途取消false
                     boolean isScan = bundle.getBoolean(FmListener.KEY_IS_SCAN);
                     int searchedNum = bundle.getInt(FmListener.KEY_STATION_NUM);
 
