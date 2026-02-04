@@ -16,7 +16,7 @@ import android.text.TextUtils;
 public class FmStation {
     private static final String TAG = "FmStation";
     // authority use composite content provider uri
-    public static final String AUTHORITY = "com.android.fmradio";
+    public static final String AUTHORITY = "com.sansan.radio.fm";
     // use to composite content provider uri
     public static final String STATION = "station";
     // store current station in share preference with this key

@@ -76,6 +76,12 @@
             </intent-filter>
         </activity>
 
+        <provider
+            android:name=".fm.FmProvider"
+            android:authorities="com.sansan.radio.fm"
+            android:exported="false" >
+        </provider>
+
         <service
             android:name=".fm.FmService"
             android:exported="true" >

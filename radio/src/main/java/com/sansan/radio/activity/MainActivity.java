@@ -387,6 +387,8 @@ public class MainActivity extends FragmentActivity {
 
         } catch (Exception e) {
 
+            Log.e("ww","三三Radio:" + e.getMessage());
+
         } finally {
             if (cursor != null) {
                 cursor.close();
