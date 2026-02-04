@@ -41,12 +41,14 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.SystemProperties;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.fmradio.FmNative;
 import com.sansan.radio.R;
 import com.sansan.radio.activity.MainActivity;
 
 import com.sansan.radio.fm.FmStation.Station;
+import com.sansan.radio.utils.ThreadPoolExecutorHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1057,14 +1059,24 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
 
 
             //wuhong
-            if(stationsInShort == null){
-                Log.e("ww","收音机FM电台为null");
-            } else {
-                Log.e("ww","收音机FM电台:" + stationsInShort.length);
-                for(short s : stationsInShort){
-                    Log.e("ww","收音机FM电台：" + s);
+            final short[] stationsInShortX = stationsInShort;
+            ThreadPoolExecutorHelper.getInstance().runUIThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(stationsInShortX == null){
+                        Log.e("ww","收音机FM电台为null");
+                        Toast.makeText(mContext,"收音机FM电台为null",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e("ww","收音机FM电台:" + stationsInShortX.length);
+                        Toast.makeText(mContext,"收音机FM电台:" + stationsInShortX.length,Toast.LENGTH_SHORT).show();
+                        for(short s : stationsInShortX){
+                            Log.e("ww","收音机FM电台：" + s);
+                            Toast.makeText(mContext,"收音机FM电台：" + s,Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
-            }
+            });
+
 
 
         }
