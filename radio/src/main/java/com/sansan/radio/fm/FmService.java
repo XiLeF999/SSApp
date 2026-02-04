@@ -1057,28 +1057,6 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
             stationsInShort = FmNative.autoScan();
             mIsNativeScanning = false;
 
-
-            //wuhong
-            final short[] stationsInShortX = stationsInShort;
-            ThreadPoolExecutorHelper.getInstance().runUIThread(new Runnable() {
-                @Override
-                public void run() {
-                    if(stationsInShortX == null){
-                        Log.e("ww","收音机FM电台为null");
-                        Toast.makeText(mContext,"收音机FM电台为null",Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.e("ww","收音机FM电台:" + stationsInShortX.length);
-                        Toast.makeText(mContext,"收音机FM电台:" + stationsInShortX.length,Toast.LENGTH_SHORT).show();
-                        for(short s : stationsInShortX){
-                            Log.e("ww","收音机FM电台：" + s);
-                            Toast.makeText(mContext,"收音机FM电台：" + s,Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-            });
-
-
-
         }
 
         setRds(true);
