@@ -94,7 +94,12 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void powerUpAsync(float frequency) {
 
-                mService.powerUpAsync(frequency);
+                currentFrequency = frequency;
+
+                mRadioScaleView.setFrequency(currentFrequency);
+                tvFrequency.setText(String.valueOf(currentFrequency));
+
+                mService.powerUpAsync(currentFrequency);
 
             }
         });
@@ -135,7 +140,7 @@ public class MainActivity extends FragmentActivity {
 
             mService.registerFmRadioListener(mFmRadioListener);
 
-            mService.tuneStationAsync(FmUtils.computeFrequency(FmStation.getCurrentStation(MainActivity.this)));
+            tuneStation();
 
         }
 
@@ -144,6 +149,19 @@ public class MainActivity extends FragmentActivity {
 
         }
     };
+
+
+    /**
+     * 播放指定电台
+     */
+    private void tuneStation(){
+
+        currentFrequency = FmUtils.computeFrequency(FmStation.getCurrentStation(MainActivity.this));
+        mRadioScaleView.setFrequency(currentFrequency);
+        tvFrequency.setText(String.valueOf(currentFrequency));
+
+        mService.tuneStationAsync(currentFrequency);
+    }
 
 
 
@@ -250,6 +268,8 @@ public class MainActivity extends FragmentActivity {
                     mHandler.removeMessages(5001);
 
                     fmListFragment.updateStationList();
+
+                    tuneStation();
 
                     break;
 
