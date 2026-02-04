@@ -1054,6 +1054,19 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
             mIsNativeScanning = true;
             stationsInShort = FmNative.autoScan();
             mIsNativeScanning = false;
+
+
+            //wuhong
+            if(stationsInShort == null){
+                Log.e("ww","收音机FM电台为null");
+            } else {
+                Log.e("ww","收音机FM电台:" + stationsInShort.length);
+                for(short s : stationsInShort){
+                    Log.e("ww","收音机FM电台：" + s);
+                }
+            }
+
+
         }
 
         setRds(true);
@@ -3474,17 +3487,6 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
                         }
                         Log.i(TAG, "handleMessage: startScan");
                         stations = startScan();
-
-                        //wuhong
-                        if(stations == null){
-                            Log.e("ww","收音机FM电台为null");
-                        } else {
-                            Log.e("ww","收音机FM电台:" + stations.length);
-                            for(int s : stations){
-                                Log.e("ww","收音机FM电台：" + s);
-                            }
-                        }
-
 
                     }
                     Log.i(TAG, "handleMessage: endScan");
