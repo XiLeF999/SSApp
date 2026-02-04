@@ -135,6 +135,7 @@ public class MainActivity extends FragmentActivity {
 
             mService.registerFmRadioListener(mFmRadioListener);
 
+            mService.tuneStationAsync(FmUtils.computeFrequency(FmStation.getCurrentStation(MainActivity.this)));
 
         }
 
