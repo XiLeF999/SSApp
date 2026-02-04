@@ -18,8 +18,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.sansan.radio.R;
 import com.sansan.radio.bean.StationInfo;
@@ -27,6 +29,8 @@ import com.sansan.radio.fm.FmListener;
 import com.sansan.radio.fm.FmService;
 import com.sansan.radio.fm.FmStation;
 import com.sansan.radio.fm.FmUtils;
+import com.sansan.radio.fragment.FavListFragment;
+import com.sansan.radio.fragment.FmListFragment;
 import com.sansan.radio.widget.RadioScaleView;
 
 import java.lang.ref.WeakReference;
@@ -42,10 +46,15 @@ public class MainActivity extends FragmentActivity {
     private float currentFrequency = 87.5f;
     private boolean animGoOrBack = true;
 
+    private FmListFragment fmListFragment;
+    private FavListFragment favListFragment;
+
     private RadioScaleView mRadioScaleView;
     private TextView tvFrequency;
     private ImageView ivPlay;
     private ImageView ivSearch;
+    private TextView tvFmType;
+    private TextView tvFavType;
 
     private FmService mService = null;
 
@@ -65,6 +74,13 @@ public class MainActivity extends FragmentActivity {
         ivPlay.setOnClickListener(onClickListener);
         ivSearch = findViewById(R.id.iv_search);
         ivSearch.setOnClickListener(onClickListener);
+        tvFmType = findViewById(R.id.tv_fm_type);
+        tvFmType.setOnClickListener(onClickListener);
+        tvFavType = findViewById(R.id.tv_fav_type);
+        tvFavType.setOnClickListener(onClickListener);
+
+        tvFmType.setSelected(true);
+        changeFragment(1);
 
     }
 
@@ -142,13 +158,17 @@ public class MainActivity extends FragmentActivity {
 
                     }
 
-
-
-
-
-
-
                     break;
+
+                case R.id.tv_fm_type:
+                    changeFragment(1);
+                    break;
+
+                case R.id.tv_fav_type:
+                    changeFragment(2);
+                    break;
+
+
 
             }
 
@@ -205,17 +225,21 @@ public class MainActivity extends FragmentActivity {
 
                     Log.e("ww","FM电台扫描结束:" + isScan + ";" + searchedNum);
 
+                    Toast.makeText(MainActivity.this,"FM电台扫描个数:" + searchedNum,Toast.LENGTH_SHORT).show();
+
                     ivSearch.setSelected(false);
                     mHandler.removeMessages(5001);
 
-                    List<StationInfo> stationInfoList = getData();
+                    if(fmListFragment != null){
+                        fmListFragment.setRadioScanData(getData());
+                    }
 
 
                     break;
 
                 case 5001:   //更新扫描UI
 
-                    currentFrequency = Math.round(currentFrequency * 10) / 10.0f;
+                    currentFrequency = Math.round(currentFrequency * 10) / 10.0f;   //保留一位小数
 
                     mRadioScaleView.setFrequency(currentFrequency);
 
@@ -243,6 +267,60 @@ public class MainActivity extends FragmentActivity {
             }
         }
     }
+
+
+    /**
+     * type:1-FM列表；2-搜藏喜欢的列表
+     * 使用 add/hide/show 模式
+     */
+    private void changeFragment(int type){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        // 隐藏所有Fragment
+        if (fmListFragment != null && fmListFragment.isAdded()) {
+            transaction.hide(fmListFragment);
+        }
+        if (favListFragment != null && favListFragment.isAdded()) {
+            transaction.hide(favListFragment);
+        }
+
+        switch (type){
+            case 1:
+
+                tvFmType.setSelected(true);
+                tvFavType.setSelected(false);
+
+                if(fmListFragment != null){
+                    if (fmListFragment.isAdded()) {
+                        transaction.show(fmListFragment);
+                    } else {
+                        transaction.add(R.id.fragment_radio, fmListFragment, "radio_fm");
+                    }
+                }
+
+                break;
+            case 2:
+
+                tvFmType.setSelected(false);
+                tvFavType.setSelected(true);
+
+                if(favListFragment != null){
+                    if (favListFragment.isAdded()) {
+                        transaction.show(favListFragment);
+                    } else {
+                        transaction.add(R.id.fragment_radio, favListFragment, "radio_fav");
+                    }
+                }
+
+                break;
+
+        }
+
+
+
+    }
+
+
+
 
 
 
