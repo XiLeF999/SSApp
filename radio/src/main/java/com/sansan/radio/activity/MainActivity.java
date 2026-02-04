@@ -68,6 +68,9 @@ public class MainActivity extends FragmentActivity {
 
         bindService(new Intent(MainActivity.this, FmService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
 
+        fmListFragment = new FmListFragment();
+        favListFragment = new FavListFragment();
+
         mRadioScaleView = findViewById(R.id.view_radio_scale);
         tvFrequency = findViewById(R.id.tv_frequency);
         ivPlay = findViewById(R.id.iv_play);
@@ -81,6 +84,16 @@ public class MainActivity extends FragmentActivity {
 
         tvFmType.setSelected(true);
         changeFragment(1);
+
+        fmListFragment.setOnFmListFragmentListener(new FmListFragment.OnFmListFragmentListener() {
+            @Override
+            public void powerUpAsync(float frequency) {
+
+                Toast.makeText(MainActivity.this,"播放电台:" + frequency,Toast.LENGTH_SHORT).show();
+
+                mService.powerUpAsync(frequency);
+            }
+        });
 
     }
 
@@ -137,7 +150,7 @@ public class MainActivity extends FragmentActivity {
             switch (v.getId()){
 
                 case R.id.iv_play:
-                    mService.powerUpAsync(93.5f);
+
                     break;
 
                 case R.id.iv_search:
@@ -185,6 +198,9 @@ public class MainActivity extends FragmentActivity {
 
 
 
+    /**
+     * 扫描结束
+     */
     private FmListener mFmRadioListener = new FmListener() {
         @Override
         public void onCallBack(Bundle bundle) {
