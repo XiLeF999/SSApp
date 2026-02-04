@@ -247,12 +247,8 @@ public class MainActivity extends FragmentActivity {
                     mHandler.removeMessages(5001);
 
                     if(fmListFragment != null){
-//                        fmListFragment.setRadioScanData(getData());
-
-                        List<StationInfo> xx = new ArrayList<>();
-                        StationInfo ss = new StationInfo(1111,"aaa","sss",1);
-                        xx.add(ss);
-                        fmListFragment.setRadioScanData(xx);
+                        
+                        fmListFragment.setRadioScanData(getData());
 
                     }
 
