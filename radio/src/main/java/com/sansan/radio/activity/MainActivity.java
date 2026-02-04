@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -12,8 +13,11 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -23,6 +27,7 @@ import com.sansan.radio.fm.FmListener;
 import com.sansan.radio.fm.FmService;
 import com.sansan.radio.fm.FmStation;
 import com.sansan.radio.fm.FmUtils;
+import com.sansan.radio.widget.RadioScaleView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -34,7 +39,11 @@ public class MainActivity extends FragmentActivity {
 
     private MainActivityHandler mHandler;
 
+    private float currentFrequency = 87.5f;
+    private boolean animGoOrBack = true;
 
+    private RadioScaleView mRadioScaleView;
+    private TextView tvFrequency;
     private ImageView ivPlay;
     private ImageView ivSearch;
 
@@ -44,16 +53,40 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTransparentStatusBar();
 
         mHandler = new MainActivityHandler(getMainLooper(), this);
 
         bindService(new Intent(MainActivity.this, FmService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
 
+        mRadioScaleView = findViewById(R.id.view_radio_scale);
+        tvFrequency = findViewById(R.id.tv_frequency);
         ivPlay = findViewById(R.id.iv_play);
         ivPlay.setOnClickListener(onClickListener);
         ivSearch = findViewById(R.id.iv_search);
         ivSearch.setOnClickListener(onClickListener);
 
+    }
+
+
+    /**
+     * 设置状态栏沉浸式透明
+     */
+    private void setTransparentStatusBar() {
+        Window window = getWindow();
+        // 清除半透明标志
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // 允许绘制系统栏背景
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        // 设置状态栏颜色为透明
+        window.setStatusBarColor(Color.TRANSPARENT);
+
+        // 设置布局延伸到状态栏
+        View decorView = window.getDecorView();
+        int systemUiVisibility = decorView.getSystemUiVisibility();
+        systemUiVisibility |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        systemUiVisibility |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        decorView.setSystemUiVisibility(systemUiVisibility);
     }
 
 
@@ -98,7 +131,15 @@ public class MainActivity extends FragmentActivity {
                         mService.stopScan();
 
                     } else {
+
+
                         mService.startScanAsync();
+
+                        ivSearch.setSelected(true);
+                        mHandler.removeMessages(5001);
+                        mHandler.sendEmptyMessage(5001);
+
+
                     }
 
 
@@ -162,11 +203,41 @@ public class MainActivity extends FragmentActivity {
                     boolean isScan = bundle.getBoolean(FmListener.KEY_IS_SCAN);
                     int searchedNum = bundle.getInt(FmListener.KEY_STATION_NUM);
 
-                    Log.e("ww","FM电台扫描完成:" + isScan + ";" + searchedNum);
+                    Log.e("ww","FM电台扫描结束:" + isScan + ";" + searchedNum);
 
-                    Log.e("ww","FM电台扫描完成111:" + getData().size());
+                    ivSearch.setSelected(false);
+                    mHandler.removeMessages(5001);
+
+                    List<StationInfo> stationInfoList = getData();
+
 
                     break;
+
+                case 5001:   //更新扫描UI
+
+                    currentFrequency = Math.round(currentFrequency * 10) / 10.0f;
+
+                    mRadioScaleView.setFrequency(currentFrequency);
+
+                    tvFrequency.setText(String.valueOf(currentFrequency));
+
+
+                    if (animGoOrBack) {
+                        currentFrequency += 0.1f;
+                        if (currentFrequency > 108.5) {
+                            animGoOrBack = false;
+                        }
+                    } else {
+                        currentFrequency -= 0.1f;
+                        if (currentFrequency < 87.5) {
+                            animGoOrBack = true;
+                        }
+                    }
+
+                    mHandler.sendEmptyMessageDelayed(5001,50);
+
+                    break;
+
                 default:
                     break;
             }
