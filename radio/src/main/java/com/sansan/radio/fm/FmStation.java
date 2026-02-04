@@ -8,6 +8,12 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
+import android.util.Log;
+
+import com.sansan.radio.bean.StationInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class provider interface to operator databases, use by activity and
@@ -354,5 +360,70 @@ public class FmStation {
     public static void cleanAllStations(Context context) {
         context.getContentResolver().delete(Station.CONTENT_URI, null, null);
     }
+
+
+    /**
+     * wuhong
+     * 获取所有数据库中的Station
+     *
+     */
+    public static List<StationInfo> getAllStation(Context context) {
+        List<StationInfo> stationInfoList = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = context.getContentResolver().query(FmStation.Station.CONTENT_URI, FmStation.COLUMNS,
+                    null,
+                    null,
+                    FmStation.Station.FREQUENCY
+            );
+
+            if (cursor == null) {
+                return stationInfoList;
+            }
+
+            // 预先获取列索引
+            int freqIndex = cursor.getColumnIndex(FmStation.Station.FREQUENCY);
+            int nameIndex = cursor.getColumnIndex(FmStation.Station.STATION_NAME);
+            int rdsIndex = cursor.getColumnIndex(FmStation.Station.RADIO_TEXT);
+            int favoriteIndex = cursor.getColumnIndex(FmStation.Station.IS_FAVORITE);
+
+            // 确保索引有效（防御性编程）
+            if (freqIndex == -1 || nameIndex == -1 || favoriteIndex == -1) {
+                Log.e("ww", "缺少必要的列索引");
+                return stationInfoList;
+            }
+
+            while (cursor.moveToNext()) {
+                int frequency = cursor.getInt(freqIndex);
+                String name = cursor.getString(nameIndex);
+
+                // 处理可能为空的字段
+                String rds = "";
+                if (rdsIndex != -1 && !cursor.isNull(rdsIndex)) {
+                    rds = cursor.getString(rdsIndex);
+                }
+
+                int isFavorite = cursor.getInt(favoriteIndex);
+
+                StationInfo stationInfo = new StationInfo(frequency, name, rds, isFavorite);
+                stationInfoList.add(stationInfo);
+            }
+
+        } catch (Exception e) {
+
+            Log.e("ww","获取数据库中的所有电台报错:" + e.getMessage());
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        Log.e("ww","数据库中的电台数:" + stationInfoList.size());
+
+        return stationInfoList;
+    }
+
 }
 

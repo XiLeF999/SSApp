@@ -46,6 +46,8 @@ public class MainActivity extends FragmentActivity {
     private float currentFrequency = 87.5f;
     private boolean animGoOrBack = true;
 
+    private boolean mIsServiceBinded = false;
+
     private FmListFragment fmListFragment;
     private FavListFragment favListFragment;
 
@@ -69,7 +71,7 @@ public class MainActivity extends FragmentActivity {
         // Should start FM service first.
         //先开始在绑定，退出Activity，Service才会继续工作
         startService(new Intent(MainActivity.this, FmService.class));
-        bindService(new Intent(MainActivity.this, FmService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        mIsServiceBinded = bindService(new Intent(MainActivity.this, FmService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
 
         fmListFragment = new FmListFragment();
         favListFragment = new FavListFragment();
@@ -92,9 +94,8 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void powerUpAsync(float frequency) {
 
-                Toast.makeText(MainActivity.this,"播放电台:" + frequency,Toast.LENGTH_SHORT).show();
-
                 mService.powerUpAsync(frequency);
+
             }
         });
 
@@ -244,17 +245,10 @@ public class MainActivity extends FragmentActivity {
 
                     Log.e("ww","FM电台扫描结束:" + isScan + ";" + searchedNum);
 
-                    Toast.makeText(MainActivity.this,"FM电台扫描个数:" + searchedNum,Toast.LENGTH_SHORT).show();
-
                     ivSearch.setSelected(false);
                     mHandler.removeMessages(5001);
 
-                    if(fmListFragment != null){
-
-                        fmListFragment.setRadioScanData(getData());
-
-                    }
-
+                    fmListFragment.updateStationList();
 
                     break;
 
@@ -344,63 +338,22 @@ public class MainActivity extends FragmentActivity {
 
 
 
-
-    private List<StationInfo> getData() {
-        List<StationInfo> stationInfoList = new ArrayList<>();
-        Cursor cursor = null;
-
-        try {
-            cursor = getContentResolver().query(
-                    FmStation.Station.CONTENT_URI,
-                    FmStation.COLUMNS,
-                    null,
-                    null,
-                    FmStation.Station.FREQUENCY
-            );
-
-            if (cursor == null) {
-                return stationInfoList;
-            }
-
-            // 预先获取列索引
-            int freqIndex = cursor.getColumnIndex(FmStation.Station.FREQUENCY);
-            int nameIndex = cursor.getColumnIndex(FmStation.Station.STATION_NAME);
-            int rdsIndex = cursor.getColumnIndex(FmStation.Station.RADIO_TEXT);
-            int favoriteIndex = cursor.getColumnIndex(FmStation.Station.IS_FAVORITE);
-
-            // 确保索引有效（防御性编程）
-            if (freqIndex == -1 || nameIndex == -1 || favoriteIndex == -1) {
-                Log.e("ww", "缺少必要的列索引");
-                return stationInfoList;
-            }
-
-            while (cursor.moveToNext()) {
-                int frequency = cursor.getInt(freqIndex);
-                String name = cursor.getString(nameIndex);
-
-                // 处理可能为空的字段
-                String rds = "";
-                if (rdsIndex != -1 && !cursor.isNull(rdsIndex)) {
-                    rds = cursor.getString(rdsIndex);
-                }
-
-                int isFavorite = cursor.getInt(favoriteIndex);
-
-                StationInfo stationInfo = new StationInfo(frequency, name, rds, isFavorite);
-                stationInfoList.add(stationInfo);
-            }
-
-        } catch (Exception e) {
-
-            Log.e("ww","三三Radio:" + e.getMessage());
-
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+    @Override
+    public void onDestroy() {
+        // need to call this function because if doesn't do this,after
+        // configuration change will have many instance and recording time
+        // or playing time will not refresh
+        // Remove all the handle message
+        mHandler.removeCallbacksAndMessages(null);
+        if (mService != null) {
+            mService.unregisterFmRadioListener(mFmRadioListener);
         }
-
-        return stationInfoList;
+        if (mIsServiceBinded) {
+            unbindService(mServiceConnection);
+            mIsServiceBinded = false;
+        }
+        mFmRadioListener = null;
+        super.onDestroy();
     }
 
 

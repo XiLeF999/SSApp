@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sansan.radio.adapter.FmAdapter
 import com.sansan.radio.bean.StationInfo
 import com.sansan.radio.databinding.FragmentFmListBinding
+import com.sansan.radio.fm.FmStation
 import com.sansan.radio.fm.FmUtils
 
 class FmListFragment : Fragment() {
@@ -35,6 +36,8 @@ class FmListFragment : Fragment() {
         binding.rvFmList.layoutManager = LinearLayoutManager(context)
         binding.rvFmList.adapter = mFmAdapter
 
+        updateStationList()
+
 
         mFmAdapter?.setOnItemClickListener(object : FmAdapter.OnItemClickListener {
             override fun onItemClick(bean: StationInfo, position: Int) {
@@ -49,8 +52,8 @@ class FmListFragment : Fragment() {
 
 
 
-    fun setRadioScanData(stations: List<StationInfo>) {
-        mFmAdapter?.setData(stations)
+    fun updateStationList(){
+        mFmAdapter?.setData(FmStation.getAllStation(context))
     }
 
 
