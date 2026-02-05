@@ -35,10 +35,20 @@ class FmAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val bean = fmList[position]
 
+        holder.llItem.isSelected = bean.isSelect
+
         holder.tvId.text = (position + 1).toTwoDigits()
         holder.tvFrequency.text = FmUtils.computeFrequency(bean.station).toString() + "MHz"
 
         holder.llItem.setOnClickListener {
+
+            for (station in fmList) {
+                station.isSelect = false
+            }
+            bean.isSelect = true
+
+            notifyDataSetChanged()
+
             onItemClickListener?.onItemClick(bean, position)
         }
     }

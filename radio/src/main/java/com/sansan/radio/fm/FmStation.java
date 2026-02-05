@@ -395,7 +395,7 @@ public class FmStation {
             }
 
             while (cursor.moveToNext()) {
-                int frequency = cursor.getInt(freqIndex);
+                int station = cursor.getInt(freqIndex);
                 String name = cursor.getString(nameIndex);
 
                 // 处理可能为空的字段
@@ -406,7 +406,7 @@ public class FmStation {
 
                 int isFavorite = cursor.getInt(favoriteIndex);
 
-                StationInfo stationInfo = new StationInfo(frequency, name, rds, isFavorite);
+                StationInfo stationInfo = new StationInfo(station, name, rds, isFavorite, false);
                 stationInfoList.add(stationInfo);
             }
 
@@ -421,6 +421,13 @@ public class FmStation {
         }
 
         Log.e("ww","数据库中的电台数:" + stationInfoList.size());
+
+        //wuhong test
+        for (int i = 0; i<20; i++){
+            StationInfo s = new StationInfo(1000+i, "测试" + i, "", 1, false);
+            stationInfoList.add(s);
+        }
+
 
         return stationInfoList;
     }
