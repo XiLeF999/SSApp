@@ -47,6 +47,16 @@ public class FmNative {
      *
      * @param frequency frequency(50KHZ, 87.55; 100KHZ, 87.5)
      * @return (true, success ; false, failed)
+     *
+     * 主要功能：开启FM收音机并设置初始频率
+     * 调用时机：设备第一次启动FM功能时
+     * 特点：
+     * 会执行完整的硬件初始化流程
+     * 建立与FM芯片的通信
+     * 设置音频路径
+     * 应用初始配置参数
+     * 示例：第一次打开收音机应用，从关闭状态到工作状态
+     *
      */
     public static native boolean powerUp(float frequency);
 
@@ -63,6 +73,15 @@ public class FmNative {
      *
      * @param frequency frequency(50KHZ, 87.55; 100KHZ, 87.5)
      * @return (true, success ; false, failed)
+     *
+     * 主要功能：在FM已开启的情况下，直接调到指定频率
+     * 调用时机：FM设备已经处于powerUp状态
+     * 特点：
+     * 只执行频率切换操作
+     * 不会重新初始化硬件
+     * 响应更快，功耗更低
+     * 示例：用户手动输入频率，或在已开启收音机的情况下切换电台
+     *
      */
     public static native boolean tune(float frequency);
 
@@ -72,6 +91,16 @@ public class FmNative {
      * @param frequency frequency(50KHZ, 87.55; 100KHZ, 87.5)
      * @param isUp      (true, next station; false previous station)
      * @return frequency(float)
+     *
+     * 主要功能：从当前频率开始搜索有信号的相邻电台
+     * 调用时机：需要自动搜索电台时
+     * 特点：
+     * 会自动检测信号强度
+     * 找到下一个有效电台后停止
+     * 支持向上(搜索频率更高)和向下搜索
+     * 返回搜索到的实际频率
+     * 示例：点击收音机上的"下一曲/上一曲"按钮自动搜台
+     *
      */
     public static native float seek(float frequency, boolean isUp);
 

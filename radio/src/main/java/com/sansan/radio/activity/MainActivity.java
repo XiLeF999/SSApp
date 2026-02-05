@@ -96,10 +96,7 @@ public class MainActivity extends FragmentActivity {
 
                 currentFrequency = frequency;
 
-                mRadioScaleView.setFrequency(currentFrequency);
-                tvFrequency.setText(String.valueOf(currentFrequency));
-
-                mService.powerUpAsync(currentFrequency);
+                tuneStation();
 
             }
         });
@@ -140,7 +137,10 @@ public class MainActivity extends FragmentActivity {
 
             mService.registerFmRadioListener(mFmRadioListener);
 
-            tuneStation();
+            currentFrequency = FmUtils.computeFrequency(FmStation.getCurrentStation(MainActivity.this));
+            mRadioScaleView.setFrequency(currentFrequency);
+            tvFrequency.setText(String.valueOf(currentFrequency));
+            powerUpFm();
 
         }
 
@@ -152,11 +152,10 @@ public class MainActivity extends FragmentActivity {
 
 
     /**
-     * 播放指定电台
+     * 播放指定电台:用户手动输入频率，或在已开启收音机的情况下切换电台
      */
     private void tuneStation(){
 
-        currentFrequency = FmUtils.computeFrequency(FmStation.getCurrentStation(MainActivity.this));
         mRadioScaleView.setFrequency(currentFrequency);
         tvFrequency.setText(String.valueOf(currentFrequency));
 
@@ -173,6 +172,14 @@ public class MainActivity extends FragmentActivity {
             switch (v.getId()){
 
                 case R.id.iv_play:
+
+                    if (mService != null) {
+                        if (mService.getPowerStatus() == FmService.POWER_UP) {
+                            powerDownFm();
+                        } else {
+                            powerUpFm();
+                        }
+                    }
 
                     break;
 
@@ -216,7 +223,21 @@ public class MainActivity extends FragmentActivity {
 
 
 
+    /**
+     * Power up FM
+     */
+    private void powerUpFm() {
+        ivPlay.setSelected(true);
+        mService.powerUpAsync(mCurrentStation);
+    }
 
+    /**
+     * Power down FM
+     */
+    private void powerDownFm() {
+        ivPlay.setSelected(false);
+        mService.powerDownAsync();
+    }
 
 
 
