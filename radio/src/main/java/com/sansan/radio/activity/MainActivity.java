@@ -290,9 +290,10 @@ public class MainActivity extends FragmentActivity {
                     ivSearch.setSelected(false);
                     mHandler.removeMessages(5001);
 
-                    fmListFragment.updateStationList();
-
                     currentStation = FmStation.getCurrentStation(MainActivity.this);
+
+                    fmListFragment.updateStationList(currentStation);
+
                     tuneStation();
 
                     break;

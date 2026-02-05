@@ -1,5 +1,6 @@
 package com.sansan.radio.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,6 @@ import com.sansan.radio.adapter.FmAdapter
 import com.sansan.radio.bean.StationInfo
 import com.sansan.radio.databinding.FragmentFmListBinding
 import com.sansan.radio.fm.FmStation
-import com.sansan.radio.fm.FmUtils
 
 class FmListFragment : Fragment() {
 
@@ -36,7 +36,7 @@ class FmListFragment : Fragment() {
         binding.rvFmList.layoutManager = LinearLayoutManager(context)
         binding.rvFmList.adapter = mFmAdapter
 
-        updateStationList()
+        updateStationList(FmStation.getCurrentStation(context))
 
 
         mFmAdapter?.setOnItemClickListener(object : FmAdapter.OnItemClickListener {
@@ -52,8 +52,17 @@ class FmListFragment : Fragment() {
 
 
 
-    fun updateStationList(){
-        mFmAdapter?.setData(FmStation.getAllStation(context))
+    fun updateStationList(currentStation: Int){
+
+        val stationInfoList = FmStation.getAllStation(context)
+        for (s in stationInfoList){
+            if(s.station == currentStation){
+                s.isSelect = true
+                break
+            }
+        }
+
+        mFmAdapter?.setData(stationInfoList)
     }
 
 
