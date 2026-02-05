@@ -3272,7 +3272,12 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
         if (null != stations) {
             int searchedListSize = stations.length;
             // get stations from db
-            stationNum = updateDBInLocation(stations);
+
+            //wuhong
+//            stationNum = updateDBInLocation(stations);
+            stationNum = updateSearchStationToDb(stations);
+
+
         }
 
         Log.d(TAG, "updateStations.firstValidstation:" + firstValidstation +
@@ -3346,6 +3351,51 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
         }
         return stationNum;
     }
+
+
+
+
+
+    /**
+     * wuhong
+     * 更新扫描出来的数据
+     * 扫描出来的数据，在数据库中is_search字段应该为1
+     */
+    public int updateSearchStationToDb(int[] stations) {
+
+        if (stations == null || stations.length == 0) {
+            return 0;
+        }
+
+        for(int station : stations){
+            ContentValues values = new ContentValues();
+            values.put(Station.IS_SEARCH, 1);
+
+            // 先尝试更新
+            int rowsUpdated = mContext.getContentResolver().update(
+                    Station.CONTENT_URI,
+                    values,
+                    Station.FREQUENCY + "=?",
+                    new String[] { String.valueOf(station) });
+
+            // 如果没有更新任何行，说明记录不存在，执行插入
+            if (rowsUpdated == 0) {
+                // 添加 frequency 到 values 中
+                values.put(Station.FREQUENCY, station);
+                mContext.getContentResolver().insert(Station.CONTENT_URI, values);
+            }
+        }
+
+        return stations.length;
+
+    }
+
+
+
+
+
+
+
 
     /**
      * The background handler

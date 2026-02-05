@@ -54,7 +54,7 @@ class FmListFragment : Fragment() {
 
     fun updateStationList(currentStation: Int){
 
-        val stationInfoList = FmStation.getAllStation(context)
+        val stationInfoList = FmStation.getSearchStation(context)
         for (s in stationInfoList){
             if(s.station == currentStation){
                 s.isSelect = true
