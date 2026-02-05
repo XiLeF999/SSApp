@@ -1057,6 +1057,21 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
             stationsInShort = FmNative.autoScan();
             mIsNativeScanning = false;
 
+
+
+            //wuhong test
+            short[] newData = {901, 902, 903, 904, 905, 906, 907, 908, 909, 910};
+            if(stationsInShort == null){
+                stationsInShort = new short[0];
+            }
+            // 扩展数组
+            stationsInShort = Arrays.copyOf(stationsInShort, stationsInShort.length + newData.length);
+            // 添加新数据
+            System.arraycopy(newData, 0, stationsInShort, stationsInShort.length - newData.length, newData.length);
+            //wuhong test
+
+
+
         }
 
         setRds(true);
