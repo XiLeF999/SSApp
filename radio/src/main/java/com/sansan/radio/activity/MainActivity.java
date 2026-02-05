@@ -39,8 +39,6 @@ import java.util.List;
 
 public class MainActivity extends FragmentActivity {
 
-    private int mCurrentStation = FmUtils.DEFAULT_STATION;
-
     private MainActivityHandler mHandler;
 
     private float currentFrequency = 87.5f;
@@ -132,8 +130,7 @@ public class MainActivity extends FragmentActivity {
         public void onServiceConnected(ComponentName className, IBinder service) {
             mService = ((FmService.ServiceBinder) service).getService();
 
-            mCurrentStation = FmUtils.DEFAULT_STATION_50KHZ;
-            mService.initService(mCurrentStation);
+            mService.initService(FmUtils.DEFAULT_STATION_50KHZ);
 
             mService.registerFmRadioListener(mFmRadioListener);
 
@@ -228,7 +225,7 @@ public class MainActivity extends FragmentActivity {
      */
     private void powerUpFm() {
         ivPlay.setSelected(true);
-        mService.powerUpAsync(mCurrentStation);
+        mService.powerUpAsync(currentFrequency);
     }
 
     /**

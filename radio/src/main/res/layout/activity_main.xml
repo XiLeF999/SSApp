@@ -126,7 +126,7 @@
                     android:layout_width="64px"
                     android:layout_height="64px"
                     android:layout_centerInParent="true"
-                    android:src="@mipmap/img_radio_pause" />
+                    android:src="@drawable/selector_radio_play" />
 
             </RelativeLayout>
 
