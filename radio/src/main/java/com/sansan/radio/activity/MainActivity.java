@@ -1,6 +1,7 @@
 package com.sansan.radio.activity;
 
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -51,6 +52,7 @@ public class MainActivity extends FragmentActivity {
 
     private RadioScaleView mRadioScaleView;
     private TextView tvFrequency;
+    private ImageView ivFav;
     private ImageView ivPlay;
     private ImageView ivSearch;
     private TextView tvFmType;
@@ -76,6 +78,8 @@ public class MainActivity extends FragmentActivity {
 
         mRadioScaleView = findViewById(R.id.view_radio_scale);
         tvFrequency = findViewById(R.id.tv_frequency);
+        ivFav = findViewById(R.id.iv_fav);
+        ivFav.setOnClickListener(onClickListener);
         ivPlay = findViewById(R.id.iv_play);
         ivPlay.setOnClickListener(onClickListener);
         ivSearch = findViewById(R.id.iv_search);
@@ -158,6 +162,27 @@ public class MainActivity extends FragmentActivity {
         public void onClick(View v) {
 
             switch (v.getId()){
+
+                case R.id.iv_fav:
+
+                    if (FmStation.isFavoriteStation(MainActivity.this, currentStation)) {
+                        FmStation.removeFromFavorite(MainActivity.this, currentStation);
+                        ivFav.setSelected(false);
+                    } else {
+                        if (FmStation.isStationExist(MainActivity.this, currentStation)) {
+                            FmStation.addToFavorite(MainActivity.this, currentStation);
+                        } else {
+                            ContentValues values = new ContentValues(2);
+                            values.put(FmStation.Station.FREQUENCY, currentStation);
+                            values.put(FmStation.Station.IS_FAVORITE, true);
+                            FmStation.insertStationToDb(MainActivity.this, values);
+                        }
+                        ivFav.setSelected(true);
+                    }
+
+                    fmListFragment.updateStationList(currentStation);
+
+                    break;
 
                 case R.id.iv_play:
 

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
@@ -48,6 +49,12 @@ class FmAdapter(
             holder.llItem.background = mContext.getDrawable(R.color.color_transparent)
         }
 
+        if(bean.isFavorite == 0){   //false
+            holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select)
+        } else {
+            holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select_ed)
+        }
+
         holder.tvId.text = (position + 1).toTwoDigits()
         holder.tvFrequency.text = FmUtils.computeFrequency(bean.station).toString() + "MHz"
 
@@ -71,6 +78,7 @@ class FmAdapter(
         val llItem: FrameLayout = itemView.findViewById(R.id.ll_item)
         val tvId: TextView = itemView.findViewById(R.id.tv_id)
         val tvFrequency: TextView = itemView.findViewById(R.id.tv_frequency)
+        val ivFav: ImageView = itemView.findViewById(R.id.iv_fav)
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {

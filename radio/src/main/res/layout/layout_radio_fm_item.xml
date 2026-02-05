@@ -28,6 +28,12 @@
             android:textSize="26sp"
             android:fontFamily="@font/alibabapuhuiti_3_65_medium" />
 
+        <ImageView
+            android:id="@+id/iv_fav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="160px"/>
+
 
     </LinearLayout>
 
