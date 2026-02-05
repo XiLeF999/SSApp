@@ -98,6 +98,8 @@ public class MainActivity extends FragmentActivity {
 
                 currentStation = station;
 
+                ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
+
                 tuneStation();
 
             }
@@ -141,6 +143,8 @@ public class MainActivity extends FragmentActivity {
             currentStation = FmStation.getCurrentStation(MainActivity.this);
 
             float currentFrequency = FmUtils.computeFrequency(currentStation);
+
+            ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
 
             mRadioScaleView.setFrequency(currentFrequency);
             tvFrequency.setText(String.valueOf(currentFrequency));
