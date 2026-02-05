@@ -151,20 +151,6 @@ public class MainActivity extends FragmentActivity {
     };
 
 
-    /**
-     * 播放指定电台:用户手动输入频率，或在已开启收音机的情况下切换电台
-     */
-    private void tuneStation(){
-
-        float currentFrequency = FmUtils.computeFrequency(currentStation);
-
-        mRadioScaleView.setFrequency(currentFrequency);
-        tvFrequency.setText(String.valueOf(currentFrequency));
-
-        mService.tuneStationAsync(currentFrequency);
-    }
-
-
 
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -196,6 +182,7 @@ public class MainActivity extends FragmentActivity {
 
                         mService.startScanAsync();
 
+                        ivPlay.setSelected(false);
                         ivSearch.setSelected(true);
                         mHandler.removeMessages(5001);
                         mHandler.sendEmptyMessage(5001);
@@ -242,7 +229,20 @@ public class MainActivity extends FragmentActivity {
     }
 
 
+    /**
+     * 播放指定电台:用户手动输入频率，或在已开启收音机的情况下切换电台
+     */
+    private void tuneStation(){
 
+        float currentFrequency = FmUtils.computeFrequency(currentStation);
+
+        mRadioScaleView.setFrequency(currentFrequency);
+        tvFrequency.setText(String.valueOf(currentFrequency));
+
+        ivPlay.setSelected(true);
+
+        mService.tuneStationAsync(currentFrequency);
+    }
 
     /**
      * 扫描结束
