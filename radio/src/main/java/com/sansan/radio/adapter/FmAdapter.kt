@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.sansan.radio.R
 import com.sansan.radio.bean.StationInfo
@@ -34,6 +35,10 @@ class FmAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val bean = fmList[position]
+
+        holder.llItem.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            topMargin = if (position == 0) 0 else (-14)
+        }
 
         holder.llItem.isSelected = bean.isSelect
 
