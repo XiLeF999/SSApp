@@ -292,6 +292,7 @@ public class MainActivity extends FragmentActivity {
 
                     fmListFragment.updateStationList();
 
+                    currentStation = FmStation.getCurrentStation(MainActivity.this);
                     tuneStation();
 
                     break;
