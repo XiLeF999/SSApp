@@ -37,6 +37,12 @@ class FmAdapter(
 
         holder.llItem.isSelected = bean.isSelect
 
+        if(bean.isSelect){
+            holder.llItem.background = mContext.getDrawable(R.mipmap.img_radio_select_bg)
+        } else {
+            holder.llItem.background = mContext.getDrawable(R.color.color_transparent)
+        }
+
         holder.tvId.text = (position + 1).toTwoDigits()
         holder.tvFrequency.text = FmUtils.computeFrequency(bean.station).toString() + "MHz"
 
