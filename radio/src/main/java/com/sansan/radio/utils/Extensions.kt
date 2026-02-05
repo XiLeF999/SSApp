@@ -37,6 +37,11 @@ inline fun <reified T : Activity> Context.startActivity() {
  */
 fun Float.roundToOneDecimal(): Float = (this * 10).roundToInt() / 10f
 
+/**
+ * 一位数在前面加0
+ */
+fun Int.toTwoDigits(): String = if (this < 10) "0$this" else toString()
+
 
 /**
  * 设置状态栏沉浸式透明

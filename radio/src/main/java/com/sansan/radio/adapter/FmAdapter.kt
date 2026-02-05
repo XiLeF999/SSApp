@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sansan.radio.R
 import com.sansan.radio.bean.StationInfo
 import com.sansan.radio.fm.FmUtils
+import com.sansan.radio.utils.toTwoDigits
 
 class FmAdapter(
     private val mContext: Context
@@ -34,6 +35,7 @@ class FmAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val bean = fmList[position]
 
+        holder.tvId.text = (position + 1).toTwoDigits()
         holder.tvFrequency.text = FmUtils.computeFrequency(bean.station).toString() + "MHz"
 
         holder.llItem.setOnClickListener {
@@ -46,6 +48,7 @@ class FmAdapter(
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val llItem: FrameLayout = itemView.findViewById(R.id.ll_item)
+        val tvId: TextView = itemView.findViewById(R.id.tv_id)
         val tvFrequency: TextView = itemView.findViewById(R.id.tv_frequency)
     }
 
