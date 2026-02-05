@@ -41,7 +41,7 @@ public class MainActivity extends FragmentActivity {
 
     private MainActivityHandler mHandler;
 
-    private float currentFrequency = 87.5f;
+    private int currentStation = 875;   //用int计算，用float显示UI
     private boolean animGoOrBack = true;
 
     private boolean mIsServiceBinded = false;
@@ -90,9 +90,9 @@ public class MainActivity extends FragmentActivity {
 
         fmListFragment.setOnFmListFragmentListener(new FmListFragment.OnFmListFragmentListener() {
             @Override
-            public void powerUpAsync(float frequency) {
+            public void powerUpAsync(int station) {
 
-                currentFrequency = frequency;
+                currentStation = station;
 
                 tuneStation();
 
@@ -134,7 +134,10 @@ public class MainActivity extends FragmentActivity {
 
             mService.registerFmRadioListener(mFmRadioListener);
 
-            currentFrequency = FmUtils.computeFrequency(FmStation.getCurrentStation(MainActivity.this));
+            currentStation = FmStation.getCurrentStation(MainActivity.this);
+
+            float currentFrequency = FmUtils.computeFrequency(currentStation);
+
             mRadioScaleView.setFrequency(currentFrequency);
             tvFrequency.setText(String.valueOf(currentFrequency));
             powerUpFm();
@@ -152,6 +155,8 @@ public class MainActivity extends FragmentActivity {
      * 播放指定电台:用户手动输入频率，或在已开启收音机的情况下切换电台
      */
     private void tuneStation(){
+
+        float currentFrequency = FmUtils.computeFrequency(currentStation);
 
         mRadioScaleView.setFrequency(currentFrequency);
         tvFrequency.setText(String.valueOf(currentFrequency));
@@ -225,7 +230,7 @@ public class MainActivity extends FragmentActivity {
      */
     private void powerUpFm() {
         ivPlay.setSelected(true);
-        mService.powerUpAsync(currentFrequency);
+        mService.powerUpAsync(FmUtils.computeFrequency(currentStation));
     }
 
     /**
@@ -293,7 +298,7 @@ public class MainActivity extends FragmentActivity {
 
                 case 5001:   //更新扫描UI
 
-                    currentFrequency = Math.round(currentFrequency * 10) / 10.0f;   //保留一位小数
+                    float currentFrequency = FmUtils.computeFrequency(currentStation);
 
                     mRadioScaleView.setFrequency(currentFrequency);
 
@@ -301,13 +306,13 @@ public class MainActivity extends FragmentActivity {
 
 
                     if (animGoOrBack) {
-                        currentFrequency += 0.1f;
-                        if (currentFrequency > 108.5) {
+                        currentStation += 1;
+                        if (currentStation > 1085) {
                             animGoOrBack = false;
                         }
                     } else {
-                        currentFrequency -= 0.1f;
-                        if (currentFrequency < 87.5) {
+                        currentStation -= 1;
+                        if (currentStation < 875) {
                             animGoOrBack = true;
                         }
                     }

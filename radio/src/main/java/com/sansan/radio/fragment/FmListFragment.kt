@@ -42,7 +42,7 @@ class FmListFragment : Fragment() {
         mFmAdapter?.setOnItemClickListener(object : FmAdapter.OnItemClickListener {
             override fun onItemClick(bean: StationInfo, position: Int) {
 
-                onFmListFragmentListener?.powerUpAsync(FmUtils.computeFrequency(bean.frequency))
+                onFmListFragmentListener?.powerUpAsync(bean.station)
 
 
             }
@@ -63,7 +63,7 @@ class FmListFragment : Fragment() {
     }
 
     interface OnFmListFragmentListener {
-        fun powerUpAsync(frequency: Float)
+        fun powerUpAsync(station: Int)
     }
 
 

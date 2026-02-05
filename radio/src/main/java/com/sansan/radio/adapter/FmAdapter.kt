@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sansan.radio.R
 import com.sansan.radio.bean.StationInfo
+import com.sansan.radio.fm.FmUtils
 
 class FmAdapter(
     private val mContext: Context
@@ -33,7 +34,7 @@ class FmAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val bean = fmList[position]
 
-        holder.tvFrequency.text = bean.frequency.toString() + "MHz"
+        holder.tvFrequency.text = FmUtils.computeFrequency(bean.station).toString() + "MHz"
 
         holder.llItem.setOnClickListener {
             onItemClickListener?.onItemClick(bean, position)
