@@ -88,6 +88,7 @@ public class FmProvider extends ContentProvider {
                             + FmStation.Station._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                             + FmStation.Station.FREQUENCY + " INTEGER UNIQUE,"
                             + FmStation.Station.IS_FAVORITE + " INTEGER DEFAULT 0,"
+                            + FmStation.Station.IS_SEARCH + " INTEGER DEFAULT 0,"    //是否是搜索出来的电台:数据库里面只会存在搜索出来的电台和被搜藏了的电台
                             + FmStation.Station.STATION_NAME + " TEXT,"
                             + FmStation.Station.PROGRAM_SERVICE + " TEXT,"
                             + FmStation.Station.RADIO_TEXT + " TEXT"

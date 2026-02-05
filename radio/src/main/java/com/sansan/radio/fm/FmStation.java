@@ -56,6 +56,11 @@ public class FmStation {
         public static final String IS_FAVORITE = "is_favorite";
 
         /**
+         * 是否是搜索出来的电台：1是，0不是
+         */
+        public static final String IS_SEARCH = "is_search";
+
+        /**
          * Station name, if user rename a station, this must be not null, otherwise is null.
          * <P>Type: TEXT</P>
          */
