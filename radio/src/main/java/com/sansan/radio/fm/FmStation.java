@@ -397,6 +397,9 @@ public class FmStation {
             while (cursor.moveToNext()) {
                 int station = cursor.getInt(freqIndex);
                 String name = cursor.getString(nameIndex);
+                if(name == null){
+                    name = "";
+                }
 
                 // 处理可能为空的字段
                 String rds = "";
