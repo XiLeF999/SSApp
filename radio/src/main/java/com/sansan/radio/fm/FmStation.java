@@ -425,13 +425,6 @@ public class FmStation {
 
         Log.e("ww","数据库中的电台数:" + stationInfoList.size());
 
-        //wuhong test
-        for (int i = 0; i<20; i++){
-            StationInfo s = new StationInfo(1000+i, "测试" + i, "", 0, false);
-            stationInfoList.add(s);
-        }
-
-
         return stationInfoList;
     }
 
