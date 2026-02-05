@@ -32,6 +32,7 @@ public class FmStation {
             Station._ID,
             Station.FREQUENCY,
             Station.IS_FAVORITE,
+            Station.IS_SEARCH,
             Station.STATION_NAME,
             Station.PROGRAM_SERVICE,
             Station.RADIO_TEXT,
@@ -392,9 +393,10 @@ public class FmStation {
             int nameIndex = cursor.getColumnIndex(FmStation.Station.STATION_NAME);
             int rdsIndex = cursor.getColumnIndex(FmStation.Station.RADIO_TEXT);
             int favoriteIndex = cursor.getColumnIndex(FmStation.Station.IS_FAVORITE);
+            int searchIndex = cursor.getColumnIndex(Station.IS_SEARCH);
 
             // 确保索引有效（防御性编程）
-            if (freqIndex == -1 || nameIndex == -1 || favoriteIndex == -1) {
+            if (freqIndex == -1 || nameIndex == -1 || favoriteIndex == -1 || searchIndex == -1) {
                 Log.e("ww", "缺少必要的列索引");
                 return stationInfoList;
             }
@@ -414,7 +416,9 @@ public class FmStation {
 
                 int isFavorite = cursor.getInt(favoriteIndex);
 
-                StationInfo stationInfo = new StationInfo(station, name, rds, isFavorite, false);
+                int isSearch = cursor.getInt(searchIndex);
+
+                StationInfo stationInfo = new StationInfo(station, name, rds, isFavorite, isSearch,false);
                 stationInfoList.add(stationInfo);
             }
 

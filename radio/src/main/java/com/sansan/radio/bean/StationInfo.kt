@@ -8,5 +8,6 @@ data class StationInfo(
     val name: String,
     val rds: String,
     var isFavorite: Int,
+    var isSearch: Int,
     var isSelect: Boolean
 )
