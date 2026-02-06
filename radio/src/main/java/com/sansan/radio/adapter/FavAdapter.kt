@@ -1,6 +1,7 @@
 package com.sansan.radio.adapter
 
 import android.content.Context
+import android.graphics.drawable.AnimationDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,10 +44,23 @@ class FavAdapter(
 
         holder.llItem.isSelected = bean.isSelect
 
+        val animation = holder.ivAnim.drawable as AnimationDrawable
         if(bean.isSelect){
             holder.llItem.background = mContext.getDrawable(R.mipmap.img_radio_select_bg)
+
+            holder.ivAnim.post { animation.start() }
+
+            holder.ivAnim.visibility = View.VISIBLE
+            holder.tvId.visibility = View.INVISIBLE
+
         } else {
             holder.llItem.background = mContext.getDrawable(R.color.color_transparent)
+
+            animation.stop()
+
+            holder.ivAnim.visibility = View.INVISIBLE
+            holder.tvId.visibility = View.VISIBLE
+
         }
 
         if(bean.isFavorite == 0){   //false
@@ -77,6 +91,7 @@ class FavAdapter(
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val llItem: FrameLayout = itemView.findViewById(R.id.ll_item)
         val tvId: TextView = itemView.findViewById(R.id.tv_id)
+        val ivAnim: ImageView = itemView.findViewById(R.id.iv_anim)
         val tvFrequency: TextView = itemView.findViewById(R.id.tv_frequency)
         val ivFav: ImageView = itemView.findViewById(R.id.iv_fav)
     }
