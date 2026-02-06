@@ -196,6 +196,9 @@ public class MainActivity extends FragmentActivity {
                     ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
                     tuneStation();
 
+                    fmListFragment.updateStationList(currentStation);
+                    favListFragment.updateStationList(currentStation);
+
                     break;
 
                 case R.id.iv_add:
@@ -208,6 +211,8 @@ public class MainActivity extends FragmentActivity {
                     ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
                     tuneStation();
 
+                    fmListFragment.updateStationList(currentStation);
+                    favListFragment.updateStationList(currentStation);
                     break;
 
                 case R.id.iv_fav:
