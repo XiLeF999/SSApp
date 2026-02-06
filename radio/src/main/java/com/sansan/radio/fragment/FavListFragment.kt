@@ -53,7 +53,7 @@ class FavListFragment : Fragment() {
 
     fun updateStationList(currentStation: Int){
 
-        val stationInfoList = FmStation.getSearchStation(context)
+        val stationInfoList = FmStation.getFavStation(context)
         for (s in stationInfoList){
             if(s.station == currentStation){
                 s.isSelect = true

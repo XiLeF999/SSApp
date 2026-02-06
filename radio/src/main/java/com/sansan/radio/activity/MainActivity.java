@@ -185,6 +185,7 @@ public class MainActivity extends FragmentActivity {
                     }
 
                     fmListFragment.updateStationList(currentStation);
+                    favListFragment.updateStationList(currentStation);
 
                     break;
 
