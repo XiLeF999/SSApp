@@ -65,6 +65,12 @@ class FmListFragment : Fragment() {
     }
 
 
+    fun updatePlayAnim(isPlayAnim: Boolean){
+        mFmAdapter?.setPlayAnim(isPlayAnim)
+    }
+
+
+
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {

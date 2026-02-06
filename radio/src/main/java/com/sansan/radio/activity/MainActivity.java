@@ -242,8 +242,12 @@ public class MainActivity extends FragmentActivity {
                     if (mService != null) {
                         if (mService.getPowerStatus() == FmService.POWER_UP) {
                             powerDownFm();
+
+                            fmListFragment.updatePlayAnim(false);
                         } else {
                             powerUpFm();
+
+                            fmListFragment.updatePlayAnim(true);
                         }
                     }
 

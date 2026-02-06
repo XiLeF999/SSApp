@@ -22,11 +22,21 @@ class FmAdapter(
     private var fmList: List<StationInfo> = emptyList()
     private var onItemClickListener: OnItemClickListener? = null
 
+    private var isPlayAnim: Boolean = true   //控制播放动画
+
     fun setData(list: List<StationInfo>) {
         fmList = list
 
         notifyDataSetChanged()
     }
+
+
+    fun setPlayAnim(play: Boolean) {
+        isPlayAnim = play
+
+        notifyDataSetChanged()
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(mContext)
@@ -48,10 +58,17 @@ class FmAdapter(
         if(bean.isSelect){
             holder.llItem.background = mContext.getDrawable(R.mipmap.img_radio_select_bg)
 
-            holder.ivAnim.post { animation.start() }
+            if(isPlayAnim){
+                holder.ivAnim.post { animation.start() }
+            } else {
+                animation.stop()
+            }
 
             holder.ivAnim.visibility = View.VISIBLE
             holder.tvId.visibility = View.INVISIBLE
+
+
+
 
         } else {
             holder.llItem.background = mContext.getDrawable(R.color.color_transparent)
