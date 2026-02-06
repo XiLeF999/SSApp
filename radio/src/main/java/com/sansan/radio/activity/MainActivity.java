@@ -105,6 +105,19 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+        favListFragment.setOnFavListFragmentListener(new FavListFragment.OnFavListFragmentListener() {
+            @Override
+            public void powerUpAsync(int station) {
+
+                currentStation = station;
+
+                ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
+
+                tuneStation();
+
+            }
+        });
+
     }
 
 
