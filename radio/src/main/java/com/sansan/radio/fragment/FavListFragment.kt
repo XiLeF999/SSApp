@@ -5,22 +5,76 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.sansan.radio.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.sansan.radio.adapter.FavAdapter
+import com.sansan.radio.bean.StationInfo
+import com.sansan.radio.databinding.FragmentFavListBinding
+import com.sansan.radio.fm.FmStation
 
 class FavListFragment : Fragment() {
+
+    private lateinit var binding: FragmentFavListBinding
+
+    private var mFavAdapter: FavAdapter? = null
+
+    private var onFavListFragmentListener: OnFavListFragmentListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_fav_list, container, false)
+        binding = FragmentFavListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // 初始化视图和逻辑
+        mFavAdapter = context?.let { FavAdapter(it) }
+        binding.rvFavList.layoutManager = LinearLayoutManager(context)
+        binding.rvFavList.adapter = mFavAdapter
+
+        updateStationList(FmStation.getCurrentStation(context))
+
+
+        mFavAdapter?.setOnItemClickListener(object : FavAdapter.OnItemClickListener {
+            override fun onItemClick(bean: StationInfo, position: Int) {
+
+                onFavListFragmentListener?.powerUpAsync(bean.station)
+
+
+            }
+        })
+
     }
+
+
+
+    fun updateStationList(currentStation: Int){
+
+        val stationInfoList = FmStation.getSearchStation(context)
+        for (s in stationInfoList){
+            if(s.station == currentStation){
+                s.isSelect = true
+                break
+            }
+        }
+
+        mFavAdapter?.setData(stationInfoList)
+    }
+
+
+
+
+    fun setOnFavListFragmentListener(listener: OnFavListFragmentListener) {
+        this.onFavListFragmentListener = listener
+    }
+
+    interface OnFavListFragmentListener {
+        fun powerUpAsync(station: Int)
+    }
+
 
 
     override fun onDestroyView() {

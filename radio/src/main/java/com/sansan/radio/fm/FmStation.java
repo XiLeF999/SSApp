@@ -514,5 +514,81 @@ public class FmStation {
 
 
 
+    /**
+     * wuhong
+     * 获取数据库中有搜藏标记的的Station
+     *
+     */
+    public static List<StationInfo> getFavStation(Context context) {
+        List<StationInfo> stationInfoList = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = context.getContentResolver().query(FmStation.Station.CONTENT_URI, FmStation.COLUMNS,
+                    null,
+                    null,
+                    FmStation.Station.FREQUENCY
+            );
+
+            if (cursor == null) {
+                return stationInfoList;
+            }
+
+            // 预先获取列索引
+            int freqIndex = cursor.getColumnIndex(FmStation.Station.FREQUENCY);
+            int nameIndex = cursor.getColumnIndex(FmStation.Station.STATION_NAME);
+            int rdsIndex = cursor.getColumnIndex(FmStation.Station.RADIO_TEXT);
+            int favoriteIndex = cursor.getColumnIndex(FmStation.Station.IS_FAVORITE);
+            int searchIndex = cursor.getColumnIndex(Station.IS_SEARCH);
+
+            // 确保索引有效（防御性编程）
+            if (freqIndex == -1 || nameIndex == -1 || favoriteIndex == -1 || searchIndex == -1) {
+                Log.e("ww", "缺少必要的列索引");
+                return stationInfoList;
+            }
+
+            while (cursor.moveToNext()) {
+
+                int isFavorite = cursor.getInt(favoriteIndex);
+
+                if(isFavorite > 0){  //true
+                    int station = cursor.getInt(freqIndex);
+                    String name = cursor.getString(nameIndex);
+                    if(name == null){
+                        name = "";
+                    }
+
+                    // 处理可能为空的字段
+                    String rds = "";
+                    if (rdsIndex != -1 && !cursor.isNull(rdsIndex)) {
+                        rds = cursor.getString(rdsIndex);
+                    }
+
+                    int isSearch = cursor.getInt(searchIndex);
+
+                    StationInfo stationInfo = new StationInfo(station, name, rds, isFavorite, isSearch,false);
+                    stationInfoList.add(stationInfo);
+                }
+
+            }
+
+        } catch (Exception e) {
+
+            Log.e("ww","获取数据库中的搜藏电台报错:" + e.getMessage());
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        Log.e("ww","数据库中的搜藏电台数:" + stationInfoList.size());
+
+        return stationInfoList;
+    }
+
+
+
+
 }
 
