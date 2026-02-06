@@ -65,6 +65,12 @@ class FmListFragment : Fragment() {
     }
 
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            updateStationList(FmStation.getCurrentStation(context))
+        }
+    }
 
 
     fun setOnFmListFragmentListener(listener: OnFmListFragmentListener) {

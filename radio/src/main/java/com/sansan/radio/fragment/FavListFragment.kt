@@ -1,6 +1,7 @@
 package com.sansan.radio.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,6 +66,12 @@ class FavListFragment : Fragment() {
     }
 
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            updateStationList(FmStation.getCurrentStation(context))
+        }
+    }
 
 
     fun setOnFavListFragmentListener(listener: OnFavListFragmentListener) {
