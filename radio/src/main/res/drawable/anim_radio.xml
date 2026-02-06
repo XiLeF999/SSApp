@@ -2,36 +2,6 @@
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
     android:oneshot="false">
     <item
-        android:drawable="@drawable/radio_fav_00"
-        android:duration="40"/>
-    <item
-        android:drawable="@drawable/radio_fav_01"
-        android:duration="40"/>
-    <item
-        android:drawable="@drawable/radio_fav_02"
-        android:duration="40"/>
-    <item
-        android:drawable="@drawable/radio_fav_03"
-        android:duration="40"/>
-    <item
-        android:drawable="@drawable/radio_fav_04"
-        android:duration="40"/>
-    <item
-        android:drawable="@drawable/radio_fav_05"
-        android:duration="40"/>
-    <item
-        android:drawable="@drawable/radio_fav_06"
-        android:duration="40"/>
-    <item
-        android:drawable="@drawable/radio_fav_07"
-        android:duration="40"/>
-    <item
-        android:drawable="@drawable/radio_fav_08"
-        android:duration="40"/>
-    <item
-        android:drawable="@drawable/radio_fav_09"
-        android:duration="40"/>
-    <item
         android:drawable="@drawable/radio_fav_10"
         android:duration="40"/>
     <item
@@ -63,5 +33,35 @@
         android:duration="40"/>
     <item
         android:drawable="@drawable/radio_fav_20"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/radio_fav_00"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/radio_fav_01"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/radio_fav_02"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/radio_fav_03"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/radio_fav_04"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/radio_fav_05"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/radio_fav_06"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/radio_fav_07"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/radio_fav_08"
+        android:duration="40"/>
+    <item
+        android:drawable="@drawable/radio_fav_09"
         android:duration="40"/>
 </animation-list>
