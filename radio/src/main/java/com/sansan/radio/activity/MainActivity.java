@@ -52,6 +52,8 @@ public class MainActivity extends FragmentActivity {
 
     private RadioScaleView mRadioScaleView;
     private TextView tvFrequency;
+    private ImageView ivSub;
+    private ImageView ivAdd;
     private ImageView ivFav;
     private ImageView ivPlay;
     private ImageView ivSearch;
@@ -78,6 +80,10 @@ public class MainActivity extends FragmentActivity {
 
         mRadioScaleView = findViewById(R.id.view_radio_scale);
         tvFrequency = findViewById(R.id.tv_frequency);
+        ivSub = findViewById(R.id.iv_sub);
+        ivSub.setOnClickListener(onClickListener);
+        ivAdd = findViewById(R.id.iv_add);
+        ivAdd.setOnClickListener(onClickListener);
         ivFav = findViewById(R.id.iv_fav);
         ivFav.setOnClickListener(onClickListener);
         ivPlay = findViewById(R.id.iv_play);
@@ -179,6 +185,30 @@ public class MainActivity extends FragmentActivity {
         public void onClick(View v) {
 
             switch (v.getId()){
+
+                case R.id.iv_sub:
+
+                    currentStation -= 1;
+                    if (currentStation < 875) {
+                        currentStation = 1085;
+                    }
+
+                    ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
+                    tuneStation();
+
+                    break;
+
+                case R.id.iv_add:
+
+                    currentStation += 1;
+                    if (currentStation > 1085) {
+                        currentStation = 875;
+                    }
+
+                    ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
+                    tuneStation();
+
+                    break;
 
                 case R.id.iv_fav:
 
