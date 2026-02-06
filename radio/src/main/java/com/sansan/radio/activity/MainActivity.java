@@ -47,6 +47,8 @@ public class MainActivity extends FragmentActivity {
 
     private boolean mIsServiceBinded = false;
 
+    private boolean isPlaying = true;  //是否在播放
+
     private FmListFragment fmListFragment;
     private FavListFragment favListFragment;
 
@@ -100,6 +102,11 @@ public class MainActivity extends FragmentActivity {
 
         fmListFragment.setOnFmListFragmentListener(new FmListFragment.OnFmListFragmentListener() {
             @Override
+            public boolean isPlaying() {
+                return isPlaying;
+            }
+
+            @Override
             public void powerUpAsync(int station) {
 
                 currentStation = station;
@@ -112,6 +119,11 @@ public class MainActivity extends FragmentActivity {
         });
 
         favListFragment.setOnFavListFragmentListener(new FavListFragment.OnFavListFragmentListener() {
+            @Override
+            public boolean isPlaying() {
+                return isPlaying;
+            }
+
             @Override
             public void powerUpAsync(int station) {
 
@@ -243,11 +255,13 @@ public class MainActivity extends FragmentActivity {
                         if (mService.getPowerStatus() == FmService.POWER_UP) {
                             powerDownFm();
 
+                            isPlaying = false;
                             fmListFragment.updatePlayAnim(false);
                             favListFragment.updatePlayAnim(false);
                         } else {
                             powerUpFm();
 
+                            isPlaying = true;
                             fmListFragment.updatePlayAnim(true);
                             favListFragment.updatePlayAnim(true);
                         }

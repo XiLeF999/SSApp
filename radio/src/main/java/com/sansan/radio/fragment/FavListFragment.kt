@@ -62,7 +62,7 @@ class FavListFragment : Fragment() {
             }
         }
 
-        mFavAdapter?.setData(stationInfoList)
+        mFavAdapter?.setData(stationInfoList, onFavListFragmentListener?.isPlaying() ?: true)
     }
 
 
@@ -87,6 +87,7 @@ class FavListFragment : Fragment() {
 
     interface OnFavListFragmentListener {
         fun powerUpAsync(station: Int)
+        fun isPlaying(): Boolean
     }
 
 

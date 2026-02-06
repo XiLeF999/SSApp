@@ -61,7 +61,7 @@ class FmListFragment : Fragment() {
             }
         }
 
-        mFmAdapter?.setData(stationInfoList)
+        mFmAdapter?.setData(stationInfoList, onFmListFragmentListener?.isPlaying() ?: true)
     }
 
 
@@ -85,6 +85,7 @@ class FmListFragment : Fragment() {
 
     interface OnFmListFragmentListener {
         fun powerUpAsync(station: Int)
+        fun isPlaying(): Boolean
     }
 
 

@@ -24,8 +24,9 @@ class FmAdapter(
 
     private var isPlayAnim: Boolean = true   //控制播放动画
 
-    fun setData(list: List<StationInfo>) {
+    fun setData(list: List<StationInfo>, play: Boolean) {
         fmList = list
+        isPlayAnim = play
 
         notifyDataSetChanged()
     }
