@@ -1060,7 +1060,7 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
 
 
             //wuhong test
-            short[] newData = {901, 902, 903, 904, 905, 906, 907, 908, 909, 910};
+            short[] newData = {881, 938, 968, 981, 1018, 1049};
             if(stationsInShort == null){
                 stationsInShort = new short[0];
             }

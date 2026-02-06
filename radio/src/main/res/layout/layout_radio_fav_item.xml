@@ -21,7 +21,7 @@
 
         <TextView
             android:id="@+id/tv_frequency"
-            android:layout_width="wrap_content"
+            android:layout_width="340px"
             android:layout_height="wrap_content"
             android:layout_marginLeft="40px"
             android:textColor="@color/selector_radio_type"
@@ -31,8 +31,7 @@
         <ImageView
             android:id="@+id/iv_fav"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="160px"/>
+            android:layout_height="wrap_content" />
 
 
     </LinearLayout>
