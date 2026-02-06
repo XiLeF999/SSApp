@@ -3367,11 +3367,15 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
             return 0;
         }
 
+        //先删除所有没有被搜藏的数据
+        String selection = FmStation.Station.IS_FAVORITE + "=0";
+        mContext.getContentResolver().delete(FmStation.Station.CONTENT_URI,selection,null);
+
         for(int station : stations){
             ContentValues values = new ContentValues();
             values.put(Station.IS_SEARCH, 1);
 
-            // 先尝试更新
+            //尝试更新，如果这条数据在数据库中存在，把IS_SEARCH标记为1
             int rowsUpdated = mContext.getContentResolver().update(
                     Station.CONTENT_URI,
                     values,
