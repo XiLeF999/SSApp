@@ -22,8 +22,16 @@ class FavAdapter(
     private var favList: List<StationInfo> = emptyList()
     private var onItemClickListener: OnItemClickListener? = null
 
+    private var isPlayAnim: Boolean = true   //控制播放动画
+
     fun setData(list: List<StationInfo>) {
         favList = list
+
+        notifyDataSetChanged()
+    }
+
+    fun setPlayAnim(play: Boolean) {
+        isPlayAnim = play
 
         notifyDataSetChanged()
     }
@@ -48,7 +56,11 @@ class FavAdapter(
         if(bean.isSelect){
             holder.llItem.background = mContext.getDrawable(R.mipmap.img_radio_select_bg)
 
-            holder.ivAnim.post { animation.start() }
+            if(isPlayAnim){
+                holder.ivAnim.post { animation.start() }
+            } else {
+                animation.stop()
+            }
 
             holder.ivAnim.visibility = View.VISIBLE
             holder.tvId.visibility = View.INVISIBLE

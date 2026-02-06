@@ -66,6 +66,13 @@ class FavListFragment : Fragment() {
     }
 
 
+
+    fun updatePlayAnim(isPlayAnim: Boolean){
+        mFavAdapter?.setPlayAnim(isPlayAnim)
+    }
+
+
+
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {

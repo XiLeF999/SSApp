@@ -244,10 +244,12 @@ public class MainActivity extends FragmentActivity {
                             powerDownFm();
 
                             fmListFragment.updatePlayAnim(false);
+                            favListFragment.updatePlayAnim(false);
                         } else {
                             powerUpFm();
 
                             fmListFragment.updatePlayAnim(true);
+                            favListFragment.updatePlayAnim(true);
                         }
                     }
 
