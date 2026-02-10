@@ -144,6 +144,24 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+
+        mRadioScaleView.setOnFrequencyChangeListener(new RadioScaleView.OnFrequencyChangeListener() {
+            @Override
+            public void onFrequencyChanging(float frequency) {
+                tvFrequency.setText(String.valueOf(FmUtils.computeStation(frequency) / 10f));
+            }
+
+            @Override
+            public void onFrequencyChanged(float frequency) {
+                currentStation = FmUtils.computeStation(frequency);
+                ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
+                tuneStation();
+
+                fmListFragment.updateStationList(currentStation);
+                favListFragment.updateStationList(currentStation);
+            }
+        });
+
     }
 
 
