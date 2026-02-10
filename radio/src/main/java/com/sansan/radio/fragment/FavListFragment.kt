@@ -55,12 +55,8 @@ class FavListFragment : Fragment() {
     fun updateStationList(currentStation: Int){
 
         val stationInfoList = FmStation.getFavStation(context)
-        for (s in stationInfoList){
-            if(s.station == currentStation){
-                s.isSelect = true
-                break
-            }
-        }
+
+        stationInfoList.firstOrNull { it.station == currentStation }?.let { it.isSelect = true }
 
         mFavAdapter?.setData(stationInfoList, onFavListFragmentListener?.isPlaying() ?: true)
     }

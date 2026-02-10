@@ -49,6 +49,8 @@ public class MainActivity extends FragmentActivity {
 
     private boolean isPlaying = true;  //是否在播放
 
+    private int currentType = 1;
+
     private FmListFragment fmListFragment;
     private FavListFragment favListFragment;
 
@@ -433,6 +435,9 @@ public class MainActivity extends FragmentActivity {
      * 使用 add/hide/show 模式
      */
     private void changeFragment(int type){
+
+        currentType = type;
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         // 隐藏所有Fragment
         if (fmListFragment != null && fmListFragment.isAdded()) {

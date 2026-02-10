@@ -54,12 +54,7 @@ class FmListFragment : Fragment() {
     fun updateStationList(currentStation: Int){
 
         val stationInfoList = FmStation.getSearchStation(context)
-        for (s in stationInfoList){
-            if(s.station == currentStation){
-                s.isSelect = true
-                break
-            }
-        }
+        stationInfoList.firstOrNull { it.station == currentStation }?.let { it.isSelect = true }
 
         mFmAdapter?.setData(stationInfoList, onFmListFragmentListener?.isPlaying() ?: true)
     }
