@@ -47,15 +47,9 @@ class FavAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val bean = favList[position]
 
-        holder.llItem.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            topMargin = if (position == 0) 0 else (-14)
-        }
-
-        holder.llItem.isSelected = bean.isSelect
-
         val animation = holder.ivAnim.drawable as AnimationDrawable
         if(bean.isSelect){
-            holder.llItem.background = mContext.getDrawable(R.mipmap.img_radio_select_bg)
+            holder.ivBg.setImageResource(R.mipmap.img_radio_select_bg)
 
             if(isPlayAnim){
                 holder.ivAnim.post { animation.start() }
@@ -67,7 +61,7 @@ class FavAdapter(
             holder.tvId.visibility = View.INVISIBLE
 
         } else {
-            holder.llItem.background = mContext.getDrawable(R.color.color_transparent)
+            holder.ivBg.setImageResource(R.color.color_transparent)
 
             animation.stop()
 
@@ -85,7 +79,7 @@ class FavAdapter(
         holder.tvId.text = (position + 1).toTwoDigits()
         holder.tvFrequency.text = FmUtils.computeFrequency(bean.station).toString() + "MHz"
 
-        holder.llItem.setOnClickListener {
+        holder.flItem.setOnClickListener {
 
             for (station in favList) {
                 station.isSelect = false
@@ -104,7 +98,8 @@ class FavAdapter(
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val llItem: FrameLayout = itemView.findViewById(R.id.ll_item)
+        val flItem: FrameLayout = itemView.findViewById(R.id.fl_item)
+        val ivBg: ImageView = itemView.findViewById(R.id.iv_bg)
         val tvId: TextView = itemView.findViewById(R.id.tv_id)
         val ivAnim: ImageView = itemView.findViewById(R.id.iv_anim)
         val tvFrequency: TextView = itemView.findViewById(R.id.tv_frequency)
