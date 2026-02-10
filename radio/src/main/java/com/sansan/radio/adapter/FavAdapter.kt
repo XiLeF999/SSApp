@@ -100,6 +100,8 @@ class FavAdapter(
 
     override fun getItemCount(): Int = favList.size
 
+    fun getList(): List<StationInfo> = favList
+
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val llItem: FrameLayout = itemView.findViewById(R.id.ll_item)

@@ -300,10 +300,12 @@ public class MainActivity extends FragmentActivity {
 
                 case R.id.iv_previous:
                     fmListFragment.updateStationItemInternal(false);
+                    favListFragment.updateStationItemInternal(false);
                     break;
 
                 case R.id.iv_next:
                     fmListFragment.updateStationItemInternal(true);
+                    favListFragment.updateStationItemInternal(true);
                     break;
 
                 case R.id.tv_fm_type:
