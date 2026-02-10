@@ -59,6 +59,8 @@ public class MainActivity extends FragmentActivity {
     private ImageView ivSub;
     private ImageView ivAdd;
     private ImageView ivFav;
+    private ImageView ivPrevious;
+    private ImageView ivNext;
     private ImageView ivPlay;
     private ImageView ivSearch;
     private TextView tvFmType;
@@ -90,6 +92,10 @@ public class MainActivity extends FragmentActivity {
         ivAdd.setOnClickListener(onClickListener);
         ivFav = findViewById(R.id.iv_fav);
         ivFav.setOnClickListener(onClickListener);
+        ivPrevious = findViewById(R.id.iv_previous);
+        ivPrevious.setOnClickListener(onClickListener);
+        ivNext = findViewById(R.id.iv_next);
+        ivNext.setOnClickListener(onClickListener);
         ivPlay = findViewById(R.id.iv_play);
         ivPlay.setOnClickListener(onClickListener);
         ivSearch = findViewById(R.id.iv_search);
@@ -290,6 +296,14 @@ public class MainActivity extends FragmentActivity {
 
                     }
 
+                    break;
+
+                case R.id.iv_previous:
+                    fmListFragment.updateStationItemInternal(false);
+                    break;
+
+                case R.id.iv_next:
+                    fmListFragment.updateStationItemInternal(true);
                     break;
 
                 case R.id.tv_fm_type:

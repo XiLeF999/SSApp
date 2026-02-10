@@ -104,6 +104,8 @@ class FmAdapter(
 
     override fun getItemCount(): Int = fmList.size
 
+    fun getList(): List<StationInfo> = fmList
+
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val llItem: FrameLayout = itemView.findViewById(R.id.ll_item)

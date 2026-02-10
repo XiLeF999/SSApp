@@ -111,6 +111,7 @@
                 android:src="@drawable/selector_radio_btn_fav"/>
 
             <ImageView
+                android:id="@+id/iv_previous"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="80px"
@@ -134,6 +135,7 @@
             </RelativeLayout>
 
             <ImageView
+                android:id="@+id/iv_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="80px"

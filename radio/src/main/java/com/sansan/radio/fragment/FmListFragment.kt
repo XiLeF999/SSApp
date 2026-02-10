@@ -64,6 +64,49 @@ class FmListFragment : Fragment() {
         mFmAdapter?.setPlayAnim(isPlayAnim)
     }
 
+    /**
+     * 通过上一曲false、下一曲true
+     * 更新当前播放的电台
+     */
+    fun updateStationItemInternal(isNext: Boolean) {
+        val stationInfoList = mFmAdapter?.getList() ?: return
+        if (stationInfoList.isEmpty()) return
+
+        val currentStation = FmStation.getCurrentStation(context)
+
+        // 查找当前选中的位置
+        var newPosition = stationInfoList.indexOfFirst { it.isSelect }
+
+        if (newPosition == -1) { // 没找到选中的
+            if (isNext) {
+                // 下一个：找第一个大于当前频率的
+                newPosition = stationInfoList.indexOfFirst { it.station > currentStation }
+            } else {
+                // 上一个：找最后一个小于当前频率的
+                newPosition = stationInfoList.indexOfLast { it.station < currentStation }
+            }
+
+            if (newPosition == -1) { // 没找到
+                newPosition = if (isNext) 0 else stationInfoList.size - 1
+            }
+        } else { // 找到了选中的
+            newPosition = if (isNext) {
+                // 下一个：循环前进
+                (newPosition + 1) % stationInfoList.size
+            } else {
+                // 上一个：循环后退
+                (newPosition - 1 + stationInfoList.size) % stationInfoList.size
+            }
+        }
+
+        // 更新选中状态
+        stationInfoList.forEach { it.isSelect = false }
+        stationInfoList[newPosition].isSelect = true
+
+        // 更新适配器
+        mFmAdapter?.setData(stationInfoList, onFmListFragmentListener?.isPlaying() ?: true)
+    }
+
 
 
     override fun onHiddenChanged(hidden: Boolean) {
