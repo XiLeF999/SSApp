@@ -11,6 +11,8 @@ import com.sansan.radio.adapter.FavAdapter
 import com.sansan.radio.bean.StationInfo
 import com.sansan.radio.databinding.FragmentFavListBinding
 import com.sansan.radio.fm.FmStation
+import com.sansan.radio.utils.hide
+import com.sansan.radio.utils.show
 
 class FavListFragment : Fragment() {
 
@@ -51,15 +53,22 @@ class FavListFragment : Fragment() {
     }
 
 
-
     fun updateStationList(currentStation: Int){
 
         val stationInfoList = FmStation.getFavStation(context)
 
-        stationInfoList.firstOrNull { it.station == currentStation }?.let { it.isSelect = true }
+        if (stationInfoList.isEmpty()){
+            binding.llNoStation.show()
+            binding.rvFavList.hide()
+        } else {
+            binding.llNoStation.hide()
+            binding.rvFavList.show()
 
-        mFavAdapter?.setData(stationInfoList, onFavListFragmentListener?.isPlaying() ?: true)
+            stationInfoList.firstOrNull { it.station == currentStation }?.let { it.isSelect = true }
+            mFavAdapter?.setData(stationInfoList, onFavListFragmentListener?.isPlaying() ?: true)
+        }
     }
+
 
 
 

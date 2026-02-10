@@ -10,6 +10,8 @@ import com.sansan.radio.adapter.FmAdapter
 import com.sansan.radio.bean.StationInfo
 import com.sansan.radio.databinding.FragmentFmListBinding
 import com.sansan.radio.fm.FmStation
+import com.sansan.radio.utils.hide
+import com.sansan.radio.utils.show
 
 class FmListFragment : Fragment() {
 
@@ -54,9 +56,17 @@ class FmListFragment : Fragment() {
     fun updateStationList(currentStation: Int){
 
         val stationInfoList = FmStation.getSearchStation(context)
-        stationInfoList.firstOrNull { it.station == currentStation }?.let { it.isSelect = true }
 
-        mFmAdapter?.setData(stationInfoList, onFmListFragmentListener?.isPlaying() ?: true)
+        if (stationInfoList.isEmpty()){
+            binding.llNoStation.show()
+            binding.rvFmList.hide()
+        } else {
+            binding.llNoStation.hide()
+            binding.rvFmList.show()
+
+            stationInfoList.firstOrNull { it.station == currentStation }?.let { it.isSelect = true }
+            mFmAdapter?.setData(stationInfoList, onFmListFragmentListener?.isPlaying() ?: true)
+        }
     }
 
 
