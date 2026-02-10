@@ -103,6 +103,8 @@ class FmListFragment : Fragment() {
         stationInfoList.forEach { it.isSelect = false }
         stationInfoList[newPosition].isSelect = true
 
+        onFmListFragmentListener?.powerUpAsync(stationInfoList[newPosition].station)
+
         // 更新适配器
         mFmAdapter?.setData(stationInfoList, onFmListFragmentListener?.isPlaying() ?: true)
     }

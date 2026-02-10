@@ -107,6 +107,8 @@ class FavListFragment : Fragment() {
         stationInfoList.forEach { it.isSelect = false }
         stationInfoList[newPosition].isSelect = true
 
+        onFavListFragmentListener?.powerUpAsync(stationInfoList[newPosition].station)
+
         // 更新适配器
         mFavAdapter?.setData(stationInfoList, onFavListFragmentListener?.isPlaying() ?: true)
     }
