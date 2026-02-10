@@ -299,13 +299,19 @@ public class MainActivity extends FragmentActivity {
                     break;
 
                 case R.id.iv_previous:
-                    fmListFragment.updateStationItemInternal(false);
-                    favListFragment.updateStationItemInternal(false);
+                    if(currentType == 1){
+                        fmListFragment.updateStationItemInternal(false);
+                    } else {
+                        favListFragment.updateStationItemInternal(false);
+                    }
                     break;
 
                 case R.id.iv_next:
-                    fmListFragment.updateStationItemInternal(true);
-                    favListFragment.updateStationItemInternal(true);
+                    if(currentType == 1){
+                        fmListFragment.updateStationItemInternal(true);
+                    } else {
+                        favListFragment.updateStationItemInternal(true);
+                    }
                     break;
 
                 case R.id.tv_fm_type:
