@@ -47,6 +47,10 @@ class FavAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val bean = favList[position]
 
+        holder.flItem.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            topMargin = if (position == 0) 0 else (-14)
+        }
+
         val animation = holder.ivAnim.drawable as AnimationDrawable
         if(bean.isSelect){
             holder.ivBg.setImageResource(R.mipmap.img_radio_select_bg)
