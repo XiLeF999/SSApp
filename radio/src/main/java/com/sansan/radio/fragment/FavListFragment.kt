@@ -16,7 +16,7 @@ import com.sansan.radio.utils.show
 
 class FavListFragment : Fragment() {
 
-    private lateinit var binding: FragmentFavListBinding
+    private var binding: FragmentFavListBinding? = null
 
     private var mFavAdapter: FavAdapter? = null
 
@@ -28,15 +28,15 @@ class FavListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFavListBinding.inflate(inflater, container, false)
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // 初始化视图和逻辑
         mFavAdapter = context?.let { FavAdapter(it) }
-        binding.rvFavList.layoutManager = LinearLayoutManager(context)
-        binding.rvFavList.adapter = mFavAdapter
+        binding?.rvFavList?.layoutManager = LinearLayoutManager(context)
+        binding?.rvFavList?.adapter = mFavAdapter
 
         updateStationList(FmStation.getCurrentStation(context))
 
@@ -58,11 +58,11 @@ class FavListFragment : Fragment() {
         val stationInfoList = FmStation.getFavStation(context)
 
         if (stationInfoList.isEmpty()){
-            binding.llNoStation.show()
-            binding.rvFavList.hide()
+            binding?.llNoStation?.show()
+            binding?.rvFavList?.hide()
         } else {
-            binding.llNoStation.hide()
-            binding.rvFavList.show()
+            binding?.llNoStation?.hide()
+            binding?.rvFavList?.show()
 
             stationInfoList.firstOrNull { it.station == currentStation }?.let { it.isSelect = true }
             mFavAdapter?.setData(stationInfoList, onFavListFragmentListener?.isPlaying() ?: true)
@@ -146,6 +146,7 @@ class FavListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         // 清理资源
+        binding = null // 防止内存泄漏
     }
 
 }
