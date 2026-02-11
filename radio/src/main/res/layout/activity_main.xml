@@ -79,6 +79,21 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:src="@drawable/selector_radio_btn_sub"/>
 
+            <TextView
+                android:id="@+id/tv_scan_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="gone"
+                android:textColor="@color/color_8593A2"
+                android:textSize="20sp"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="0dp"
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium" />
+
             <ImageView
                 android:id="@+id/iv_add"
                 android:layout_width="wrap_content"

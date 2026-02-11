@@ -51,12 +51,15 @@ public class MainActivity extends FragmentActivity {
 
     private int currentType = 1;
 
+    private int scanProgress = 0;
+
     private FmListFragment fmListFragment;
     private FavListFragment favListFragment;
 
     private RadioScaleView mRadioScaleView;
     private TextView tvFrequency;
     private ImageView ivSub;
+    private TextView tvScanProgress;
     private ImageView ivAdd;
     private ImageView ivFav;
     private ImageView ivPrevious;
@@ -88,6 +91,7 @@ public class MainActivity extends FragmentActivity {
         tvFrequency = findViewById(R.id.tv_frequency);
         ivSub = findViewById(R.id.iv_sub);
         ivSub.setOnClickListener(onClickListener);
+        tvScanProgress = findViewById(R.id.tv_scan_progress);
         ivAdd = findViewById(R.id.iv_add);
         ivAdd.setOnClickListener(onClickListener);
         ivFav = findViewById(R.id.iv_fav);
@@ -430,6 +434,9 @@ public class MainActivity extends FragmentActivity {
                     ivSearch.setSelected(false);
                     mHandler.removeMessages(5001);
 
+                    tvScanProgress.setVisibility(View.GONE);
+                    scanProgress = 0;
+
                     currentStation = FmStation.getCurrentStation(MainActivity.this);
 
                     fmListFragment.updateStationList(currentStation);
@@ -446,6 +453,9 @@ public class MainActivity extends FragmentActivity {
 
                     tvFrequency.setText(String.valueOf(currentFrequency));
 
+                    tvScanProgress.setVisibility(View.VISIBLE);
+                    tvScanProgress.setText("电台搜索" + scanProgress + "%");
+                    scanProgress += 1;
 
                     if (animGoOrBack) {
                         currentStation += 1;
