@@ -384,6 +384,9 @@ public class MainActivity extends FragmentActivity {
         tvFrequency.setText(String.valueOf(currentFrequency));
 
         ivPlay.setSelected(true);
+        isPlaying = true;
+        fmListFragment.updatePlayAnim(true);
+        favListFragment.updatePlayAnim(true);
 
         mService.tuneStationAsync(currentFrequency);
     }
