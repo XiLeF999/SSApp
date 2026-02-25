@@ -226,128 +226,98 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onClick(View v) {
 
-            switch (v.getId()){
+            int id = v.getId();
 
-                case R.id.iv_sub:
+            if(id == R.id.iv_sub){
+                currentStation -= 1;
+                if (currentStation < 875) {
+                    currentStation = 1085;
+                }
 
-                    currentStation -= 1;
-                    if (currentStation < 875) {
-                        currentStation = 1085;
-                    }
+                ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
+                tuneStation();
 
-                    ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
-                    tuneStation();
+                fmListFragment.updateStationList(currentStation);
+                favListFragment.updateStationList(currentStation);
+            } else if(id == R.id.iv_add){
+                currentStation += 1;
+                if (currentStation > 1085) {
+                    currentStation = 875;
+                }
 
-                    fmListFragment.updateStationList(currentStation);
-                    favListFragment.updateStationList(currentStation);
+                ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
+                tuneStation();
 
-                    break;
-
-                case R.id.iv_add:
-
-                    currentStation += 1;
-                    if (currentStation > 1085) {
-                        currentStation = 875;
-                    }
-
-                    ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
-                    tuneStation();
-
-                    fmListFragment.updateStationList(currentStation);
-                    favListFragment.updateStationList(currentStation);
-                    break;
-
-                case R.id.iv_fav:
-
-                    if (FmStation.isFavoriteStation(MainActivity.this, currentStation)) {
-                        FmStation.removeFromFavorite(MainActivity.this, currentStation);
-                        ivFav.setSelected(false);
+                fmListFragment.updateStationList(currentStation);
+                favListFragment.updateStationList(currentStation);
+            } else if(id == R.id.iv_fav){
+                if (FmStation.isFavoriteStation(MainActivity.this, currentStation)) {
+                    FmStation.removeFromFavorite(MainActivity.this, currentStation);
+                    ivFav.setSelected(false);
+                } else {
+                    if (FmStation.isStationExist(MainActivity.this, currentStation)) {
+                        FmStation.addToFavorite(MainActivity.this, currentStation);
                     } else {
-                        if (FmStation.isStationExist(MainActivity.this, currentStation)) {
-                            FmStation.addToFavorite(MainActivity.this, currentStation);
-                        } else {
-                            ContentValues values = new ContentValues(2);
-                            values.put(FmStation.Station.FREQUENCY, currentStation);
-                            values.put(FmStation.Station.IS_FAVORITE, true);
-                            FmStation.insertStationToDb(MainActivity.this, values);
-                        }
-                        ivFav.setSelected(true);
+                        ContentValues values = new ContentValues(2);
+                        values.put(FmStation.Station.FREQUENCY, currentStation);
+                        values.put(FmStation.Station.IS_FAVORITE, true);
+                        FmStation.insertStationToDb(MainActivity.this, values);
                     }
+                    ivFav.setSelected(true);
+                }
 
-                    fmListFragment.updateStationList(currentStation);
-                    favListFragment.updateStationList(currentStation);
+                fmListFragment.updateStationList(currentStation);
+                favListFragment.updateStationList(currentStation);
+            } else if(id == R.id.iv_previous){
+                if(currentType == 1){
+                    fmListFragment.updateStationItemInternal(false);
+                } else {
+                    favListFragment.updateStationItemInternal(false);
+                }
+            } else if(id == R.id.iv_next){
+                if(currentType == 1){
+                    fmListFragment.updateStationItemInternal(true);
+                } else {
+                    favListFragment.updateStationItemInternal(true);
+                }
+            } else if(id == R.id.iv_play){
+                if (mService != null) {
+                    if (mService.getPowerStatus() == FmService.POWER_UP) {
+                        powerDownFm();
 
-                    break;
-
-                case R.id.iv_play:
-
-                    if (mService != null) {
-                        if (mService.getPowerStatus() == FmService.POWER_UP) {
-                            powerDownFm();
-
-                            isPlaying = false;
-                            fmListFragment.updatePlayAnim(false);
-                            favListFragment.updatePlayAnim(false);
-                        } else {
-                            powerUpFm();
-
-                            isPlaying = true;
-                            fmListFragment.updatePlayAnim(true);
-                            favListFragment.updatePlayAnim(true);
-                        }
-                    }
-
-                    break;
-
-                case R.id.iv_search:
-
-                    if (mService.isScanning()) {
-
-                        mService.stopScan();
-
+                        isPlaying = false;
+                        fmListFragment.updatePlayAnim(false);
+                        favListFragment.updatePlayAnim(false);
                     } else {
+                        powerUpFm();
 
-
-                        mService.startScanAsync();
-
-                        ivPlay.setSelected(false);
-                        ivSearch.setSelected(true);
-                        mHandler.removeMessages(5001);
-                        mHandler.sendEmptyMessage(5001);
-
-
+                        isPlaying = true;
+                        fmListFragment.updatePlayAnim(true);
+                        favListFragment.updatePlayAnim(true);
                     }
+                }
+            } else if(id == R.id.iv_search){
+                if (mService.isScanning()) {
 
-                    break;
+                    mService.stopScan();
 
-                case R.id.iv_previous:
-                    if(currentType == 1){
-                        fmListFragment.updateStationItemInternal(false);
-                    } else {
-                        favListFragment.updateStationItemInternal(false);
-                    }
-                    break;
-
-                case R.id.iv_next:
-                    if(currentType == 1){
-                        fmListFragment.updateStationItemInternal(true);
-                    } else {
-                        favListFragment.updateStationItemInternal(true);
-                    }
-                    break;
-
-                case R.id.tv_fm_type:
-                    changeFragment(1);
-                    break;
-
-                case R.id.tv_fav_type:
-                    changeFragment(2);
-                    break;
+                } else {
 
 
+                    mService.startScanAsync();
 
+                    ivPlay.setSelected(false);
+                    ivSearch.setSelected(true);
+                    mHandler.removeMessages(5001);
+                    mHandler.sendEmptyMessage(5001);
+
+
+                }
+            } else if(id == R.id.tv_fm_type){
+                changeFragment(1);
+            } else if(id == R.id.tv_fav_type){
+                changeFragment(2);
             }
-
 
 
         }

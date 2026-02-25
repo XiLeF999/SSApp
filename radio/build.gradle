@@ -1,16 +1,20 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace 'com.sansan.radio'
-    compileSdk 34
+    compileSdk {
+        version = release(36) {
+            minorApiLevel = 1
+        }
+    }
 
     defaultConfig {
         applicationId "com.sansan.radio"
         minSdk 30
-        targetSdk 34
+        targetSdk 36
         versionCode 1
         versionName "1.0"
 
@@ -42,14 +46,14 @@ android {
 
     buildTypes {
         release {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.signConfig
             minifyEnabled false
             shrinkResources false
             zipAlignEnabled false
         }
         debug {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.signConfig
             minifyEnabled false
             shrinkResources false
@@ -57,7 +61,7 @@ android {
         }
     }
 
-
+    //这里只能用1.8，否则导入不了framework.jar
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -65,11 +69,13 @@ android {
 
 
     //打包文件名
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-            def newName = "SSRadio.apk"
-            output.outputFileName = new File(newName)
-        }
+    androidComponents {
+        onVariants(selector().all(), { variant ->
+            variant.outputs.forEach { output ->
+                def newName = "SSRadio.apk"
+                output.outputFileName.set(newName)
+            }
+        })
     }
 
 
@@ -87,6 +93,12 @@ android {
     }
 
 
+
+    buildFeatures {
+        compose true
+    }
+
+
     viewBinding {
         enabled = true
     }
@@ -96,15 +108,15 @@ android {
 
 dependencies {
 
-    // Kotlin
-    implementation 'androidx.core:core-ktx:1.8.0'
-    // 协程核心
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-    // Android 支持
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
-    // ViewModel 协程支持
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+//    // Kotlin
+//    implementation 'androidx.core:core-ktx:1.8.0'
+//    // 协程核心
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+//    // Android 支持
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
+//    // ViewModel 协程支持
+//    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+//    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     // Room 协程支持
     implementation("androidx.room:room-ktx:2.6.0")
 
@@ -112,11 +124,35 @@ dependencies {
 
     compileOnly files('../libs/framework.jar')
 
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+//    implementation 'androidx.appcompat:appcompat:1.6.1'
+//    implementation 'com.google.android.material:material:1.12.0'
+//    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+//    testImplementation 'junit:junit:4.13.2'
+//    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+
+
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.activity.compose
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.ui.graphics
+    implementation libs.androidx.compose.ui.tooling.preview
+    implementation libs.androidx.compose.material3
+
+    implementation libs.androidx.appcompat
+
+
+    implementation libs.material
+
+
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
+    androidTestImplementation platform(libs.androidx.compose.bom)
+    androidTestImplementation libs.androidx.compose.ui.test.junit4
+    debugImplementation libs.androidx.compose.ui.tooling
+    debugImplementation libs.androidx.compose.ui.test.manifest
 
 }
