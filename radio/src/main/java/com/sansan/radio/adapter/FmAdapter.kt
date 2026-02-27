@@ -68,8 +68,11 @@ class FmAdapter(
 
             holder.tvFrequency.setTextColor(mContext.getColor(R.color.color_363E47))
 
-
-
+            if(bean.isFavorite == 0){   //false
+                holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select)
+            } else {
+                holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select_ed)
+            }
 
         } else {
             holder.ivBg.setImageResource(R.color.color_transparent)
@@ -81,13 +84,14 @@ class FmAdapter(
 
             holder.tvFrequency.setTextColor(mContext.getColor(R.color.color_92A7BF))
 
+            if(bean.isFavorite == 0){   //false
+                holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav)
+            } else {
+                holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select_ed)
+            }
+
         }
 
-        if(bean.isFavorite == 0){   //false
-            holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select)
-        } else {
-            holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select_ed)
-        }
 
         holder.tvId.text = (position + 1).toTwoDigits()
         holder.tvFrequency.text = FmUtils.computeFrequency(bean.station).toString() + "MHz"
