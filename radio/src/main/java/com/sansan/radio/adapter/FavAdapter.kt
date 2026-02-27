@@ -64,6 +64,9 @@ class FavAdapter(
             holder.ivAnim.visibility = View.VISIBLE
             holder.tvId.visibility = View.INVISIBLE
 
+            holder.tvFrequency.setTextColor(mContext.getColor(R.color.color_363E47))
+
+
         } else {
             holder.ivBg.setImageResource(R.color.color_transparent)
 
@@ -71,6 +74,8 @@ class FavAdapter(
 
             holder.ivAnim.visibility = View.INVISIBLE
             holder.tvId.visibility = View.VISIBLE
+
+            holder.tvFrequency.setTextColor(mContext.getColor(R.color.color_92A7BF))
 
         }
 
