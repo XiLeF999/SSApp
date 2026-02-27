@@ -64,7 +64,9 @@ class FavAdapter(
             holder.ivAnim.visibility = View.VISIBLE
             holder.tvId.visibility = View.INVISIBLE
 
-            holder.tvFrequency.setTextColor(mContext.getColor(R.color.color_363E47))
+            holder.tvFrequency.setTextColor(mContext.getColor(R.color.color_17A1E6))
+
+            holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select_ed)
 
 
         } else {
@@ -77,12 +79,8 @@ class FavAdapter(
 
             holder.tvFrequency.setTextColor(mContext.getColor(R.color.color_92A7BF))
 
-        }
+            holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_ed)
 
-        if(bean.isFavorite == 0){   //false
-            holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select)
-        } else {
-            holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select_ed)
         }
 
         holder.tvId.text = (position + 1).toTwoDigits()
