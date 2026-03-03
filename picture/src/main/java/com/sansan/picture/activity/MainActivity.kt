@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
                 list.forEach {
 
-                    Log.e("wwww", it.name)
+                    Log.e("wwww", it.toString())
 
                 }
 
