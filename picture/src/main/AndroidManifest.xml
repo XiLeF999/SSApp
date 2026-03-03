@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:persistent="true"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Apps">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
