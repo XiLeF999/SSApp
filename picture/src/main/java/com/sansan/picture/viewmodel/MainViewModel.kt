@@ -20,6 +20,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getPictureList() {
 
+        viewModelScope.launch {
+            _pictureList.value = pictureRepository.getAllPictures()
+        }
+
     }
 
     fun updatePictureList() {
