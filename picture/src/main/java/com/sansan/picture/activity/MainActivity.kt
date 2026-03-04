@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         pictureAdapter = PictureAdapter(this)
         binding.rvPicture.apply {
-            layoutManager = GridLayoutManager(this@MainActivity, 3)
+            layoutManager = GridLayoutManager(this@MainActivity, 5)
             adapter = pictureAdapter
         }
 
