@@ -72,6 +72,14 @@ class MainActivity : AppCompatActivity() {
                 viewModel.getPictureList(StorageType.ALL)
             }
 
+            tvUsbPicture.setOnClickListener {
+                viewModel.getPictureList(StorageType.USB)
+            }
+
+            tvSdPicture.setOnClickListener {
+                viewModel.getPictureList(StorageType.SD_CARD)
+            }
+
             tvLocalPicture.setOnClickListener {
                 viewModel.getPictureList(StorageType.INTERNAL)
             }
