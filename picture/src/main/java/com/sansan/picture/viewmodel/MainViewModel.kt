@@ -18,15 +18,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val pictureRepository  = PictureRepository(application.applicationContext)
 
-    private var currentJob: Job? = null
-
 
     fun getPictureList(storageType: PictureRepository.StorageType) {
 
-        // 取消之前的请求
-        currentJob?.cancel()
-
-        currentJob = viewModelScope.launch {
+        viewModelScope.launch {
             _pictureList.value = pictureRepository.getPictures(storageType)
         }
 

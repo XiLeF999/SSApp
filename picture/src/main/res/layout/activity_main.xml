@@ -35,6 +35,17 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tv_sd_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+            android:text="SD图片"
+            android:textColor="@color/color_8593A2"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/tv_local_picture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

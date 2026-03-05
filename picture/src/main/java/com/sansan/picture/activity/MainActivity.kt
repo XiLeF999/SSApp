@@ -13,6 +13,7 @@ import com.sansan.picture.utils.setTransparentStatusBar
 import com.sansan.picture.viewmodel.MainViewModel
 import com.sansan.picture.widget.PictureItemDecoration
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
@@ -45,19 +46,12 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.getPictureList(StorageType.ALL)
 
-
-        binding.tvAllPicture.setOnClickListener {
-
-            viewModel.getPictureList(StorageType.ALL)
-
-
-        }
-
+        click()
 
         lifecycleScope.launch {
 
-            viewModel.pictureList.collect { list ->
-
+            //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
+            viewModel.pictureList.collectLatest { list ->
                 pictureAdapter.setData(list)
 
             }
@@ -67,6 +61,27 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+
+
+    fun click() {
+
+        binding.apply {
+
+            tvAllPicture.setOnClickListener {
+                viewModel.getPictureList(StorageType.ALL)
+            }
+
+            tvLocalPicture.setOnClickListener {
+                viewModel.getPictureList(StorageType.INTERNAL)
+            }
+
+        }
+
+
+    }
+
+
 
 
 }
