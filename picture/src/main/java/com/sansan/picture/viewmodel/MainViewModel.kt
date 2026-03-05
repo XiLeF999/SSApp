@@ -18,10 +18,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val pictureRepository  = PictureRepository(application.applicationContext)
 
 
-    fun getPictureList() {
+    fun getPictureList(storageType: PictureRepository.StorageType) {
 
         viewModelScope.launch {
-            _pictureList.value = pictureRepository.getAllPictures()
+            _pictureList.value = pictureRepository.getPictures(storageType)
         }
 
     }

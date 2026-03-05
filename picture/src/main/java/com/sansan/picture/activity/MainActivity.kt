@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.sansan.picture.adapter.PictureAdapter
 import com.sansan.picture.databinding.ActivityMainBinding
+import com.sansan.picture.repository.PictureRepository.StorageType
 import com.sansan.picture.utils.setTransparentStatusBar
 import com.sansan.picture.viewmodel.MainViewModel
 import com.sansan.picture.widget.PictureItemDecoration
@@ -42,10 +43,12 @@ class MainActivity : AppCompatActivity() {
             addItemDecoration(itemDecoration)
         }
 
+        viewModel.getPictureList(StorageType.ALL)
+
 
         binding.tvAllPicture.setOnClickListener {
 
-            viewModel.getPictureList()
+            viewModel.getPictureList(StorageType.ALL)
 
 
         }
