@@ -8,7 +8,6 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.sansan.picture.R
-import com.sansan.picture.model.Picture
 import com.sansan.picture.model.PictureFolder
 
 class PictureFolderAdapter(
@@ -36,6 +35,12 @@ class PictureFolderAdapter(
 
         Glide.with(mContext).load(bean.coverPath).into(holder.ivCoverPicture)
 
+        holder.itemView.setOnClickListener {
+            it.setOnClickListener {
+                onItemClickListener?.onItemClick(bean, position)
+            }
+        }
+
     }
 
     override fun getItemCount(): Int = pictureFolderList.size
@@ -52,7 +57,7 @@ class PictureFolderAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClick(bean: Picture, position: Int)
+        fun onItemClick(bean: PictureFolder, position: Int)
     }
 
 

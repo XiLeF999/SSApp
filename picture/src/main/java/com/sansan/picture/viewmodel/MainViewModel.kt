@@ -22,9 +22,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val pictureFolderList: StateFlow<List<PictureFolder>> = _pictureFolderList
 
 
-    fun getPictureList(storageType: PictureRepository.StorageType) {
+    fun getPicturesInFolder(folderId: String) {
         viewModelScope.launch {
-            _pictureList.value = pictureRepository.getPictures(storageType)
+            _pictureList.value = pictureRepository.getPicturesInFolder(folderId)
         }
     }
 

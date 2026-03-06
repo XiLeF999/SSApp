@@ -9,8 +9,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.sansan.picture.adapter.PictureAdapter
 import com.sansan.picture.adapter.PictureFolderAdapter
 import com.sansan.picture.databinding.ActivityMainBinding
+import com.sansan.picture.model.PictureFolder
 import com.sansan.picture.repository.PictureRepository.StorageType
+import com.sansan.picture.utils.hide
 import com.sansan.picture.utils.setTransparentStatusBar
+import com.sansan.picture.utils.show
 import com.sansan.picture.viewmodel.MainViewModel
 import com.sansan.picture.widget.PictureItemDecoration
 import kotlinx.coroutines.delay
@@ -34,43 +37,64 @@ class MainActivity : AppCompatActivity() {
         setTransparentStatusBar()
 
         pictureFolderAdapter = PictureFolderAdapter(this)
-        binding.rvFolderPicture.apply {
-            layoutManager = GridLayoutManager(this@MainActivity, 5)
-            adapter = pictureFolderAdapter
+        pictureAdapter = PictureAdapter(this)
 
-            val itemDecoration = PictureItemDecoration(
-                spanCount = 5,
-                spacingX = 0,
-                spacingY = 20
-            )
-            addItemDecoration(itemDecoration)
+        binding.apply {
+            rvFolderPicture.apply {
+                layoutManager = GridLayoutManager(this@MainActivity, 5)
+                adapter = pictureFolderAdapter
+
+                val itemDecoration = PictureItemDecoration(
+                    spanCount = 5,
+                    spacingX = 0,
+                    spacingY = 20
+                )
+                addItemDecoration(itemDecoration)
+            }
+            rvPicture.apply {
+                layoutManager = GridLayoutManager(this@MainActivity, 5)
+                adapter = pictureAdapter
+
+                val itemDecoration = PictureItemDecoration(
+                    spanCount = 5,
+                    spacingX = 0,
+                    spacingY = 20
+                )
+                addItemDecoration(itemDecoration)
+            }
         }
 
         viewModel.getPictureFolderList(StorageType.ALL)
 
         click()
 
-//        lifecycleScope.launch {
-//
-//            //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
-//            viewModel.pictureList.collectLatest { list ->
-//                pictureAdapter.setData(list)
-//
-//            }
-//
-//        }
+
+        pictureFolderAdapter.setOnItemClickListener(object : PictureFolderAdapter.OnItemClickListener {
+            override fun onItemClick(bean: PictureFolder, position: Int) {
+
+                binding.rvFolderPicture.hide()
+                binding.rvPicture.show()
+
+                viewModel.getPicturesInFolder(bean.id)
+
+            }
+        })
+
 
 
         lifecycleScope.launch {
-
             //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
             viewModel.pictureFolderList.collectLatest { list ->
-
                 pictureFolderAdapter.setData(list)
-
-
             }
+        }
 
+
+        lifecycleScope.launch {
+            //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
+            viewModel.pictureList.collectLatest { list ->
+                pictureAdapter.setData(list)
+            }
         }
 
 
@@ -84,20 +108,27 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
 
             tvAllPicture.setOnClickListener {
-
+                binding.rvFolderPicture.show()
+                binding.rvPicture.hide()
                 viewModel.getPictureFolderList(StorageType.ALL)
 
             }
 
             tvUsbPicture.setOnClickListener {
+                binding.rvFolderPicture.show()
+                binding.rvPicture.hide()
                 viewModel.getPictureFolderList(StorageType.USB)
             }
 
             tvSdPicture.setOnClickListener {
+                binding.rvFolderPicture.show()
+                binding.rvPicture.hide()
                 viewModel.getPictureFolderList(StorageType.SD_CARD)
             }
 
             tvLocalPicture.setOnClickListener {
+                binding.rvFolderPicture.show()
+                binding.rvPicture.hide()
                 viewModel.getPictureFolderList(StorageType.INTERNAL)
             }
 
