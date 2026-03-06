@@ -8,16 +8,16 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.sansan.picture.R
-import com.sansan.picture.model.PictureModel
+import com.sansan.picture.model.Picture
 
 class PictureAdapter(
     private val mContext: Context
 ) : RecyclerView.Adapter<PictureAdapter.ViewHolder>() {
 
-    private var pictureList: List<PictureModel> = emptyList()
+    private var pictureList: List<Picture> = emptyList()
     private var onItemClickListener: OnItemClickListener? = null
 
-    fun setData(list: List<PictureModel>) {
+    fun setData(list: List<Picture>) {
         pictureList = list
 
         notifyDataSetChanged()
@@ -39,7 +39,7 @@ class PictureAdapter(
 
     override fun getItemCount(): Int = pictureList.size
 
-    fun getList(): List<PictureModel> = pictureList
+    fun getList(): List<Picture> = pictureList
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -51,7 +51,7 @@ class PictureAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClick(bean: PictureModel, position: Int)
+        fun onItemClick(bean: Picture, position: Int)
     }
 
 

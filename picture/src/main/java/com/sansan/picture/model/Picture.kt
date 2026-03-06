@@ -2,7 +2,7 @@ package com.sansan.picture.model
 
 import com.sansan.picture.repository.PictureRepository
 
-data class PictureModel(
+data class Picture(
     val id: Long,
     val path: String,
     val name: String,

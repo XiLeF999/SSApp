@@ -59,6 +59,18 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        lifecycleScope.launch {
+
+            //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
+            viewModel.pictureFolderList.collectLatest { list ->
+
+                Log.e("wwww", "list: ${list.toString()}")
+
+            }
+
+        }
+
+
 
     }
 
@@ -69,7 +81,10 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
 
             tvAllPicture.setOnClickListener {
-                viewModel.getPictureList(StorageType.ALL)
+//                viewModel.getPictureList(StorageType.ALL)
+
+                viewModel.getPictureFolderList(StorageType.ALL)
+
             }
 
             tvUsbPicture.setOnClickListener {
