@@ -64,7 +64,10 @@ class MainActivity : AppCompatActivity() {
             //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
             viewModel.pictureFolderList.collectLatest { list ->
 
-                Log.e("wwww", "list: ${list.toString()}")
+                list.forEach {
+                    Log.e("wwww", "it: ${it.toString()}")
+                }
+
 
             }
 

@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.wh.astest"
+        applicationId "com.sansan.picture"
         minSdk 29
         targetSdk 36
         versionCode 1
