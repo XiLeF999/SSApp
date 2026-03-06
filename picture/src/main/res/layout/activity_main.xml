@@ -59,16 +59,13 @@
     </LinearLayout>
 
 
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/rv_picture"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:paddingRight="10dp"-->
-<!--        android:fadeScrollbars="false"-->
-<!--        android:orientation="vertical"-->
-<!--        android:overScrollMode="never"-->
-<!--        android:scrollbarSize="16dp"-->
-<!--        android:scrollbars="vertical" />-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_folder_picture"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fadeScrollbars="false"
+        android:orientation="vertical"
+        android:overScrollMode="never" />
 
     <com.sansan.picture.widget.ScrollableRecyclerView
         android:id="@+id/rv_picture"

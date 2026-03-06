@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.sansan.picture.adapter.PictureAdapter
+import com.sansan.picture.adapter.PictureFolderAdapter
 import com.sansan.picture.databinding.ActivityMainBinding
 import com.sansan.picture.repository.PictureRepository.StorageType
 import com.sansan.picture.utils.setTransparentStatusBar
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+    private lateinit var pictureFolderAdapter: PictureFolderAdapter
     private lateinit var pictureAdapter: PictureAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,10 +33,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setTransparentStatusBar()
 
-        pictureAdapter = PictureAdapter(this)
-        binding.rvPicture.apply {
+        pictureFolderAdapter = PictureFolderAdapter(this)
+        binding.rvFolderPicture.apply {
             layoutManager = GridLayoutManager(this@MainActivity, 5)
-            adapter = pictureAdapter
+            adapter = pictureFolderAdapter
 
             val itemDecoration = PictureItemDecoration(
                 spanCount = 5,
@@ -44,19 +46,19 @@ class MainActivity : AppCompatActivity() {
             addItemDecoration(itemDecoration)
         }
 
-        viewModel.getPictureList(StorageType.ALL)
+        viewModel.getPictureFolderList(StorageType.ALL)
 
         click()
 
-        lifecycleScope.launch {
-
-            //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
-            viewModel.pictureList.collectLatest { list ->
-                pictureAdapter.setData(list)
-
-            }
-
-        }
+//        lifecycleScope.launch {
+//
+//            //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
+//            viewModel.pictureList.collectLatest { list ->
+//                pictureAdapter.setData(list)
+//
+//            }
+//
+//        }
 
 
         lifecycleScope.launch {
@@ -64,9 +66,7 @@ class MainActivity : AppCompatActivity() {
             //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
             viewModel.pictureFolderList.collectLatest { list ->
 
-                list.forEach {
-                    Log.e("wwww", "it: ${it.toString()}")
-                }
+                pictureFolderAdapter.setData(list)
 
 
             }
