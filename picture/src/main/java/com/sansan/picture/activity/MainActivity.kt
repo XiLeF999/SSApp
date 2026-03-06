@@ -84,22 +84,21 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
 
             tvAllPicture.setOnClickListener {
-//                viewModel.getPictureList(StorageType.ALL)
 
                 viewModel.getPictureFolderList(StorageType.ALL)
 
             }
 
             tvUsbPicture.setOnClickListener {
-                viewModel.getPictureList(StorageType.USB)
+                viewModel.getPictureFolderList(StorageType.USB)
             }
 
             tvSdPicture.setOnClickListener {
-                viewModel.getPictureList(StorageType.SD_CARD)
+                viewModel.getPictureFolderList(StorageType.SD_CARD)
             }
 
             tvLocalPicture.setOnClickListener {
-                viewModel.getPictureList(StorageType.INTERNAL)
+                viewModel.getPictureFolderList(StorageType.INTERNAL)
             }
 
         }
