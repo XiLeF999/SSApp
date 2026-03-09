@@ -52,9 +52,9 @@
 
             <TextView
                 android:id="@+id/tv_all_picture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="110px"
+                android:gravity="center"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="全部图片"
                 android:textColor="@color/selector_text_select"
@@ -64,9 +64,10 @@
 
             <TextView
                 android:id="@+id/tv_sd_picture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="110px"
+                android:gravity="center"
+                android:layout_marginTop="-20px"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="TF图片"
                 android:textColor="@color/selector_text_select"
@@ -76,9 +77,10 @@
 
             <TextView
                 android:id="@+id/tv_usb_picture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="110px"
+                android:gravity="center"
+                android:layout_marginTop="-20px"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="U盘图片"
                 android:textColor="@color/selector_text_select"
@@ -88,9 +90,10 @@
 
             <TextView
                 android:id="@+id/tv_local_picture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="110px"
+                android:gravity="center"
+                android:layout_marginTop="-20px"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="本地图片"
                 android:textColor="@color/selector_text_select"
