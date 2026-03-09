@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
         pictureAdapter = PictureAdapter(this)
 
         binding.apply {
+
+            binding.tvAllPicture.isSelected = true
+
             rvFolderPicture.apply {
                 layoutManager = GridLayoutManager(this@MainActivity, 5)
                 adapter = pictureFolderAdapter
