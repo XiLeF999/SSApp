@@ -1,6 +1,7 @@
 package com.sansan.picture.model
 
 import com.sansan.picture.repository.PictureRepository
+import java.io.Serializable
 
 data class Picture(
     val id: Long,
@@ -14,4 +15,4 @@ data class Picture(
     val height: Int,
     val mimeType: String,
     val storageType: PictureRepository.StorageType
-)
+): Serializable

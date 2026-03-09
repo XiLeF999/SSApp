@@ -43,6 +43,11 @@ class PictureAdapter(
             )
         ).into(holder.ivPicture)
 
+
+        holder.itemView.setOnClickListener {
+            onItemClickListener?.onItemClick(pictureList, bean, position)
+        }
+
     }
 
     override fun getItemCount(): Int = pictureList.size
@@ -59,7 +64,7 @@ class PictureAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClick(bean: Picture, position: Int)
+        fun onItemClick(pictureList: List<Picture>, bean: Picture, position: Int)
     }
 
 

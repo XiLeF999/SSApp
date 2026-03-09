@@ -20,6 +20,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activity.PictureActivity"
+            android:exported="true"/>
+
     </application>
 
 </manifest>

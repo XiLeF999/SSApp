@@ -1,5 +1,6 @@
 package com.sansan.picture.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.sansan.picture.adapter.PictureAdapter
 import com.sansan.picture.adapter.PictureFolderAdapter
 import com.sansan.picture.databinding.ActivityMainBinding
+import com.sansan.picture.model.Picture
 import com.sansan.picture.model.PictureFolder
 import com.sansan.picture.repository.PictureRepository.StorageType
 import com.sansan.picture.utils.hide
@@ -79,6 +81,24 @@ class MainActivity : AppCompatActivity() {
                 binding.rvPicture.show()
 
                 viewModel.getPicturesInFolder(bean.id)
+
+            }
+        })
+
+
+        pictureAdapter.setOnItemClickListener(object : PictureAdapter.OnItemClickListener {
+            override fun onItemClick(pictureList: List<Picture>, bean: Picture, position: Int) {
+
+                val intent = Intent(this@MainActivity, PictureActivity::class.java)
+
+                // 传递整个列表
+                intent.putExtra("picture_list", ArrayList(pictureList))
+                // 传递当前点击的图片
+                intent.putExtra("current_picture", bean)
+                // 传递当前位置
+                intent.putExtra("position", position)
+
+                startActivity(intent)
 
             }
         })
