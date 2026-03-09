@@ -119,7 +119,6 @@ class MainActivity : AppCompatActivity() {
 
                 binding.rvFolderPicture.show()
                 binding.rvPicture.hide()
-                pictureAdapter.setData(emptyList())
                 viewModel.getPictureFolderList(StorageType.ALL)
 
             }
@@ -133,7 +132,6 @@ class MainActivity : AppCompatActivity() {
 
                 binding.rvFolderPicture.show()
                 binding.rvPicture.hide()
-                pictureAdapter.setData(emptyList())
                 viewModel.getPictureFolderList(StorageType.USB)
             }
 
@@ -146,7 +144,6 @@ class MainActivity : AppCompatActivity() {
 
                 binding.rvFolderPicture.show()
                 binding.rvPicture.hide()
-                pictureAdapter.setData(emptyList())
                 viewModel.getPictureFolderList(StorageType.SD_CARD)
             }
 
@@ -159,7 +156,6 @@ class MainActivity : AppCompatActivity() {
 
                 binding.rvFolderPicture.show()
                 binding.rvPicture.hide()
-                pictureAdapter.setData(emptyList())
                 viewModel.getPictureFolderList(StorageType.INTERNAL)
             }
 

@@ -24,12 +24,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getPicturesInFolder(folderId: String) {
         viewModelScope.launch {
+
+            _pictureList.value = emptyList()   //先清除，免得数据闪烁
+
             _pictureList.value = pictureRepository.getPicturesInFolder(folderId)
         }
     }
 
     fun getPictureFolderList(storageType: PictureRepository.StorageType) {
         viewModelScope.launch {
+
             _pictureFolderList.value = pictureRepository.getPictureFolders(storageType)
         }
     }
