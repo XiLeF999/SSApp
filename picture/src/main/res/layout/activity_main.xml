@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="80px"
-    android:background="@color/color_ECF3FA">
+    android:background="@mipmap/img_background">
 
     <FrameLayout
         android:layout_width="match_parent"
