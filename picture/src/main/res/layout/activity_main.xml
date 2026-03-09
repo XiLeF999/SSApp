@@ -58,6 +58,7 @@
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="全部图片"
                 android:textColor="@color/selector_text_select"
+                android:background="@drawable/selector_type_bg_select"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -69,6 +70,7 @@
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="TF图片"
                 android:textColor="@color/selector_text_select"
+                android:background="@drawable/selector_type_bg_select"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -80,6 +82,7 @@
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="U盘图片"
                 android:textColor="@color/selector_text_select"
+                android:background="@drawable/selector_type_bg_select"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -91,6 +94,7 @@
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="本地图片"
                 android:textColor="@color/selector_text_select"
+                android:background="@drawable/selector_type_bg_select"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
