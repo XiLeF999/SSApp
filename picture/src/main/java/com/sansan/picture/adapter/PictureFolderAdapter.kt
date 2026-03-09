@@ -48,9 +48,7 @@ class PictureFolderAdapter(
         holder.tvCount.text = bean.count.toString()
 
         holder.itemView.setOnClickListener {
-            it.setOnClickListener {
-                onItemClickListener?.onItemClick(bean, position)
-            }
+            onItemClickListener?.onItemClick(bean, position)
         }
 
     }
