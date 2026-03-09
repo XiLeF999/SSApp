@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.sansan.picture.R
 import com.sansan.picture.model.Picture
 
@@ -33,7 +36,12 @@ class PictureAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val bean = pictureList[position]
 
-        Glide.with(mContext).load(bean.uri).into(holder.ivPicture)
+        Glide.with(mContext).load(bean.uri).transform(
+            MultiTransformation(
+                CenterCrop(),
+                RoundedCorners(8)
+            )
+        ).into(holder.ivPicture)
 
     }
 
