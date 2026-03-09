@@ -25,6 +25,7 @@ class PictureActivity : AppCompatActivity() {
 
         val pictureList = intent.getSerializableExtra("picture_list") as? ArrayList<Picture>
         val currentPicture = intent.getSerializableExtra("current_picture") as? Picture
+        val position = intent.getIntExtra("position", 0)
 
 
         Log.e("wwww", "pictureList: $pictureList")
