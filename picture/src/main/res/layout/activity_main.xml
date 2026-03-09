@@ -57,18 +57,7 @@
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="全部图片"
-                android:textColor="@color/color_8593A2"
-                android:textSize="30sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tv_usb_picture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
-                android:text="USB图片"
-                android:textColor="@color/color_8593A2"
+                android:textColor="@color/selector_text_select"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -78,8 +67,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
-                android:text="SD图片"
-                android:textColor="@color/color_8593A2"
+                android:text="TF图片"
+                android:textColor="@color/selector_text_select"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_usb_picture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:text="U盘图片"
+                android:textColor="@color/selector_text_select"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -90,7 +90,7 @@
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:text="本地图片"
-                android:textColor="@color/color_8593A2"
+                android:textColor="@color/selector_text_select"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 

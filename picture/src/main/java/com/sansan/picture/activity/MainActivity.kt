@@ -108,6 +108,12 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
 
             tvAllPicture.setOnClickListener {
+
+                tvAllPicture.isSelected = true
+                tvUsbPicture.isSelected = false
+                tvSdPicture.isSelected = false
+                tvLocalPicture.isSelected = false
+
                 binding.rvFolderPicture.show()
                 binding.rvPicture.hide()
                 viewModel.getPictureFolderList(StorageType.ALL)
@@ -115,18 +121,36 @@ class MainActivity : AppCompatActivity() {
             }
 
             tvUsbPicture.setOnClickListener {
+
+                tvAllPicture.isSelected = false
+                tvUsbPicture.isSelected = true
+                tvSdPicture.isSelected = false
+                tvLocalPicture.isSelected = false
+
                 binding.rvFolderPicture.show()
                 binding.rvPicture.hide()
                 viewModel.getPictureFolderList(StorageType.USB)
             }
 
             tvSdPicture.setOnClickListener {
+
+                tvAllPicture.isSelected = false
+                tvUsbPicture.isSelected = false
+                tvSdPicture.isSelected = true
+                tvLocalPicture.isSelected = false
+
                 binding.rvFolderPicture.show()
                 binding.rvPicture.hide()
                 viewModel.getPictureFolderList(StorageType.SD_CARD)
             }
 
             tvLocalPicture.setOnClickListener {
+
+                tvAllPicture.isSelected = false
+                tvUsbPicture.isSelected = false
+                tvSdPicture.isSelected = false
+                tvLocalPicture.isSelected = true
+
                 binding.rvFolderPicture.show()
                 binding.rvPicture.hide()
                 viewModel.getPictureFolderList(StorageType.INTERNAL)
