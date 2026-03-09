@@ -10,6 +10,8 @@
 
     <color name="color_transparent">#00000000</color>
 
+    <color name="color_80000000">#80000000</color>
+
     <color name="color_C5DBF2">#C5DBF2</color>
     <color name="color_8593A2">#8593A2</color>
     <color name="color_92A7BF">#92A7BF</color>

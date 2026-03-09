@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
@@ -43,6 +44,9 @@ class PictureFolderAdapter(
             )
         ).into(holder.ivCoverPicture)
 
+        holder.tvName.text = bean.name
+        holder.tvCount.text = bean.count.toString()
+
         holder.itemView.setOnClickListener {
             it.setOnClickListener {
                 onItemClickListener?.onItemClick(bean, position)
@@ -58,6 +62,8 @@ class PictureFolderAdapter(
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivCoverPicture: ImageView = itemView.findViewById(R.id.iv_cover_picture)
+        val tvName: TextView = itemView.findViewById(R.id.tv_name)
+        val tvCount: TextView = itemView.findViewById(R.id.tv_count)
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
