@@ -10,10 +10,18 @@ import com.bumptech.glide.Glide
 import com.sansan.picture.R
 import com.sansan.picture.model.Picture
 
-class PictureGalleryAdapter(private val mContext: Context, private val images: List<Picture>) :
+class PictureGalleryAdapter(private val mContext: Context) :
     RecyclerView.Adapter<PictureGalleryAdapter.ViewHolder>() {
 
     private var onItemClickListener: OnItemClickListener? = null
+
+    private var pictureList: List<Picture> = emptyList()
+
+    fun setData(list: List<Picture>) {
+        pictureList = list
+
+        notifyDataSetChanged()
+    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,15 +31,15 @@ class PictureGalleryAdapter(private val mContext: Context, private val images: L
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Glide.with(mContext).load(images[position].uri).into(holder.imageView)
+        Glide.with(mContext).load(pictureList[position].uri).into(holder.imageView)
 
         holder.itemView.setOnClickListener {
-            onItemClickListener?.onItemClick(images, images[position], position)
+            onItemClickListener?.onItemClick(pictureList, pictureList[position], position)
         }
 
     }
 
-    override fun getItemCount() = images.size
+    override fun getItemCount() = pictureList.size
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.iv_image)

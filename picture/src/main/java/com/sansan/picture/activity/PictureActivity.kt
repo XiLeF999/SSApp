@@ -60,7 +60,9 @@ class PictureActivity : AppCompatActivity() {
         Glide.with(this).load(pictureList[0].uri).into(binding.ivPicture)
 
 
-        pictureGalleryAdapter = PictureGalleryAdapter(this, pictureList)
+        pictureGalleryAdapter = PictureGalleryAdapter(this)
+        pictureGalleryAdapter.setData(pictureList)
+        binding.carouselRecyclerview.adapter = pictureGalleryAdapter
 
         scaleGestureDetector = ScaleGestureDetector(
             this,
@@ -164,7 +166,6 @@ class PictureActivity : AppCompatActivity() {
 
     private fun showCarouselWithAnimation() {
         binding.carouselRecyclerview.apply {
-            adapter = pictureGalleryAdapter
             set3DItem(false)
             setAlpha(true)
             setInfinite(true)
@@ -174,6 +175,9 @@ class PictureActivity : AppCompatActivity() {
             scaleY = 1.2f
             alpha = 0f
             show()
+
+            pictureList = reorderList(pictureList, currentPosition)
+            pictureGalleryAdapter.setData(pictureList)
 
 
             animate()
