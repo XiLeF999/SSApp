@@ -40,7 +40,7 @@ class PictureActivity : AppCompatActivity() {
             set3DItem(false)
             setAlpha(true)
             setInfinite(true)
-            setIntervalRatio(0.38f)
+            setIntervalRatio(0.352f)  //这个值是根据布局宽度调试出来的，正好不重叠且挨着
         }
 
 
