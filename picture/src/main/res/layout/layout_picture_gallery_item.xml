@@ -7,7 +7,7 @@
         android:id="@+id/iv_image"
         android:layout_width="500px"
         android:layout_height="500px"
-        android:scaleType="fitCenter"
+        android:scaleType="fitXY"
         android:layout_gravity="center" />
 
 </FrameLayout>

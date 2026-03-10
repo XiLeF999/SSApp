@@ -40,6 +40,7 @@ class PictureActivity : AppCompatActivity() {
             set3DItem(false)
             setAlpha(true)
             setInfinite(true)
+            setIntervalRatio(0.4f)
         }
 
 
