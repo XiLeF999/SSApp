@@ -8,6 +8,7 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.sansan.picture.adapter.PictureGalleryAdapter
 import com.sansan.picture.databinding.ActivityPictureBinding
@@ -128,6 +129,26 @@ class PictureActivity : AppCompatActivity() {
 
         })
 
+
+        binding.carouselRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                when (newState) {
+                    RecyclerView.SCROLL_STATE_IDLE -> {
+                        // 状态 0：滚动已停止（静止）
+                        Log.e("wwww", "已停止滚动")
+                    }
+                    RecyclerView.SCROLL_STATE_DRAGGING -> {
+                        // 状态 1：用户手指正在拖拽（正在滚动）
+                        Log.e("wwww", "用户正在拖拽滚动")
+                    }
+                    RecyclerView.SCROLL_STATE_SETTLING -> {
+                        // 状态 2：惯性滚动或自动对齐（正在滚动）
+                        Log.e("wwww", "惯性滚动中")
+                    }
+                }
+            }
+        })
 
 
 
