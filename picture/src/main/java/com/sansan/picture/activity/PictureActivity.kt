@@ -51,13 +51,13 @@ class PictureActivity : AppCompatActivity() {
 //        currentPicture = intent.getSerializableExtra("current_picture") as Picture
         val pos = intent.getIntExtra("position", 0)
 
-        // 确保 position 在有效范围内
-        currentPosition = pos.coerceIn(0, pList.size - 1)
+        currentPosition = pos
 
         //重新排序列表:让选择的图片始终在第一个
         pictureList = reorderList(pList, currentPosition)
+        currentPosition = 0
 
-        Glide.with(this).load(pictureList[0].uri).into(binding.ivPicture)
+        Glide.with(this).load(pictureList[currentPosition].uri).into(binding.ivPicture)
 
 
         pictureGalleryAdapter = PictureGalleryAdapter(this)
@@ -119,6 +119,7 @@ class PictureActivity : AppCompatActivity() {
 
                 binding.carouselRecyclerview.hide()
                 binding.ivPicture.show()
+                resetImageView()
 
                 currentPosition = binding.carouselRecyclerview.getSelectedPosition()
                 Glide.with(this@PictureActivity).load(pictureList[currentPosition].uri).into(binding.ivPicture)
