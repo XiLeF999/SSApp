@@ -24,8 +24,8 @@ class PictureGalleryAdapter(private val mContext: Context, private val images: L
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Glide.with(mContext).load(images[position % images.size].uri).into(holder.imageView)
+        Glide.with(mContext).load(images[position].uri).into(holder.imageView)
     }
 
-    override fun getItemCount() = Int.MAX_VALUE  // 无限循环
+    override fun getItemCount() = images.size
 }

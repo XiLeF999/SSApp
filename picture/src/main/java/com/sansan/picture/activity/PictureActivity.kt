@@ -34,20 +34,13 @@ class PictureActivity : AppCompatActivity() {
         Log.e("wwww", "pictureList: $pictureList")
         Log.e("wwww", "currentPicture: $currentPicture")
 
-        // 1. 设置适配器
-        binding.viewPager2.adapter = PictureGalleryAdapter(this, pictureList)
 
-        // 2. 设置页面间距
-        val spacingPx = 20
-        binding.viewPager2.setPadding(spacingPx, 0, spacingPx, 0)
-        binding.viewPager2.clipToPadding = false
-        binding.viewPager2.clipChildren = false
-
-        // 3. 设置页面变换（核心）
-        binding.viewPager2.setPageTransformer(PictureGalleryTransformer())
-
-        // 4. 预加载
-        binding.viewPager2.offscreenPageLimit = 2
+        binding.carouselRecyclerview.apply {
+            adapter = PictureGalleryAdapter(this@PictureActivity, pictureList)
+            set3DItem(true)
+            setAlpha(true)
+            setInfinite(true)
+        }
 
 
 
