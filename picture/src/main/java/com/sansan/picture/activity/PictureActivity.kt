@@ -33,6 +33,8 @@ class PictureActivity : AppCompatActivity() {
     private var position: Int = 0
 
     private var currentScale = 1.0f
+    private var isTransitioning = false
+    private var isAutoTransitioning = false  // 标记是否正在自动过渡
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,46 +49,45 @@ class PictureActivity : AppCompatActivity() {
 
         Glide.with(this).load(currentPicture.uri).into(binding.ivPicture)
 
-        // 简化版双指缩小监听
         scaleGestureDetector = ScaleGestureDetector(
             this,
             object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-                // 只修改 onScale 方法
+
                 override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    if (isTransitioning || isAutoTransitioning) return false
+
                     val scaleFactor = detector.scaleFactor
 
-                    // 修复：实时更新图片缩放
-                    if (scaleFactor < 1.0) {  // 只在缩小时更新
-                        // 更新当前缩放比例
+                    if (scaleFactor < 1.0) {  // 只在缩小时处理
                         currentScale *= scaleFactor
 
                         // 限制最小缩放
                         if (currentScale < 0.3f) currentScale = 0.3f
 
-                        // 应用到图片
+                        // 应用缩放
                         binding.ivPicture.scaleX = currentScale
                         binding.ivPicture.scaleY = currentScale
-                        binding.ivPicture.alpha = currentScale
+
+                        // 关键：在0.8以下时开始自动渐变
+                        if (currentScale <= 0.8f && !isAutoTransitioning) {
+                            startSmoothTransition()
+                        } else {
+                            // 正常计算透明度
+                            binding.ivPicture.alpha = currentScale
+                        }
 
                         return true
                     }
                     return false
                 }
 
-                // 在 onScaleEnd 中检查
                 override fun onScaleEnd(detector: ScaleGestureDetector) {
-                    // 检查是否需要触发过渡动画
-                    if (currentScale < 0.5f) {  // 缩小到50%以下
-                        startSimpleTransition()
-                    } else {
-                        // 恢复原状
-                        binding.ivPicture.animate()
-                            .scaleX(1f)
-                            .scaleY(1f)
-                            .alpha(1f)
-                            .setDuration(300)
-                            .start()
-                        currentScale = 1.0f
+                    if (isTransitioning || isAutoTransitioning) return
+
+                    if (currentScale <= 0.8f) {
+                        startSmoothTransition()
+                    } else if (currentScale < 1f) {
+                        resetImageView()
                     }
                 }
             })
@@ -97,39 +98,71 @@ class PictureActivity : AppCompatActivity() {
         }
     }
 
-    private fun startSimpleTransition() {
-        // 1. 图片缩小消失
+    private fun startSmoothTransition() {
+        isAutoTransitioning = true
+
+        // 计算剩余要缩小的比例
+        val remainingScale = currentScale / 0.8f
+        val duration = (300 * (1 - remainingScale)).toLong()
+
+        // 平滑缩小到0
         binding.ivPicture.animate()
-            .scaleX(0.5f)
-            .scaleY(0.5f)
+            .scaleX(0f)
+            .scaleY(0f)
             .alpha(0f)
-            .setDuration(300)
+            .setDuration(duration)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     binding.ivPicture.hide()
+                    binding.ivPicture.scaleX = 1f
+                    binding.ivPicture.scaleY = 1f
+                    binding.ivPicture.alpha = 1f
+                    isAutoTransitioning = false
+                    isTransitioning = true
 
-                    // 2. 显示Carousel
-                    binding.carouselRecyclerview.apply {
-                        adapter = PictureGalleryAdapter(this@PictureActivity, pictureList)
-                        set3DItem(false)
-                        setAlpha(true)
-                        setInfinite(true)
-                        setIntervalRatio(0.352f)
+                    showCarouselWithAnimation()
+                }
+            })
+            .start()
+    }
 
-                        // 初始状态：放大
-                        scaleX = 1.5f
-                        scaleY = 1.5f
-                        alpha = 0f
-                        show()
+    private fun showCarouselWithAnimation() {
+        binding.carouselRecyclerview.apply {
+            adapter = PictureGalleryAdapter(this@PictureActivity, pictureList)
+            set3DItem(false)
+            setAlpha(true)
+            setInfinite(true)
+            setIntervalRatio(0.352f)
 
-                        // 缩小+淡入
-                        animate()
-                            .scaleX(1f)
-                            .scaleY(1f)
-                            .alpha(1f)
-                            .setDuration(300)
-                            .start()
+            scaleX = 1.2f
+            scaleY = 1.2f
+            alpha = 0f
+            show()
+
+            animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .alpha(1f)
+                .setDuration(300)
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        isTransitioning = false
+                        currentScale = 1.0f
                     }
+                })
+                .start()
+        }
+    }
+
+    private fun resetImageView() {
+        binding.ivPicture.animate()
+            .scaleX(1f)
+            .scaleY(1f)
+            .alpha(1f)
+            .setDuration(300)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    currentScale = 1.0f
                 }
             })
             .start()
