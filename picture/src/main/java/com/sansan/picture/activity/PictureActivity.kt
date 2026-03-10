@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.sansan.picture.adapter.PictureGalleryAdapter
 import com.sansan.picture.databinding.ActivityPictureBinding
 import com.sansan.picture.model.Picture
@@ -27,12 +28,11 @@ class PictureActivity : AppCompatActivity() {
 
 
         val pictureList = intent.getSerializableExtra("picture_list") as ArrayList<Picture>
-        val currentPicture = intent.getSerializableExtra("current_picture") as? Picture
+        val currentPicture = intent.getSerializableExtra("current_picture") as Picture
         val position = intent.getIntExtra("position", 0)
 
+        Glide.with(this).load(currentPicture.uri).into(binding.ivPicture)
 
-        Log.e("wwww", "pictureList: $pictureList")
-        Log.e("wwww", "currentPicture: $currentPicture")
 
 
         binding.carouselRecyclerview.apply {
