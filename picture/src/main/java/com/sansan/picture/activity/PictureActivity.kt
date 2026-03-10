@@ -36,6 +36,8 @@ class PictureActivity : AppCompatActivity() {
     private var isTransitioning = false
     private var isAutoTransitioning = false  // 标记是否正在自动过渡
 
+    private var transitionTriggered = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPictureBinding.inflate(layoutInflater)
@@ -69,7 +71,10 @@ class PictureActivity : AppCompatActivity() {
                         binding.ivPicture.scaleY = currentScale
 
                         // 关键：在0.8以下时开始自动渐变
-                        if (currentScale <= 0.8f && !isAutoTransitioning) {
+                        if (currentScale <= 0.8f && !isAutoTransitioning && !transitionTriggered) {
+
+                            transitionTriggered = true   //标志只执行一次
+
                             startSmoothTransition()
                         } else {
                             // 正常计算透明度
@@ -82,13 +87,13 @@ class PictureActivity : AppCompatActivity() {
                 }
 
                 override fun onScaleEnd(detector: ScaleGestureDetector) {
-                    if (isTransitioning || isAutoTransitioning) return
-
-                    if (currentScale <= 0.8f) {
-                        startSmoothTransition()
-                    } else if (currentScale < 1f) {
-                        resetImageView()
-                    }
+                    transitionTriggered = false
+//                    if (isTransitioning || isAutoTransitioning) return
+//                    if (currentScale <= 0.8f) {
+//                        startSmoothTransition()
+//                    } else if (currentScale < 1f) {
+//                        resetImageView()
+//                    }
                 }
             })
 
