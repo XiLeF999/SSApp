@@ -1,25 +1,31 @@
 package com.sansan.picture.adapter
 
 import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.sansan.picture.R
 import com.sansan.picture.model.Picture
-import com.zhpan.bannerview.BaseBannerAdapter
-import com.zhpan.bannerview.BaseViewHolder
 
-class PictureGalleryAdapter(
-    private val mContext: Context
-) : BaseBannerAdapter<Picture>() {
+class PictureGalleryAdapter(private val mContext: Context, private val images: List<Picture>) :
+    RecyclerView.Adapter<PictureGalleryAdapter.ViewHolder>() {
 
-    override fun bindData(holder: BaseViewHolder<Picture>, bean: Picture?, position: Int, pageSize: Int) {
-        val ivPicture: ImageView = holder.findViewById(R.id.banner_image)
-
-        Glide.with(mContext).load(bean?.uri).into(ivPicture)
-
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val imageView: ImageView = view.findViewById(R.id.iv_image)
     }
 
-    override fun getLayoutId(viewType: Int): Int {
-        return R.layout.layout_picture_gallery_item;
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.layout_picture_gallery_item, parent, false)
+        return ViewHolder(view)
     }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        Glide.with(mContext).load(images[position % images.size].uri).into(holder.imageView)
+    }
+
+    override fun getItemCount() = Int.MAX_VALUE  // 无限循环
 }

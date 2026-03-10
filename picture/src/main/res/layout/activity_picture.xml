@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.zhpan.bannerview.BannerViewPager
-        android:id="@+id/banner_view_pager"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager2"
         android:layout_width="500px"
         android:layout_height="500px"
         android:layout_gravity="center"/>
