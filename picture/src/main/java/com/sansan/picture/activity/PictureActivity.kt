@@ -26,6 +26,8 @@ class PictureActivity : AppCompatActivity() {
 
     private val viewModel: PictureViewModel by viewModels()
 
+    private lateinit var pictureGalleryAdapter: PictureGalleryAdapter
+
     private lateinit var scaleGestureDetector: ScaleGestureDetector
 
     private lateinit var pictureList: ArrayList<Picture>
@@ -56,6 +58,9 @@ class PictureActivity : AppCompatActivity() {
         pictureList = reorderList(pList, position)
 
         Glide.with(this).load(pictureList[0].uri).into(binding.ivPicture)
+
+
+        pictureGalleryAdapter = PictureGalleryAdapter(this, pictureList)
 
         scaleGestureDetector = ScaleGestureDetector(
             this,
@@ -103,6 +108,20 @@ class PictureActivity : AppCompatActivity() {
                 }
             })
 
+
+        pictureGalleryAdapter.setOnItemClickListener(object : PictureGalleryAdapter.OnItemClickListener {
+
+            override fun onItemClick(pictureList: List<Picture>, bean: Picture, position: Int) {
+
+                Log.e("wwww", "position: $position")
+
+            }
+
+        })
+
+
+
+
         binding.ivPicture.setOnTouchListener { _, event ->
             scaleGestureDetector.onTouchEvent(event)
             true
@@ -139,7 +158,7 @@ class PictureActivity : AppCompatActivity() {
 
     private fun showCarouselWithAnimation() {
         binding.carouselRecyclerview.apply {
-            adapter = PictureGalleryAdapter(this@PictureActivity, pictureList)
+            adapter = pictureGalleryAdapter
             set3DItem(false)
             setAlpha(true)
             setInfinite(true)
