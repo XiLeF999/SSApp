@@ -29,7 +29,7 @@ class PictureActivity : AppCompatActivity() {
     private lateinit var scaleGestureDetector: ScaleGestureDetector
 
     private lateinit var pictureList: ArrayList<Picture>
-    private lateinit var currentPicture: Picture
+//    private lateinit var currentPicture: Picture
     private var position: Int = 0
 
     private var currentScale = 1.0f
@@ -45,11 +45,17 @@ class PictureActivity : AppCompatActivity() {
         setFullScreen()
 
 
-        pictureList = intent.getSerializableExtra("picture_list") as ArrayList<Picture>
-        currentPicture = intent.getSerializableExtra("current_picture") as Picture
-        position = intent.getIntExtra("position", 0)
+        val pList = intent.getSerializableExtra("picture_list") as ArrayList<Picture>
+//        currentPicture = intent.getSerializableExtra("current_picture") as Picture
+        val pos = intent.getIntExtra("position", 0)
 
-        Glide.with(this).load(currentPicture.uri).into(binding.ivPicture)
+        // 确保 position 在有效范围内
+        position = pos.coerceIn(0, pList.size - 1)
+
+        //重新排序列表:让选择的图片始终在第一个
+        pictureList = reorderList(pList, position)
+
+        Glide.with(this).load(pictureList[0].uri).into(binding.ivPicture)
 
         scaleGestureDetector = ScaleGestureDetector(
             this,
@@ -172,4 +178,28 @@ class PictureActivity : AppCompatActivity() {
             })
             .start()
     }
+
+
+
+    /**
+     * 重新排序列表
+     * 例如: [A,B,C,D,E], position=2 → [C,D,E,A,B]
+     */
+    private fun reorderList(originalList: List<Picture>, position: Int): ArrayList<Picture> {
+        val newList = ArrayList<Picture>()
+
+        // 从position开始到末尾
+        for (i in position until originalList.size) {
+            newList.add(originalList[i])
+        }
+
+        // 从0到position-1
+        for (i in 0 until position) {
+            newList.add(originalList[i])
+        }
+
+        return newList
+    }
+
+
 }
