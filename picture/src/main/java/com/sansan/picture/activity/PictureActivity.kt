@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.sansan.picture.adapter.PictureGalleryAdapter
 import com.sansan.picture.databinding.ActivityPictureBinding
 import com.sansan.picture.model.Picture
 import com.sansan.picture.utils.setFullScreen
@@ -30,6 +31,18 @@ class PictureActivity : AppCompatActivity() {
 
         Log.e("wwww", "pictureList: $pictureList")
         Log.e("wwww", "currentPicture: $currentPicture")
+
+        var pictureGalleryAdapter = PictureGalleryAdapter(this)
+
+        binding.bannerViewPager.apply {
+            setAdapter(pictureGalleryAdapter)
+            setLifecycleRegistry(lifecycle)
+            create()
+
+            refreshData(pictureList)
+        }
+
+
 
     }
 }
