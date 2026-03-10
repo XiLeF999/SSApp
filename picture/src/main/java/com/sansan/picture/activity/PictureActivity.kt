@@ -37,7 +37,7 @@ class PictureActivity : AppCompatActivity() {
 
         binding.carouselRecyclerview.apply {
             adapter = PictureGalleryAdapter(this@PictureActivity, pictureList)
-            set3DItem(true)
+            set3DItem(false)
             setAlpha(true)
             setInfinite(true)
         }
