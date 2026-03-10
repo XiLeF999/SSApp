@@ -32,7 +32,7 @@ class PictureActivity : AppCompatActivity() {
 
     private lateinit var pictureList: ArrayList<Picture>
 //    private lateinit var currentPicture: Picture
-    private var position: Int = 0
+    private var currentPosition: Int = 0
 
     private var currentScale = 1.0f
     private var isTransitioning = false
@@ -52,10 +52,10 @@ class PictureActivity : AppCompatActivity() {
         val pos = intent.getIntExtra("position", 0)
 
         // 确保 position 在有效范围内
-        position = pos.coerceIn(0, pList.size - 1)
+        currentPosition = pos.coerceIn(0, pList.size - 1)
 
         //重新排序列表:让选择的图片始终在第一个
-        pictureList = reorderList(pList, position)
+        pictureList = reorderList(pList, currentPosition)
 
         Glide.with(this).load(pictureList[0].uri).into(binding.ivPicture)
 
@@ -115,6 +115,12 @@ class PictureActivity : AppCompatActivity() {
 
                 Log.e("wwww", "position: $position")
 
+                binding.carouselRecyclerview.hide()
+                binding.ivPicture.show()
+
+                currentPosition = binding.carouselRecyclerview.getSelectedPosition()
+                Glide.with(this@PictureActivity).load(pictureList[currentPosition].uri).into(binding.ivPicture)
+
             }
 
         })
@@ -168,6 +174,7 @@ class PictureActivity : AppCompatActivity() {
             scaleY = 1.2f
             alpha = 0f
             show()
+
 
             animate()
                 .scaleX(1f)
