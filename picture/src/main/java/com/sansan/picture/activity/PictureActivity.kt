@@ -2,6 +2,7 @@ package com.sansan.picture.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.sansan.picture.adapter.PictureGalleryAdapter
@@ -38,6 +39,9 @@ class PictureActivity : AppCompatActivity() {
             setAdapter(pictureGalleryAdapter)
             setLifecycleRegistry(lifecycle)
             create()
+
+            setAutoPlay(false)
+            setIndicatorVisibility(View.GONE)
 
             refreshData(pictureList)
         }
