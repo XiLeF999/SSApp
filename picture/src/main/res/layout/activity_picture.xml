@@ -2,13 +2,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:background="@color/black">
 
     <com.jackandphantom.carouselrecyclerview.CarouselRecyclerview
         android:id="@+id/carouselRecyclerview"
-        android:layout_width="1500px"
-        android:layout_height="500px"
-        android:layout_gravity="center"
-        android:background="#00FFFF"/>
+        android:layout_width="1920px"
+        android:layout_height="720px"
+        android:layout_gravity="center" />
 
 </FrameLayout>
