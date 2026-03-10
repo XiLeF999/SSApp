@@ -41,6 +41,8 @@ class PictureActivity : AppCompatActivity() {
 
     private var transitionTriggered = false
 
+    private var currentScrollerState : Int = RecyclerView.SCROLL_STATE_IDLE   //是否在滚动
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPictureBinding.inflate(layoutInflater)
@@ -118,12 +120,17 @@ class PictureActivity : AppCompatActivity() {
 
                 Log.e("wwww", "position: $position")
 
-                binding.carouselRecyclerview.hide()
-                binding.ivPicture.show()
-                resetImageView()
+                if(currentScrollerState == RecyclerView.SCROLL_STATE_IDLE){
+                    binding.carouselRecyclerview.hide()
+                    binding.ivPicture.show()
+                    resetImageView()
 
-                currentPosition = binding.carouselRecyclerview.getSelectedPosition()
-                Glide.with(this@PictureActivity).load(pictureList[currentPosition].uri).into(binding.ivPicture)
+                    currentPosition = binding.carouselRecyclerview.getSelectedPosition()
+                    Glide.with(this@PictureActivity).load(pictureList[currentPosition].uri).into(binding.ivPicture)
+                }
+
+
+
 
             }
 
@@ -133,7 +140,10 @@ class PictureActivity : AppCompatActivity() {
         binding.carouselRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                when (newState) {
+
+                currentScrollerState = newState
+
+                    when (newState) {
                     RecyclerView.SCROLL_STATE_IDLE -> {
                         // 状态 0：滚动已停止（静止）
                         Log.e("wwww", "已停止滚动")
