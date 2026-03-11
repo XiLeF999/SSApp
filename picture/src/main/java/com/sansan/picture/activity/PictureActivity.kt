@@ -41,8 +41,6 @@ class PictureActivity : AppCompatActivity() {
 
     private var transitionTriggered = false
 
-    private var currentScrollerState : Int = RecyclerView.SCROLL_STATE_IDLE   //是否在滚动
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPictureBinding.inflate(layoutInflater)
@@ -120,14 +118,12 @@ class PictureActivity : AppCompatActivity() {
 
                 Log.e("wwww", "position: $position")
 
-                if(currentScrollerState == RecyclerView.SCROLL_STATE_IDLE){
-                    binding.carouselRecyclerview.hide()
-                    binding.ivPicture.show()
-                    resetImageView()
+                binding.carouselRecyclerview.hide()
+                binding.ivPicture.show()
+                resetImageView()
 
-                    currentPosition = binding.carouselRecyclerview.getSelectedPosition()
-                    Glide.with(this@PictureActivity).load(pictureList[currentPosition].uri).into(binding.ivPicture)
-                }
+                currentPosition = binding.carouselRecyclerview.getSelectedPosition()
+                Glide.with(this@PictureActivity).load(pictureList[currentPosition].uri).into(binding.ivPicture)
 
 
 
@@ -135,31 +131,6 @@ class PictureActivity : AppCompatActivity() {
             }
 
         })
-
-
-        binding.carouselRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-
-                currentScrollerState = newState
-
-                    when (newState) {
-                    RecyclerView.SCROLL_STATE_IDLE -> {
-                        // 状态 0：滚动已停止（静止）
-                        Log.e("wwww", "已停止滚动")
-                    }
-                    RecyclerView.SCROLL_STATE_DRAGGING -> {
-                        // 状态 1：用户手指正在拖拽（正在滚动）
-                        Log.e("wwww", "用户正在拖拽滚动")
-                    }
-                    RecyclerView.SCROLL_STATE_SETTLING -> {
-                        // 状态 2：惯性滚动或自动对齐（正在滚动）
-                        Log.e("wwww", "惯性滚动中")
-                    }
-                }
-            }
-        })
-
 
 
         binding.ivPicture.setOnTouchListener { _, event ->
