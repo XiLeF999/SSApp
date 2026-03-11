@@ -108,6 +108,8 @@ class PictureActivity : AppCompatActivity() {
 //                    } else if (currentScale < 1f) {
 //                        resetImageView()
 //                    }
+
+                    resetImageView()
                 }
             })
 
