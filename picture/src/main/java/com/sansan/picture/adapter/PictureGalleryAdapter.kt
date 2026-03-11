@@ -51,6 +51,10 @@ class PictureGalleryAdapter(private val mContext: Context) :
         this.onItemClickListener = listener
     }
 
+    fun clearOnItemClickListener() {
+        this.onItemClickListener = null
+    }
+
     interface OnItemClickListener {
         fun onItemClick(pictureList: List<Picture>, bean: Picture, position: Int)
     }

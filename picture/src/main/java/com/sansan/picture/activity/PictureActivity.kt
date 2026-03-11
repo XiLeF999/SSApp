@@ -114,28 +114,37 @@ class PictureActivity : AppCompatActivity() {
             })
 
 
-        pictureGalleryAdapter.setOnItemClickListener(object : PictureGalleryAdapter.OnItemClickListener {
-
-            override fun onItemClick(pictureList: List<Picture>, bean: Picture, position: Int) {
-
-                currentPosition = position
-
-                binding.carouselRecyclerview.hide()
-                binding.ivPicture.show()
-                resetImageView()
-
-                Glide.with(this@PictureActivity).load(pictureList[currentPosition].uri).into(binding.ivPicture)
-
-            }
-
-        })
-
 
         binding.ivPicture.setOnTouchListener { _, event ->
             scaleGestureDetector.onTouchEvent(event)
             true
         }
+
+
+
     }
+
+
+
+
+    private val galleryItemClickListener = object : PictureGalleryAdapter.OnItemClickListener {
+        override fun onItemClick(pictureList: List<Picture>, bean: Picture, position: Int) {
+            currentPosition = position
+
+            binding.carouselRecyclerview.hide()
+            pictureGalleryAdapter.clearOnItemClickListener()   //当carouselRecyclerview隐藏时，取消监听
+            binding.ivPicture.show()
+            resetImageView()
+
+            Glide.with(this@PictureActivity)
+                .load(pictureList[currentPosition].uri)
+                .into(binding.ivPicture)
+        }
+    }
+
+
+
+
 
     private fun startSmoothTransition() {
         isAutoTransitioning = true
@@ -179,6 +188,7 @@ class PictureActivity : AppCompatActivity() {
 
             pictureList = reorderList(pictureList, currentPosition)
             pictureGalleryAdapter.setData(pictureList)
+            pictureGalleryAdapter.setOnItemClickListener(galleryItemClickListener)  //当carouselRecyclerview显示时，注册监听
 
 
             animate()
