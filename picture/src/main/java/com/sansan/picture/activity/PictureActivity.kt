@@ -116,21 +116,13 @@ class PictureActivity : AppCompatActivity() {
 
             override fun onItemClick(pictureList: List<Picture>, bean: Picture, position: Int) {
 
-                currentPosition = binding.carouselRecyclerview.getSelectedPosition()
-
-                Log.e("wwww", "position: $position==$currentPosition")
+                currentPosition = position
 
                 binding.carouselRecyclerview.hide()
                 binding.ivPicture.show()
                 resetImageView()
 
                 Glide.with(this@PictureActivity).load(pictureList[currentPosition].uri).into(binding.ivPicture)
-
-
-
-
-
-
 
             }
 
