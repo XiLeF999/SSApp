@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -33,7 +34,8 @@ class PictureGalleryAdapter(private val mContext: Context) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Glide.with(mContext).load(pictureList[position].uri).into(holder.imageView)
 
-        holder.itemView.setOnClickListener {
+        //这里只能监听imageView的点击事件，因为每一个Item其实都是全屏的
+        holder.imageView.setOnClickListener {
             onItemClickListener?.onItemClick(pictureList, pictureList[position], position)
         }
 
