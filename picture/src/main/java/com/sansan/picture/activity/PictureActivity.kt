@@ -3,10 +3,9 @@ package com.sansan.picture.activity
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
-import android.view.ScaleGestureDetector
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.sansan.picture.adapter.PictureGalleryAdapter
 import com.sansan.picture.databinding.ActivityPictureBinding
@@ -15,7 +14,7 @@ import com.sansan.picture.utils.hide
 import com.sansan.picture.utils.setFullScreen
 import com.sansan.picture.utils.show
 import com.sansan.picture.viewmodel.PictureViewModel
-import kotlin.getValue
+
 
 class PictureActivity : AppCompatActivity() {
 
@@ -25,17 +24,9 @@ class PictureActivity : AppCompatActivity() {
 
     private lateinit var pictureGalleryAdapter: PictureGalleryAdapter
 
-    private lateinit var scaleGestureDetector: ScaleGestureDetector
-
     private lateinit var pictureList: ArrayList<Picture>
 //    private lateinit var currentPicture: Picture
     private var currentPosition: Int = 0
-
-    private var currentScale = 1.0f
-    private var isTransitioning = false
-    private var isAutoTransitioning = false  // 标记是否正在自动过渡
-
-    private var transitionTriggered = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,87 +52,35 @@ class PictureActivity : AppCompatActivity() {
         pictureGalleryAdapter.setData(pictureList)
         binding.carouselRecyclerview.adapter = pictureGalleryAdapter
 
-        scaleGestureDetector = ScaleGestureDetector(
-            this,
-            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-
-                override fun onScale(detector: ScaleGestureDetector): Boolean {
-                    if (isTransitioning || isAutoTransitioning) return false
-
-                    val scaleFactor = detector.scaleFactor
-
-                    if (scaleFactor < 1.0) {  // 只在缩小时处理
-                        currentScale *= scaleFactor
-
-                        // 限制最小缩放
-                        if (currentScale < 0.3f) currentScale = 0.3f
-
-                        // 应用缩放
-                        binding.ivPicture.scaleX = currentScale
-                        binding.ivPicture.scaleY = currentScale
-
-                        // 关键：在0.8以下时开始自动渐变
-                        if (currentScale <= 0.8f && !isAutoTransitioning && !transitionTriggered) {
-
-                            transitionTriggered = true   //标志只执行一次
-
-                            startSmoothTransition()
-                        } else {
-                            // 正常计算透明度
-                            binding.ivPicture.alpha = currentScale
-                        }
-
-                        return true
-                    }
-                    return false
-                }
-
-                override fun onScaleEnd(detector: ScaleGestureDetector) {
-                    transitionTriggered = false
-//                    if (isTransitioning || isAutoTransitioning) return
-//                    if (currentScale <= 0.8f) {
-//                        startSmoothTransition()
-//                    } else if (currentScale < 1f) {
-//                        resetImageView()
-//                    }
-
-                    resetImageView()
-                }
-            })
-
-
         pictureGalleryAdapter.setOnItemClickListener(galleryItemClickListener)
 
 
+        binding.ivPicture.apply {
+            setOnScaleChangeListener { scaleFactor, focusX, focusY ->
+                val currentScale = scale
+                Log.d("wwww", "当前缩放比例：$currentScale")
 
-        binding.ivPicture.setOnTouchListener { _, event ->
-            scaleGestureDetector.onTouchEvent(event)
-            true
-        }
+                if (currentScale <= 0.8f) {
 
+                    binding.ivPicture.hide()
+                    binding.carouselRecyclerview.apply {
+                        set3DItem(false)
+                        setAlpha(true)
+                        setInfinite(true)
+                        setIntervalRatio(0.352f)
 
-        binding.carouselRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                        show()
 
-            // 滚动状态变化
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                when (newState) {
-                    RecyclerView.SCROLL_STATE_IDLE -> {       // 0: 静止
-                        // 滚动停止，可恢复图片加载
-                        binding.flPicture.setPictureCanTouch(true)
+                        pictureList = reorderList(pictureList, currentPosition)
+                        pictureGalleryAdapter.setData(pictureList)
+
                     }
-                    RecyclerView.SCROLL_STATE_DRAGGING -> {  // 1: 拖拽中
-                        // 用户手指拖拽，可暂停图片加载
-                    }
-                    RecyclerView.SCROLL_STATE_SETTLING -> {  // 2: 惯性滚动
-                        // 手指离开后的惯性滚动
-                    }
+
+
                 }
+
             }
-
-        })
-
-
+        }
 
     }
 
@@ -153,94 +92,16 @@ class PictureActivity : AppCompatActivity() {
 
             binding.carouselRecyclerview.hide()
             binding.ivPicture.show()
-            resetImageView()
 
             Glide.with(this@PictureActivity)
                 .load(pictureList[currentPosition].uri)
                 .into(binding.ivPicture)
 
-
-            binding.flPicture.setPictureCanTouch(true)
-
         }
     }
 
 
 
-
-
-    private fun startSmoothTransition() {
-        isAutoTransitioning = true
-
-        // 计算剩余要缩小的比例
-        val remainingScale = currentScale / 0.8f
-        val duration = (300 * (1 - remainingScale)).toLong()
-
-        // 平滑缩小到0
-        binding.ivPicture.animate()
-            .scaleX(0f)
-            .scaleY(0f)
-            .alpha(0f)
-            .setDuration(duration)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    binding.ivPicture.hide()
-                    binding.ivPicture.scaleX = 1f
-                    binding.ivPicture.scaleY = 1f
-                    binding.ivPicture.alpha = 1f
-                    isAutoTransitioning = false
-                    isTransitioning = true
-
-                    showCarouselWithAnimation()
-                }
-            })
-            .start()
-    }
-
-    private fun showCarouselWithAnimation() {
-        binding.carouselRecyclerview.apply {
-            set3DItem(false)
-            setAlpha(true)
-            setInfinite(true)
-            setIntervalRatio(0.352f)
-
-            scaleX = 1.2f
-            scaleY = 1.2f
-            alpha = 0f
-            show()
-
-            pictureList = reorderList(pictureList, currentPosition)
-            pictureGalleryAdapter.setData(pictureList)
-
-
-            animate()
-                .scaleX(1f)
-                .scaleY(1f)
-                .alpha(1f)
-                .setDuration(300)
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        isTransitioning = false
-                        currentScale = 1.0f
-                    }
-                })
-                .start()
-        }
-    }
-
-    private fun resetImageView() {
-        binding.ivPicture.animate()
-            .scaleX(1f)
-            .scaleY(1f)
-            .alpha(1f)
-            .setDuration(300)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    currentScale = 1.0f
-                }
-            })
-            .start()
-    }
 
 
 
