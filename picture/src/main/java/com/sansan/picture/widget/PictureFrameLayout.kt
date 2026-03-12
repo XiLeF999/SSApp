@@ -41,7 +41,7 @@ class PictureFrameLayout @JvmOverloads constructor(
             MotionEvent.ACTION_UP -> {
 
                 pictureScope.launch {
-                    delay(100L)
+                    delay(50L)
                     canTouch = true
                 }
 
