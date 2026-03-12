@@ -101,8 +101,8 @@ class PictureActivity : AppCompatActivity() {
                     binding.ivPicture.hide()
                     binding.carouselRecyclerview.show()
 
-                    pictureList = reorderList(pictureList, currentPosition)
-                    pictureGalleryAdapter.setData(pictureList)
+//                    pictureList = reorderList(pictureList, currentPosition)
+//                    pictureGalleryAdapter.setData(pictureList)
 
                 }
 
