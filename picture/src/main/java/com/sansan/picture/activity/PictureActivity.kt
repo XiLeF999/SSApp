@@ -28,6 +28,8 @@ class PictureActivity : AppCompatActivity() {
 //    private lateinit var currentPicture: Picture
     private var currentPosition: Int = 0
 
+    private var isGalleryShow = false   //是否显示画廊，用于只执行一次
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPictureBinding.inflate(layoutInflater)
@@ -54,28 +56,29 @@ class PictureActivity : AppCompatActivity() {
 
         pictureGalleryAdapter.setOnItemClickListener(galleryItemClickListener)
 
+        binding.carouselRecyclerview.apply {
+            set3DItem(false)
+            setAlpha(true)
+            setInfinite(true)
+            setIntervalRatio(0.352f)
+        }
+
 
         binding.ivPicture.apply {
             setOnScaleChangeListener { scaleFactor, focusX, focusY ->
                 val currentScale = scale
-                Log.d("wwww", "当前缩放比例：$currentScale")
 
-                if (currentScale <= 0.8f) {
+                if (currentScale < 0.8f && !isGalleryShow) {
+
+                    Log.d("wwww", "当前缩放比例：$currentScale")
+
+                    isGalleryShow = true
 
                     binding.ivPicture.hide()
-                    binding.carouselRecyclerview.apply {
-                        set3DItem(false)
-                        setAlpha(true)
-                        setInfinite(true)
-                        setIntervalRatio(0.352f)
+                    binding.carouselRecyclerview.show()
 
-                        show()
-
-                        pictureList = reorderList(pictureList, currentPosition)
-                        pictureGalleryAdapter.setData(pictureList)
-
-                    }
-
+                    pictureList = reorderList(pictureList, currentPosition)
+                    pictureGalleryAdapter.setData(pictureList)
 
                 }
 
@@ -92,6 +95,7 @@ class PictureActivity : AppCompatActivity() {
 
             binding.carouselRecyclerview.hide()
             binding.ivPicture.show()
+            isGalleryShow = false
 
             Glide.with(this@PictureActivity)
                 .load(pictureList[currentPosition].uri)
