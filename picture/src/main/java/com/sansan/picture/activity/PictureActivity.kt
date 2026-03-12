@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import androidx.activity.viewModels
@@ -18,12 +19,15 @@ import com.sansan.picture.utils.hide
 import com.sansan.picture.utils.setFullScreen
 import com.sansan.picture.utils.show
 import com.sansan.picture.viewmodel.PictureViewModel
+import com.sansan.picture.widget.MotionEventSanitizer
 import com.sansan.picture.widget.PictureGalleryTransformer
 import kotlin.getValue
 
 class PictureActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPictureBinding
+
+    private var xxx: MotionEventSanitizer = MotionEventSanitizer()
 
     private val viewModel: PictureViewModel by viewModels()
 
@@ -129,6 +133,42 @@ class PictureActivity : AppCompatActivity() {
 
 
 
+//    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+//        val action = ev.actionMasked
+//        val actionIndex = ev.actionIndex // 触发当前ACTION的指针在事件中的索引
+//
+//        val c = ev.pointerCount
+//
+//        when (action) {
+//            MotionEvent.ACTION_DOWN -> {
+//                val pointerId = ev.getPointerId(actionIndex)
+//                Log.e("wwww", "ACTION_DOWN - $pointerId,$c")
+//            }
+//            MotionEvent.ACTION_POINTER_DOWN -> {
+//                val pointerId = ev.getPointerId(actionIndex)
+//                Log.e("wwww", "ACTION_POINTER_DOWN - $pointerId,$c")
+//            }
+//            MotionEvent.ACTION_POINTER_UP -> {
+//                val pointerId = ev.getPointerId(actionIndex)
+//                Log.e("wwww", "ACTION_POINTER_UP - $pointerId,$c")
+//            }
+//            MotionEvent.ACTION_UP -> {
+//                val pointerId = ev.getPointerId(actionIndex)
+//                Log.e("wwww", "ACTION_UP - $pointerId,$c")
+//
+//            }
+//            MotionEvent.ACTION_CANCEL -> {
+//            }
+//
+//        }
+//
+//
+//
+//        return super.dispatchTouchEvent(xxx.sanitize( ev))
+//    }
+
+
+
 
     private val galleryItemClickListener = object : PictureGalleryAdapter.OnItemClickListener {
         override fun onItemClick(pictureList: List<Picture>, bean: Picture, position: Int) {
@@ -141,6 +181,10 @@ class PictureActivity : AppCompatActivity() {
             Glide.with(this@PictureActivity)
                 .load(pictureList[currentPosition].uri)
                 .into(binding.ivPicture)
+
+
+            binding.flPicture.setPictureCanTouch(true)
+
         }
     }
 
