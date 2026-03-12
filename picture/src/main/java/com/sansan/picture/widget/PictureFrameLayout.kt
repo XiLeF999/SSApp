@@ -10,13 +10,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class CustomFrameLayout @JvmOverloads constructor(
+class PictureFrameLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    val myScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    val pictureScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     var canTouch = true   //这个标志，用于处理触摸冲突
 
@@ -40,7 +40,7 @@ class CustomFrameLayout @JvmOverloads constructor(
             }
             MotionEvent.ACTION_UP -> {
 
-                myScope.launch {
+                pictureScope.launch {
                     delay(100L)
                     canTouch = true
                 }
