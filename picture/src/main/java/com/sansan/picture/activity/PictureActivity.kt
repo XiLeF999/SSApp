@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.sansan.picture.adapter.PictureGalleryAdapter
 import com.sansan.picture.databinding.ActivityPictureBinding
@@ -61,7 +62,30 @@ class PictureActivity : AppCompatActivity() {
             setAlpha(true)
             setInfinite(true)
             setIntervalRatio(0.352f)
+
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+                // 滚动状态变化
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    when (newState) {
+                        RecyclerView.SCROLL_STATE_IDLE -> {       // 0: 静止
+                            // 滚动停止，可恢复图片加载
+                            binding.flPicture.setPictureCanTouch(true)
+                        }
+                        RecyclerView.SCROLL_STATE_DRAGGING -> {  // 1: 拖拽中
+                            // 用户手指拖拽，可暂停图片加载
+                        }
+                        RecyclerView.SCROLL_STATE_SETTLING -> {  // 2: 惯性滚动
+                            // 手指离开后的惯性滚动
+                        }
+                    }
+                }
+
+            })
+
         }
+
 
 
         binding.ivPicture.apply {
@@ -100,6 +124,8 @@ class PictureActivity : AppCompatActivity() {
             Glide.with(this@PictureActivity)
                 .load(pictureList[currentPosition].uri)
                 .into(binding.ivPicture)
+
+            binding.flPicture.setPictureCanTouch(true)
 
         }
     }
