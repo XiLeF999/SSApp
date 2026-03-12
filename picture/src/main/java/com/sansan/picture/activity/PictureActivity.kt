@@ -122,6 +122,10 @@ class PictureActivity : AppCompatActivity() {
 
         }
 
+        binding.ivClose.setOnClickListener {
+            finish()
+        }
+
 
     }
 
