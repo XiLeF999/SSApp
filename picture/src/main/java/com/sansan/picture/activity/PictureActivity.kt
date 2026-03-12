@@ -1,9 +1,8 @@
 package com.sansan.picture.activity
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +14,7 @@ import com.sansan.picture.utils.hide
 import com.sansan.picture.utils.setFullScreen
 import com.sansan.picture.utils.show
 import com.sansan.picture.viewmodel.PictureViewModel
+import androidx.core.view.isVisible
 
 
 class PictureActivity : AppCompatActivity() {
@@ -99,6 +99,7 @@ class PictureActivity : AppCompatActivity() {
                     isGalleryShow = true
 
                     binding.ivPicture.hide()
+                    binding.flPictureInfo.hide()
                     binding.carouselRecyclerview.show()
 
 //                    pictureList = reorderList(pictureList, currentPosition)
@@ -108,6 +109,19 @@ class PictureActivity : AppCompatActivity() {
 
             }
         }
+
+
+        binding.ivPicture.setOnClickListener {
+
+            if(binding.flPictureInfo.isVisible){
+                binding.flPictureInfo.hide()
+            } else {
+                binding.flPictureInfo.show()
+            }
+
+
+        }
+
 
     }
 
