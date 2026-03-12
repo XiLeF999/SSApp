@@ -41,7 +41,7 @@ class PictureFrameLayout @JvmOverloads constructor(
             MotionEvent.ACTION_UP -> {
 
                 pictureScope.launch {
-                    delay(50L)
+                    delay(30L)    //这个延迟是为了在双指抬起一个手指时，会马上执行一次ACTION_DOWN，导致误执行一次点击事件，给个延迟不误执行
                     canTouch = true
                 }
 
