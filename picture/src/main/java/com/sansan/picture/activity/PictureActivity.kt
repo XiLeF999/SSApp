@@ -92,7 +92,7 @@ class PictureActivity : AppCompatActivity() {
             setOnScaleChangeListener { scaleFactor, focusX, focusY ->
                 val currentScale = scale
 
-                if (currentScale < 0.8f && !isGalleryShow) {
+                if (currentScale < 0.7f && !isGalleryShow) {
 
                     Log.d("wwww", "当前缩放比例：$currentScale")
 
