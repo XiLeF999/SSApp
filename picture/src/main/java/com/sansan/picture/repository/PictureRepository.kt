@@ -2,6 +2,7 @@ package com.sansan.picture.repository
 
 import android.content.ContentResolver
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.provider.MediaStore
 import com.sansan.picture.model.Picture
 import com.sansan.picture.model.PictureFolder
@@ -137,8 +138,14 @@ class PictureRepository(private val context: Context) {
                 val relativePath = it.getString(relativePathColumn) ?: ""
                 val size = it.getLong(sizeColumn)
                 val dateTaken = it.getLong(dateColumn)
-                val width = it.getInt(widthColumn)
-                val height = it.getInt(heightColumn)
+                var width = it.getInt(widthColumn)
+                if(width <= 0){
+                    width = getImageWidth(path)
+                }
+                var height = it.getInt(heightColumn)
+                if(height <= 0){
+                    height = getImageHeight(path)
+                }
                 val mimeType = it.getString(mimeColumn) ?: "image/*"
 
                 val detectedType = detectStorageType(path)
@@ -165,6 +172,43 @@ class PictureRepository(private val context: Context) {
 
         return@withContext pictures
     }
+
+
+
+    /**
+     * 获取图片宽
+     */
+    fun getImageWidth(filePath: String): Int {
+        return try {
+            val options = BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
+            BitmapFactory.decodeFile(filePath, options)
+            options.outWidth
+        } catch (e: Exception) {
+            0
+        }
+    }
+
+
+    /**
+     * 获取图片高
+     */
+    fun getImageHeight(filePath: String): Int {
+        return try {
+            val options = BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
+            BitmapFactory.decodeFile(filePath, options)
+            options.outHeight
+        } catch (e: Exception) {
+            0
+        }
+    }
+
+
+
+
 
     // 获取指定存储类型的所有文件夹
     suspend fun getImageFoldersByType(storageType: StorageType): List<PictureFolder> {

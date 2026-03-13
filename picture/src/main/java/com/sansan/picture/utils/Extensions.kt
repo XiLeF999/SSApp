@@ -80,8 +80,10 @@ fun Long.toChineseTime(): String {
 fun Long.toKB2Decimal(): String = "%.2f".format(this / 1024.0) + " KB"
 
 
-
-fun String.wrapEvery(maxLength: Int = 15): String {
+/**
+ * 超过15个字符换行
+ */
+fun String.wrapEvery(maxLength: Int = 25): String {
     if (maxLength <= 0) return this
     val result = StringBuilder()
     for ((index, char) in this.withIndex()) {
@@ -91,6 +93,22 @@ fun String.wrapEvery(maxLength: Int = 15): String {
         result.append(char)
     }
     return result.toString()
+}
+
+
+/**
+ * 超过15个字符中间省略号
+ */
+fun String.truncateMiddle(maxLength: Int = 25, ellipsis: String = "..."): String {
+    if (this.length <= maxLength) return this
+
+    val prefixLength = (maxLength - ellipsis.length) / 2
+    val suffixLength = maxLength - ellipsis.length - prefixLength
+
+    val prefix = this.take(prefixLength)
+    val suffix = this.takeLast(suffixLength)
+
+    return "$prefix$ellipsis$suffix"
 }
 
 
