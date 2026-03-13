@@ -8,6 +8,12 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.util.Date
+import java.util.Locale
 import kotlin.math.roundToInt
 
 /**  扩展函数  */
@@ -41,6 +47,32 @@ fun Float.roundToOneDecimal(): Float = (this * 10).roundToInt() / 10f
  * 一位数在前面加0
  */
 fun Int.toTwoDigits(): String = if (this < 10) "0$this" else toString()
+
+/**
+ * 将时间戳（毫秒）转换为中文日期字符串
+ */
+fun Long.toChineseDate(): String {
+    val sdf = SimpleDateFormat("yyyy年M月d日", Locale.getDefault())
+    val date = Date(this)
+    return sdf.format(date)
+}
+
+/**
+ * 将毫秒时间戳转换为“下午13:51”格式
+ */
+fun Long.toChineseTime(): String {
+    val instant = Instant.ofEpochMilli(this)
+    val zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault())
+
+    val hour = zonedDateTime.hour
+    val minute = zonedDateTime.minute
+
+    val amPm = if (hour < 12) "上午" else "下午"
+    val hourStr = String.format("%02d", hour)
+    val minuteStr = String.format("%02d", minute)
+
+    return "$amPm${hourStr}:${minuteStr}"
+}
 
 
 /**

@@ -15,6 +15,8 @@ import com.sansan.picture.utils.setFullScreen
 import com.sansan.picture.utils.show
 import com.sansan.picture.viewmodel.PictureViewModel
 import androidx.core.view.isVisible
+import com.sansan.picture.utils.toChineseDate
+import com.sansan.picture.utils.toChineseTime
 
 
 class PictureActivity : AppCompatActivity() {
@@ -117,6 +119,10 @@ class PictureActivity : AppCompatActivity() {
                 binding.flPictureInfo.hide()
             } else {
                 binding.flPictureInfo.show()
+
+                binding.tvPictureDate.text = pictureList[currentPosition].dateAdded.toChineseDate()
+                binding.tvPictureTime.text = pictureList[currentPosition].dateAdded.toChineseTime()
+
             }
 
 
@@ -125,6 +131,7 @@ class PictureActivity : AppCompatActivity() {
         binding.ivClose.setOnClickListener {
             finish()
         }
+
 
 
     }
