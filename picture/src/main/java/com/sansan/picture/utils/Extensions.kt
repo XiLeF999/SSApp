@@ -81,6 +81,20 @@ fun Long.toKB2Decimal(): String = "%.2f".format(this / 1024.0) + " KB"
 
 
 
+fun String.wrapEvery(maxLength: Int = 15): String {
+    if (maxLength <= 0) return this
+    val result = StringBuilder()
+    for ((index, char) in this.withIndex()) {
+        if (index > 0 && index % maxLength == 0) {
+            result.append('\n')
+        }
+        result.append(char)
+    }
+    return result.toString()
+}
+
+
+
 /**
  * 设置状态栏沉浸式透明
  */

@@ -18,6 +18,7 @@ import androidx.core.view.isVisible
 import com.sansan.picture.utils.toChineseDate
 import com.sansan.picture.utils.toChineseTime
 import com.sansan.picture.utils.toKB2Decimal
+import com.sansan.picture.utils.wrapEvery
 
 
 class PictureActivity : AppCompatActivity() {
@@ -126,7 +127,7 @@ class PictureActivity : AppCompatActivity() {
                 binding.tvPictureName.text = pictureList[currentPosition].name
                 binding.tvPictureResolution.text = pictureList[currentPosition].width.toString() + "*" + pictureList[currentPosition].height.toString()
                 binding.tvPictureSize.text = pictureList[currentPosition].size.toKB2Decimal()
-                binding.tvPicturePath.text = "路径:" + pictureList[currentPosition].relativePath
+                binding.tvPicturePath.text = "路径:" + pictureList[currentPosition].path.wrapEvery()
 
             }
 
