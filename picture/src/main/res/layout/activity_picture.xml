@@ -45,6 +45,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/shape_picture_info_bg"
+            android:layout_marginTop="100px"
+            android:layout_marginLeft="45px"
             android:paddingTop="24px"
             android:paddingBottom="24px"
             android:paddingLeft="16px"
@@ -66,7 +68,37 @@
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 
+            <TextView
+                android:id="@+id/tv_picture_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
+            <TextView
+                android:id="@+id/tv_picture_resolution"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_picture_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_picture_path"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
 
         </LinearLayout>

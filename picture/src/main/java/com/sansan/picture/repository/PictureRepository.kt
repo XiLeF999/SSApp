@@ -27,12 +27,12 @@ class PictureRepository(private val context: Context) {
         val projection = arrayOf(
             MediaStore.Images.Media._ID,
             MediaStore.Images.Media.DATA,
-            MediaStore.Images.Media.DATE_ADDED,
+            MediaStore.Images.Media.DATE_TAKEN,
             MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
             MediaStore.Images.Media.BUCKET_ID
         )
 
-        val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
+        val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
 
         val cursor = contentResolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -100,7 +100,7 @@ class PictureRepository(private val context: Context) {
             MediaStore.Images.Media.DATA,
             MediaStore.Images.Media.RELATIVE_PATH,
             MediaStore.Images.Media.SIZE,
-            MediaStore.Images.Media.DATE_ADDED,
+            MediaStore.Images.Media.DATE_TAKEN,
             MediaStore.Images.Media.WIDTH,
             MediaStore.Images.Media.HEIGHT,
             MediaStore.Images.Media.MIME_TYPE,
@@ -109,7 +109,7 @@ class PictureRepository(private val context: Context) {
 
         val selection = "${MediaStore.Images.Media.BUCKET_ID} = ?"
         val selectionArgs = arrayOf(folderId)
-        val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
+        val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
 
         val cursor = contentResolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -125,7 +125,7 @@ class PictureRepository(private val context: Context) {
             val pathColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
             val relativePathColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.RELATIVE_PATH)
             val sizeColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
-            val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+            val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
             val widthColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)
             val heightColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)
             val mimeColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
@@ -136,7 +136,7 @@ class PictureRepository(private val context: Context) {
                 val path = it.getString(pathColumn) ?: ""
                 val relativePath = it.getString(relativePathColumn) ?: ""
                 val size = it.getLong(sizeColumn)
-                val dateAdded = it.getLong(dateColumn)
+                val dateTaken = it.getLong(dateColumn)
                 val width = it.getInt(widthColumn)
                 val height = it.getInt(heightColumn)
                 val mimeType = it.getString(mimeColumn) ?: "image/*"
@@ -153,7 +153,7 @@ class PictureRepository(private val context: Context) {
                         relativePath = relativePath,
                         uri = uri,
                         size = size,
-                        dateAdded = dateAdded,
+                        dateTaken = dateTaken,
                         width = width,
                         height = height,
                         mimeType = mimeType,
@@ -204,13 +204,13 @@ class PictureRepository(private val context: Context) {
             MediaStore.Images.Media.DATA,
             MediaStore.Images.Media.RELATIVE_PATH,
             MediaStore.Images.Media.SIZE,
-            MediaStore.Images.Media.DATE_ADDED,
+            MediaStore.Images.Media.DATE_TAKEN,
             MediaStore.Images.Media.WIDTH,
             MediaStore.Images.Media.HEIGHT,
             MediaStore.Images.Media.MIME_TYPE
         )
 
-        val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
+        val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
 
         val cursor = contentResolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -226,7 +226,7 @@ class PictureRepository(private val context: Context) {
             val pathColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
             val relativePathColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.RELATIVE_PATH)
             val sizeColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
-            val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+            val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
             val widthColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)
             val heightColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)
             val mimeColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
@@ -237,7 +237,7 @@ class PictureRepository(private val context: Context) {
                 val path = it.getString(pathColumn) ?: ""
                 val relativePath = it.getString(relativePathColumn) ?: ""
                 val size = it.getLong(sizeColumn)
-                val dateAdded = it.getLong(dateColumn)
+                val dateTaken = it.getLong(dateColumn)
                 val width = it.getInt(widthColumn)
                 val height = it.getInt(heightColumn)
                 val mimeType = it.getString(mimeColumn) ?: "image/*"
@@ -255,7 +255,7 @@ class PictureRepository(private val context: Context) {
                             relativePath = relativePath,
                             uri = uri,
                             size = size,
-                            dateAdded = dateAdded,
+                            dateTaken = dateTaken,
                             width = width,
                             height = height,
                             mimeType = mimeType,

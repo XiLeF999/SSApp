@@ -17,6 +17,7 @@ import com.sansan.picture.viewmodel.PictureViewModel
 import androidx.core.view.isVisible
 import com.sansan.picture.utils.toChineseDate
 import com.sansan.picture.utils.toChineseTime
+import com.sansan.picture.utils.toKB2Decimal
 
 
 class PictureActivity : AppCompatActivity() {
@@ -120,8 +121,12 @@ class PictureActivity : AppCompatActivity() {
             } else {
                 binding.flPictureInfo.show()
 
-                binding.tvPictureDate.text = pictureList[currentPosition].dateAdded.toChineseDate()
-                binding.tvPictureTime.text = pictureList[currentPosition].dateAdded.toChineseTime()
+                binding.tvPictureDate.text = pictureList[currentPosition].dateTaken.toChineseDate()
+                binding.tvPictureTime.text = pictureList[currentPosition].dateTaken.toChineseTime()
+                binding.tvPictureName.text = pictureList[currentPosition].name
+                binding.tvPictureResolution.text = pictureList[currentPosition].width.toString() + "*" + pictureList[currentPosition].height.toString()
+                binding.tvPictureSize.text = pictureList[currentPosition].size.toKB2Decimal()
+                binding.tvPicturePath.text = "路径:" + pictureList[currentPosition].relativePath
 
             }
 

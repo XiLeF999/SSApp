@@ -10,7 +10,7 @@ data class Picture(
     val relativePath: String = "",
     val uri: String,
     val size: Long,
-    val dateAdded: Long,
+    val dateTaken: Long,  //照片的拍摄时间（Unix 时间戳，毫秒）
     val width: Int,
     val height: Int,
     val mimeType: String,

@@ -74,6 +74,12 @@ fun Long.toChineseTime(): String {
     return "$amPm${hourStr}:${minuteStr}"
 }
 
+/**
+ * 图片Long型Size转两位小数KB
+ */
+fun Long.toKB2Decimal(): String = "%.2f".format(this / 1024.0) + " KB"
+
+
 
 /**
  * 设置状态栏沉浸式透明
