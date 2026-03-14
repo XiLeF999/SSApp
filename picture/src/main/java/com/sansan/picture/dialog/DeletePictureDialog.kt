@@ -6,21 +6,36 @@ import android.os.Bundle
 import android.view.View
 import com.sansan.picture.R
 
-class DeletePictureDialog(context: Context) : Dialog(context, R.style.DeletePictureDialogStyle), View.OnClickListener {
+class DeletePictureDialog(context: Context) : Dialog(context, R.style.DeletePictureDialogStyle) {
 
-    private lateinit var ivClose: View
+    private var onPictureDialogClickListener: OnPictureDialogClickListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_delete_picture_dialog)
 
-//        ivClose = findViewById(R.id.iv_close)
-//        ivClose.setOnClickListener(this)
+        findViewById<View>(R.id.tv_cancel).setOnClickListener { dismiss() }
+
+        findViewById<View>(R.id.tv_sure).setOnClickListener {
+
+            onPictureDialogClickListener?.onSure()
+
+        }
+
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.iv_close -> dismiss()
-        }
+
+
+
+    fun setOnPictureDialogClickListener(listener: OnPictureDialogClickListener) {
+        this.onPictureDialogClickListener = listener
     }
+
+    interface OnPictureDialogClickListener {
+        fun onSure()
+    }
+
+
+
+
 }
