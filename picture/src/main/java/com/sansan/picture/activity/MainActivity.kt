@@ -3,6 +3,7 @@ package com.sansan.picture.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -160,6 +161,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.show()
                 rvPicture.hide()
+                tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
@@ -176,6 +178,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.show()
                 rvPicture.hide()
+                tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
@@ -191,6 +194,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.show()
                 rvPicture.hide()
+                tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
@@ -206,6 +210,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.show()
                 rvPicture.hide()
+                tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
@@ -216,7 +221,7 @@ class MainActivity : AppCompatActivity() {
 
                 tvManager.hide()
                 llManager.show()
-
+                tvSelectNum.show()
                 pictureAdapter.setManager(true)
 
 
@@ -228,7 +233,12 @@ class MainActivity : AppCompatActivity() {
 
             tvDelete.setOnClickListener {
 
-                deletePictureDialog.show()
+                val selectCount = pictureAdapter.getSelectCount()
+                if (selectCount <= 0){
+                    Toast.makeText(this@MainActivity, "请选择图片", Toast.LENGTH_SHORT).show()
+                } else {
+                    deletePictureDialog.show()
+                }
 
             }
 
