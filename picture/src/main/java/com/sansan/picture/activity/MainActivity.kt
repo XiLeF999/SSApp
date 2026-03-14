@@ -103,6 +103,14 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        pictureAdapter.setOnSelectItemListener(object : PictureAdapter.OnSelectItemListener {
+            override fun onSelectNum(num: Int) {
+
+                binding.tvSelectNum.text = "已选中($num)"
+
+            }
+        })
+
 
 
         lifecycleScope.launch {
@@ -223,6 +231,7 @@ class MainActivity : AppCompatActivity() {
             tvCancel.setOnClickListener {
                 tvManager.show()
                 llManager.hide()
+                binding.tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
             }
 

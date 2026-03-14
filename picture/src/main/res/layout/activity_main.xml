@@ -22,6 +22,16 @@
             android:text="图片" />
 
         <TextView
+            android:id="@+id/tv_select_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="430px"
+            android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+            android:textColor="@color/color_8593A2"
+            android:textSize="12sp" />
+
+        <TextView
             android:id="@+id/tv_manager"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

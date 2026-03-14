@@ -22,6 +22,7 @@ class PictureAdapter(
     private var pictureList: List<Picture> = emptyList()
     private var isManager: Boolean = false
     private var onItemClickListener: OnItemClickListener? = null
+    private var onSelectItemListener: OnSelectItemListener? = null
 
     fun setData(list: List<Picture>) {
         pictureList = list
@@ -33,6 +34,8 @@ class PictureAdapter(
         isManager = manager
 
         notifyDataSetChanged()
+
+        onSelectItemListener?.onSelectNum(getSelectCount())
     }
 
     fun setAllSelect() {
@@ -41,6 +44,8 @@ class PictureAdapter(
         }
 
         notifyDataSetChanged()
+
+        onSelectItemListener?.onSelectNum(getSelectCount())
     }
 
     fun setCancelManager() {
@@ -51,6 +56,8 @@ class PictureAdapter(
         isManager = false
 
         notifyDataSetChanged()
+
+        onSelectItemListener?.onSelectNum(getSelectCount())
     }
 
 
@@ -77,6 +84,9 @@ class PictureAdapter(
                 bean.isSelect = !bean.isSelect
 
                 notifyItemChanged(position)
+
+                onSelectItemListener?.onSelectNum(getSelectCount())
+
             }
 
             if (bean.isSelect){
@@ -102,6 +112,11 @@ class PictureAdapter(
     fun getList(): List<Picture> = pictureList
 
 
+    fun getSelectCount(): Int {
+        return pictureList.count { it.isSelect }
+    }
+
+
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivPicture: ImageView = itemView.findViewById(R.id.iv_picture)
         val ivSelect: ImageView = itemView.findViewById(R.id.iv_select)
@@ -113,6 +128,14 @@ class PictureAdapter(
 
     interface OnItemClickListener {
         fun onItemClick(pictureList: List<Picture>, bean: Picture, position: Int)
+    }
+
+    fun setOnSelectItemListener(listener: OnSelectItemListener) {
+        this.onSelectItemListener = listener
+    }
+
+    interface OnSelectItemListener {
+        fun onSelectNum(num: Int)
     }
 
 
