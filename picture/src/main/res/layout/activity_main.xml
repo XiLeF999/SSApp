@@ -22,6 +22,7 @@
             android:text="图片" />
 
         <TextView
+            android:id="@+id/tv_manager"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
@@ -36,6 +37,62 @@
             android:textSize="20sp"
             android:background="@drawable/shape_manager_bg"
             android:text="管理" />
+
+        <LinearLayout
+            android:id="@+id/ll_manager"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginRight="80px"
+            android:visibility="gone" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="30px"
+                android:paddingRight="30px"
+                android:paddingTop="5px"
+                android:paddingBottom="5px"
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:textColor="@color/color_8593A2"
+                android:textSize="20sp"
+                android:background="@drawable/shape_manager_bg"
+                android:text="全选" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginLeft="10px"
+                android:paddingLeft="30px"
+                android:paddingRight="30px"
+                android:paddingTop="5px"
+                android:paddingBottom="5px"
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:textColor="@color/color_8593A2"
+                android:textSize="20sp"
+                android:background="@drawable/shape_manager_bg"
+                android:text="删除" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginLeft="10px"
+                android:paddingLeft="30px"
+                android:paddingRight="30px"
+                android:paddingTop="5px"
+                android:paddingBottom="5px"
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:textColor="@color/color_8593A2"
+                android:textSize="20sp"
+                android:background="@drawable/shape_manager_bg"
+                android:text="取消" />
+
+        </LinearLayout>
+
 
     </FrameLayout>
 

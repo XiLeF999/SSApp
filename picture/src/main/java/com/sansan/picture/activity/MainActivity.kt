@@ -179,6 +179,14 @@ class MainActivity : AppCompatActivity() {
                 viewModel.getPictureFolderList(StorageType.INTERNAL)
             }
 
+            tvManager.setOnClickListener {
+
+                tvManager.hide()
+                llManager.show()
+
+
+            }
+
         }
 
 
