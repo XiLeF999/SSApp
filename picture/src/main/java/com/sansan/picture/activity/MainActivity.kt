@@ -119,7 +119,8 @@ class MainActivity : AppCompatActivity() {
         deletePictureDialog.setOnPictureDialogClickListener(object : DeletePictureDialog.OnPictureDialogClickListener {
             override fun onSure() {
 
-
+                val selectedPictures = pictureAdapter.getList().filter { it.isSelect }
+                viewModel.deletePictures(selectedPictures)
 
             }
         })
@@ -145,6 +146,21 @@ class MainActivity : AppCompatActivity() {
                 } else {
 
                     binding.tvManager.show()
+
+                }
+
+                binding.tvSelectNum.text = "已选中(${list.count { it.isSelect }})"
+
+            }
+        }
+
+        lifecycleScope.launch {
+            //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
+            viewModel.deletePictureCount.collectLatest { count ->
+
+                if(count > 0) {
+
+                    viewModel.getPicturesInFolder()
 
                 }
 

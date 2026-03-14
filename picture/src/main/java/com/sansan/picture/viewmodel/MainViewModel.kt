@@ -21,8 +21,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _pictureFolderList = MutableStateFlow<List<PictureFolder>>(emptyList())
     val pictureFolderList: StateFlow<List<PictureFolder>> = _pictureFolderList
 
+    private val _deletePictureCount = MutableStateFlow(0)
+    val deletePictureCount: StateFlow<Int> = _deletePictureCount
 
-    fun getPicturesInFolder(folderId: String) {
+    private var folderId = ""
+
+
+    fun getPicturesInFolder(folderId: String = this.folderId) {
+
+        this.folderId = folderId
+
         viewModelScope.launch {
 
             _pictureList.value = emptyList()   //先清除，免得数据闪烁
@@ -35,6 +43,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
 
             _pictureFolderList.value = pictureRepository.getPictureFolders(storageType)
+        }
+    }
+
+
+
+    fun deletePictures(pictureList: List<Picture>) {
+        viewModelScope.launch {
+            _deletePictureCount.value = pictureRepository.deletePictures(pictureList)
         }
     }
 

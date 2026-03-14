@@ -208,6 +208,61 @@ class PictureRepository(private val context: Context) {
 
 
 
+    /**
+     * 删除一张图片
+     */
+    suspend fun deletePicture(imagePath: String): Boolean = withContext(Dispatchers.IO) {
+
+        return@withContext try {
+            val selection = "${MediaStore.Images.Media.DATA} = ?"
+            val selectionArgs = arrayOf(imagePath)
+
+            val rowsDeleted = context.contentResolver.delete(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                selection,
+                selectionArgs
+            )
+
+            rowsDeleted > 0
+        } catch (e: Exception) {
+            false
+        }
+
+
+    }
+
+
+
+    /**
+     * 批量删除图片
+     */
+    suspend fun deletePictures(pictureList: List<Picture>): Int = withContext(Dispatchers.IO) {
+        return@withContext try {
+            var totalDeleted = 0
+
+            pictureList.forEach { picture ->
+                val selection = "${MediaStore.Images.Media.DATA} = ?"
+                val selectionArgs = arrayOf(picture.path)
+
+                val rowsDeleted = context.contentResolver.delete(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    selection,
+                    selectionArgs
+                )
+
+                if (rowsDeleted > 0) {
+                    totalDeleted++
+                }
+            }
+
+            totalDeleted
+        } catch (e: Exception) {
+            0
+        }
+    }
+
+
+
 
 
     // 获取指定存储类型的所有文件夹
