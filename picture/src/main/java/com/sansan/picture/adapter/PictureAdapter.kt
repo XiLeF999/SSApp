@@ -12,16 +12,25 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.sansan.picture.R
 import com.sansan.picture.model.Picture
+import com.sansan.picture.utils.hide
+import com.sansan.picture.utils.show
 
 class PictureAdapter(
     private val mContext: Context
 ) : RecyclerView.Adapter<PictureAdapter.ViewHolder>() {
 
     private var pictureList: List<Picture> = emptyList()
+    private var isManager: Boolean = false
     private var onItemClickListener: OnItemClickListener? = null
 
     fun setData(list: List<Picture>) {
         pictureList = list
+
+        notifyDataSetChanged()
+    }
+
+    fun setManager(manager: Boolean) {
+        isManager = manager
 
         notifyDataSetChanged()
     }
@@ -43,6 +52,12 @@ class PictureAdapter(
             )
         ).into(holder.ivPicture)
 
+        if(isManager){
+            holder.ivSelect.show()
+        } else {
+            holder.ivSelect.hide()
+        }
+
 
         holder.itemView.setOnClickListener {
             onItemClickListener?.onItemClick(pictureList, bean, position)
@@ -57,6 +72,7 @@ class PictureAdapter(
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivPicture: ImageView = itemView.findViewById(R.id.iv_picture)
+        val ivSelect: ImageView = itemView.findViewById(R.id.iv_select)
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {

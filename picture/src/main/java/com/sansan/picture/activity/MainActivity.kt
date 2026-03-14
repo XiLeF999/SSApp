@@ -202,6 +202,8 @@ class MainActivity : AppCompatActivity() {
                 tvManager.hide()
                 llManager.show()
 
+                pictureAdapter.setManager(true)
+
 
             }
 

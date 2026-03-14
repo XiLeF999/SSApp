@@ -14,5 +14,6 @@ data class Picture(
     val width: Int,
     val height: Int,
     val mimeType: String,
-    val storageType: PictureRepository.StorageType
+    val storageType: PictureRepository.StorageType,
+    var isSelect : Boolean = false
 ): Serializable
