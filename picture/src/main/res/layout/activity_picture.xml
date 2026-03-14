@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:src="@mipmap/img_pic_ic_no"
             android:layout_gravity="top|end"
-            android:layout_marginTop="16px"
+            android:layout_marginTop="56px"
             android:layout_marginRight="56px" />
 
         <LinearLayout
@@ -45,12 +45,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/shape_picture_info_bg"
-            android:layout_marginTop="100px"
+            android:layout_marginTop="80px"
             android:layout_marginLeft="45px"
-            android:paddingTop="24px"
-            android:paddingBottom="24px"
-            android:paddingLeft="16px"
-            android:paddingRight="16px" >
+            android:padding="16px"  >
 
             <TextView
                 android:id="@+id/tv_picture_date"
