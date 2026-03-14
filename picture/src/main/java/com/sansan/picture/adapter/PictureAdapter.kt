@@ -54,6 +54,20 @@ class PictureAdapter(
 
         if(isManager){
             holder.ivSelect.show()
+
+            holder.ivSelect.setOnClickListener {
+                bean.isSelect = !bean.isSelect
+
+                notifyItemChanged(position)
+            }
+
+            if (bean.isSelect){
+                holder.ivSelect.setImageResource(R.mipmap.img_pic_set_ic_ok)
+            } else {
+                holder.ivSelect.setImageResource(R.mipmap.img_pic_set_ic_d)
+            }
+
+
         } else {
             holder.ivSelect.hide()
         }
