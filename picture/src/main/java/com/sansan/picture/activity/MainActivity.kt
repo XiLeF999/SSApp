@@ -205,6 +205,21 @@ class MainActivity : AppCompatActivity() {
 
             }
 
+            tvAllSelect.setOnClickListener {
+
+
+            }
+
+            tvDelete.setOnClickListener {
+
+
+            }
+
+            tvCancel.setOnClickListener {
+
+
+            }
+
         }
 
 

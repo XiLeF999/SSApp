@@ -34,9 +34,9 @@
             android:paddingTop="5px"
             android:paddingBottom="5px"
             android:fontFamily="@font/alibabapuhuiti_3_65_medium"
-            android:textColor="@color/color_8593A2"
+            android:textColor="@color/selector_text_manager"
             android:textSize="20sp"
-            android:background="@drawable/shape_manager_bg"
+            android:background="@drawable/selector_manager_bg"
             android:text="管理" />
 
         <LinearLayout
@@ -49,6 +49,7 @@
             android:visibility="gone" >
 
             <TextView
+                android:id="@+id/tv_all_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -57,12 +58,13 @@
                 android:paddingTop="5px"
                 android:paddingBottom="5px"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
-                android:textColor="@color/color_8593A2"
+                android:textColor="@color/selector_text_manager"
                 android:textSize="20sp"
-                android:background="@drawable/shape_manager_bg"
+                android:background="@drawable/selector_manager_bg"
                 android:text="全选" />
 
             <TextView
+                android:id="@+id/tv_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -72,12 +74,13 @@
                 android:paddingTop="5px"
                 android:paddingBottom="5px"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
-                android:textColor="@color/color_8593A2"
+                android:textColor="@color/selector_text_manager"
                 android:textSize="20sp"
-                android:background="@drawable/shape_manager_bg"
+                android:background="@drawable/selector_manager_bg"
                 android:text="删除" />
 
             <TextView
+                android:id="@+id/tv_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -87,9 +90,9 @@
                 android:paddingTop="5px"
                 android:paddingBottom="5px"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
-                android:textColor="@color/color_8593A2"
+                android:textColor="@color/selector_text_manager"
                 android:textSize="20sp"
-                android:background="@drawable/shape_manager_bg"
+                android:background="@drawable/selector_manager_bg"
                 android:text="取消" />
 
         </LinearLayout>
