@@ -208,8 +208,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             tvAllSelect.setOnClickListener {
-
-
+                pictureAdapter.setAllSelect()
             }
 
             tvDelete.setOnClickListener {

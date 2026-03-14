@@ -35,6 +35,14 @@ class PictureAdapter(
         notifyDataSetChanged()
     }
 
+    fun setAllSelect() {
+        pictureList.forEach {
+            it.isSelect = true
+        }
+
+        notifyDataSetChanged()
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.layout_picture_item, parent, false)
