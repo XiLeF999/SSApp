@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.sansan.picture.adapter.PictureAdapter
 import com.sansan.picture.adapter.PictureFolderAdapter
 import com.sansan.picture.databinding.ActivityMainBinding
+import com.sansan.picture.dialog.DeletePictureDialog
 import com.sansan.picture.model.Picture
 import com.sansan.picture.model.PictureFolder
 import com.sansan.picture.repository.PictureRepository.StorageType
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val viewModel: MainViewModel by viewModels()
+
+    private val deletePictureDialog by lazy { DeletePictureDialog(this) }
 
     private lateinit var pictureFolderAdapter: PictureFolderAdapter
     private lateinit var pictureAdapter: PictureAdapter
@@ -225,6 +228,7 @@ class MainActivity : AppCompatActivity() {
 
             tvDelete.setOnClickListener {
 
+                deletePictureDialog.show()
 
             }
 
