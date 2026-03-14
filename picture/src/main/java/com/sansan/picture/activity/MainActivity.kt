@@ -217,8 +217,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             tvCancel.setOnClickListener {
-
-
+                tvManager.show()
+                llManager.hide()
+                pictureAdapter.setCancelManager()
             }
 
         }

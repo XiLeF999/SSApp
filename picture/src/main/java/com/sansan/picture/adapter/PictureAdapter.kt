@@ -43,6 +43,16 @@ class PictureAdapter(
         notifyDataSetChanged()
     }
 
+    fun setCancelManager() {
+        pictureList.forEach {
+            it.isSelect = false
+        }
+
+        isManager = false
+
+        notifyDataSetChanged()
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.layout_picture_item, parent, false)
