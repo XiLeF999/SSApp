@@ -27,6 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
             android:layout_marginRight="80px"
+            android:visibility="gone"
             android:gravity="center"
             android:paddingLeft="30px"
             android:paddingRight="30px"

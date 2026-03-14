@@ -117,6 +117,16 @@ class MainActivity : AppCompatActivity() {
             //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
             viewModel.pictureList.collectLatest { list ->
                 pictureAdapter.setData(list)
+
+                if (list.isEmpty()) {
+                    binding.tvManager.hide()
+
+                } else {
+
+                    binding.tvManager.show()
+
+                }
+
             }
         }
 
@@ -137,8 +147,10 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = false
                 tvLocalPicture.isSelected = false
 
-                binding.rvFolderPicture.show()
-                binding.rvPicture.hide()
+                rvFolderPicture.show()
+                rvPicture.hide()
+                tvManager.hide()
+                llManager.hide()
                 viewModel.getPictureFolderList(StorageType.ALL)
 
             }
@@ -150,8 +162,10 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = false
                 tvLocalPicture.isSelected = false
 
-                binding.rvFolderPicture.show()
-                binding.rvPicture.hide()
+                rvFolderPicture.show()
+                rvPicture.hide()
+                tvManager.hide()
+                llManager.hide()
                 viewModel.getPictureFolderList(StorageType.USB)
             }
 
@@ -162,8 +176,10 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = true
                 tvLocalPicture.isSelected = false
 
-                binding.rvFolderPicture.show()
-                binding.rvPicture.hide()
+                rvFolderPicture.show()
+                rvPicture.hide()
+                tvManager.hide()
+                llManager.hide()
                 viewModel.getPictureFolderList(StorageType.SD_CARD)
             }
 
@@ -174,8 +190,10 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = false
                 tvLocalPicture.isSelected = true
 
-                binding.rvFolderPicture.show()
-                binding.rvPicture.hide()
+                rvFolderPicture.show()
+                rvPicture.hide()
+                tvManager.hide()
+                llManager.hide()
                 viewModel.getPictureFolderList(StorageType.INTERNAL)
             }
 
