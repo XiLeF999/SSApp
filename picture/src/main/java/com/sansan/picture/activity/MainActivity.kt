@@ -149,6 +149,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.show()
                 rvPicture.hide()
+                pictureAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
                 viewModel.getPictureFolderList(StorageType.ALL)
@@ -164,6 +165,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.show()
                 rvPicture.hide()
+                pictureAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
                 viewModel.getPictureFolderList(StorageType.USB)
@@ -178,6 +180,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.show()
                 rvPicture.hide()
+                pictureAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
                 viewModel.getPictureFolderList(StorageType.SD_CARD)
@@ -192,6 +195,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.show()
                 rvPicture.hide()
+                pictureAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
                 viewModel.getPictureFolderList(StorageType.INTERNAL)
