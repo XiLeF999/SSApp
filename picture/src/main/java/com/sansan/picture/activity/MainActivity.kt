@@ -214,6 +214,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.hide()
                 rvPicture.hide()
+                pictureAdapter.setData(emptyList())
                 tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
                 tvManager.hide()
@@ -231,6 +232,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.hide()
                 rvPicture.hide()
+                pictureAdapter.setData(emptyList())
                 tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
                 tvManager.hide()
@@ -247,6 +249,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.hide()
                 rvPicture.hide()
+                pictureAdapter.setData(emptyList())
                 tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
                 tvManager.hide()
@@ -263,6 +266,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.hide()
                 rvPicture.hide()
+                pictureAdapter.setData(emptyList())
                 tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
                 tvManager.hide()
