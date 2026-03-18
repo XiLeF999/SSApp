@@ -151,10 +151,12 @@ class MainActivity : AppCompatActivity() {
 
                 if (list.isEmpty()) {
                     binding.tvManager.hide()
+                    binding.tvSelectNum.hide()
 
                 } else {
 
                     binding.tvManager.show()
+                    binding.tvSelectNum.show()
 
                 }
 
