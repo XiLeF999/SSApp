@@ -16,25 +16,32 @@ class DeletePictureDialog(context: Context) : Dialog(context, R.style.DeletePict
 
     private var onPictureDialogClickListener: OnPictureDialogClickListener? = null
 
-    private val llDelete by lazy { findViewById<LinearLayout>(R.id.ll_delete) }
-    private val flDeleteProgress by lazy { findViewById<FrameLayout>(R.id.fl_delete_progress) }
-    private val flDeleteSuccess by lazy { findViewById<FrameLayout>(R.id.fl_delete_success) }
-    private val tvSure by lazy { findViewById<TextView>(R.id.tv_sure) }
-    private val tvCancel by lazy { findViewById<TextView>(R.id.tv_cancel) }
-    private val ivProgress by lazy { findViewById<RotateImageView>(R.id.iv_progress) }
+    private var llDelete: LinearLayout? = null
+    private var flDeleteProgress: FrameLayout? = null
+    private var flDeleteSuccess: FrameLayout? = null
+    private var tvSure: TextView? = null
+    private var tvCancel: TextView? = null
+    private var ivProgress: RotateImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_delete_picture_dialog)
 
-        tvCancel.setOnClickListener { dismiss() }
+        llDelete = findViewById(R.id.ll_delete)
+        flDeleteProgress = findViewById(R.id.fl_delete_progress)
+        flDeleteSuccess = findViewById(R.id.fl_delete_success)
+        tvSure = findViewById(R.id.tv_sure)
+        tvCancel = findViewById(R.id.tv_cancel)
+        ivProgress = findViewById(R.id.iv_progress)
 
-        tvSure.setOnClickListener {
+        tvCancel?.setOnClickListener { dismiss() }
+
+        tvSure?.setOnClickListener {
 
             llDelete?.hide()
             flDeleteSuccess?.hide()
             flDeleteProgress?.show()
-            ivProgress.startRotate()
+            ivProgress?.startRotate()
 
             onPictureDialogClickListener?.onSure()
 
