@@ -1,11 +1,16 @@
 package com.sansan.picture.activity
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.sansan.picture.adapter.PictureAdapter
@@ -36,11 +41,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pictureFolderAdapter: PictureFolderAdapter
     private lateinit var pictureAdapter: PictureAdapter
 
+    private var usbScanReceiver: BroadcastReceiver? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setTransparentStatusBar()
+
+        registerUsbScanReceiver()
 
         pictureFolderAdapter = PictureFolderAdapter(this)
         pictureAdapter = PictureAdapter(this)
@@ -277,6 +286,49 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+
+
+
+
+    /**
+     * 注册USB扫描广播接收器
+     */
+    private fun registerUsbScanReceiver() {
+        if (usbScanReceiver == null) {
+            usbScanReceiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    when (intent?.action) {
+                        Intent.ACTION_MEDIA_SCANNER_STARTED -> {
+                            Log.e("wwww","系统开始扫描媒体库...")
+                        }
+
+                        Intent.ACTION_MEDIA_SCANNER_FINISHED -> {
+                            Log.e("wwww","系统媒体库扫描完成")
+                        }
+
+                        Intent.ACTION_MEDIA_UNMOUNTED,
+                        Intent.ACTION_MEDIA_EJECT,
+                        Intent.ACTION_MEDIA_BAD_REMOVAL -> {
+                            Log.e("wwww","USB设备已拔出")
+                        }
+
+                    }
+                }
+            }
+
+            val filter = IntentFilter().apply {
+                addAction(Intent.ACTION_MEDIA_SCANNER_STARTED)
+                addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED)
+                addAction(Intent.ACTION_MEDIA_MOUNTED)
+                addAction(Intent.ACTION_MEDIA_EJECT)
+                addAction(Intent.ACTION_MEDIA_UNMOUNTED)
+                addAction(Intent.ACTION_MEDIA_BAD_REMOVAL)
+                addDataScheme("file")
+            }
+
+            registerReceiver(usbScanReceiver, filter)
+        }
     }
 
 
