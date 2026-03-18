@@ -305,12 +305,16 @@ class MainActivity : AppCompatActivity() {
 
                         Intent.ACTION_MEDIA_SCANNER_FINISHED -> {
                             Log.e("wwww","系统媒体库扫描完成")
+                            viewModel.getPictureFolderList()
+                            viewModel.getPicturesInFolder()
                         }
 
                         Intent.ACTION_MEDIA_UNMOUNTED,
                         Intent.ACTION_MEDIA_EJECT,
                         Intent.ACTION_MEDIA_BAD_REMOVAL -> {
                             Log.e("wwww","USB设备已拔出")
+                            viewModel.getPictureFolderList()
+                            viewModel.getPicturesInFolder()
                         }
 
                     }

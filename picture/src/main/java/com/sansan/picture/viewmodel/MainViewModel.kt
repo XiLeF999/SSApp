@@ -25,6 +25,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val deletePictureCount: StateFlow<Int> = _deletePictureCount
 
     private var folderId = ""
+    private var storageType = PictureRepository.StorageType.ALL
 
 
     fun getPicturesInFolder(folderId: String = this.folderId) {
@@ -39,9 +40,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getPictureFolderList(storageType: PictureRepository.StorageType) {
-        viewModelScope.launch {
+    fun getPictureFolderList(storageType: PictureRepository.StorageType = this.storageType) {
 
+        this.storageType = storageType
+
+        viewModelScope.launch {
             _pictureFolderList.value = pictureRepository.getPictureFolders(storageType)
         }
     }
@@ -53,6 +56,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _deletePictureCount.value = pictureRepository.deletePictures(pictureList)
         }
     }
+
 
 
 
