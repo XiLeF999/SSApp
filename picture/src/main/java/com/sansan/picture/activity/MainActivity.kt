@@ -140,6 +140,16 @@ class MainActivity : AppCompatActivity() {
             //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
             viewModel.pictureFolderList.collectLatest { list ->
                 pictureFolderAdapter.setData(list)
+
+                if (list.isEmpty()) {
+                    binding.rvFolderPicture.hide()
+                    binding.viewEmpty.show()
+
+                } else {
+                    binding.rvFolderPicture.show()
+                    binding.viewEmpty.hide()
+                }
+
             }
         }
 
@@ -153,10 +163,16 @@ class MainActivity : AppCompatActivity() {
                     binding.tvManager.hide()
                     binding.tvSelectNum.hide()
 
+                    binding.rvPicture.hide()
+                    binding.viewEmpty.show()
+
                 } else {
 
                     binding.tvManager.show()
                     binding.tvSelectNum.show()
+
+                    binding.rvPicture.show()
+                    binding.viewEmpty.hide()
 
                 }
 
@@ -197,7 +213,7 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = false
                 tvLocalPicture.isSelected = false
 
-                rvFolderPicture.show()
+                rvFolderPicture.hide()
                 rvPicture.hide()
                 tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
@@ -214,7 +230,7 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = false
                 tvLocalPicture.isSelected = false
 
-                rvFolderPicture.show()
+                rvFolderPicture.hide()
                 rvPicture.hide()
                 tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
@@ -230,7 +246,7 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = true
                 tvLocalPicture.isSelected = false
 
-                rvFolderPicture.show()
+                rvFolderPicture.hide()
                 rvPicture.hide()
                 tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
@@ -246,7 +262,7 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = false
                 tvLocalPicture.isSelected = true
 
-                rvFolderPicture.show()
+                rvFolderPicture.hide()
                 rvPicture.hide()
                 tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
