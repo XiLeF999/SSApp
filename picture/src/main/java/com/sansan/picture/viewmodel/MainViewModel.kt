@@ -16,12 +16,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val pictureRepository  = PictureRepository(application.applicationContext)
 
-    private val _pictureList = MutableStateFlow<List<Picture>>(emptyList())
-    val pictureList: StateFlow<List<Picture>> = _pictureList
+    private val _pictureList = MutableSharedFlow<List<Picture>>()
+    val pictureList: SharedFlow<List<Picture>> = _pictureList
 
     //包含图片的文件夹
-    private val _pictureFolderList = MutableStateFlow<List<PictureFolder>>(emptyList())
-    val pictureFolderList: StateFlow<List<PictureFolder>> = _pictureFolderList
+    private val _pictureFolderList = MutableSharedFlow<List<PictureFolder>>()
+    val pictureFolderList: SharedFlow<List<PictureFolder>> = _pictureFolderList
 
     private val _deletePictureCount = MutableSharedFlow<Int>()
     val deletePictureCount: SharedFlow<Int> = _deletePictureCount
@@ -35,10 +35,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         this.folderId = folderId
 
         viewModelScope.launch {
-
-            _pictureList.value = emptyList()   //先清除，免得数据闪烁
-
-            _pictureList.value = pictureRepository.getPicturesInFolder(folderId)
+            _pictureList.emit(pictureRepository.getPicturesInFolder(folderId))
         }
     }
 
@@ -47,7 +44,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         this.storageType = storageType
 
         viewModelScope.launch {
-            _pictureFolderList.value = pictureRepository.getPictureFolders(storageType)
+            _pictureFolderList.emit(pictureRepository.getPictureFolders(storageType))
         }
     }
 
