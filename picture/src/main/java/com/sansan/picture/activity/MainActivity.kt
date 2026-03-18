@@ -92,6 +92,7 @@ class MainActivity : AppCompatActivity() {
 
                 binding.rvFolderPicture.hide()
                 binding.rvPicture.show()
+                binding.tvSelectNum.hide()
 
                 viewModel.getPicturesInFolder(bean.id)
 
@@ -161,7 +162,6 @@ class MainActivity : AppCompatActivity() {
 
                 if (list.isEmpty()) {
                     binding.tvManager.hide()
-                    binding.tvSelectNum.hide()
 
                     binding.rvPicture.hide()
                     binding.viewEmpty.show()
@@ -169,7 +169,6 @@ class MainActivity : AppCompatActivity() {
                 } else {
 
                     binding.tvManager.show()
-                    binding.tvSelectNum.show()
 
                     binding.rvPicture.show()
                     binding.viewEmpty.hide()
