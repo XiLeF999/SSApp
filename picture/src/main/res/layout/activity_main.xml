@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@mipmap/img_background"
     android:orientation="vertical"
-    android:paddingTop="80px"
-    android:background="@mipmap/img_background">
+    android:paddingTop="80px">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="80px" >
+        android:layout_height="80px">
 
         <TextView
             android:layout_width="wrap_content"
@@ -17,20 +17,20 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="40px"
             android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+            android:text="图片"
             android:textColor="@color/color_49535F"
-            android:textSize="30sp"
-            android:text="图片" />
+            android:textSize="30sp" />
 
         <TextView
             android:id="@+id/tv_select_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:visibility="gone"
             android:layout_marginLeft="430px"
             android:fontFamily="@font/alibabapuhuiti_3_65_medium"
             android:textColor="@color/color_8593A2"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_manager"
@@ -38,73 +38,73 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
             android:layout_marginRight="80px"
-            android:visibility="gone"
+            android:background="@drawable/selector_manager_bg"
+            android:fontFamily="@font/alibabapuhuiti_3_65_medium"
             android:gravity="center"
             android:paddingLeft="30px"
-            android:paddingRight="30px"
             android:paddingTop="5px"
+            android:paddingRight="30px"
             android:paddingBottom="5px"
-            android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+            android:text="管理"
             android:textColor="@color/selector_text_manager"
             android:textSize="20sp"
-            android:background="@drawable/selector_manager_bg"
-            android:text="管理" />
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/ll_manager"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_gravity="center_vertical|end"
             android:layout_marginRight="80px"
-            android:visibility="gone" >
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tv_all_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/selector_manager_bg"
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:gravity="center"
                 android:paddingLeft="30px"
-                android:paddingRight="30px"
                 android:paddingTop="5px"
+                android:paddingRight="30px"
                 android:paddingBottom="5px"
-                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:text="全选"
                 android:textColor="@color/selector_text_manager"
-                android:textSize="20sp"
-                android:background="@drawable/selector_manager_bg"
-                android:text="全选" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/tv_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginLeft="10px"
-                android:paddingLeft="30px"
-                android:paddingRight="30px"
-                android:paddingTop="5px"
-                android:paddingBottom="5px"
-                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
-                android:textColor="@color/selector_text_manager"
-                android:textSize="20sp"
                 android:background="@drawable/selector_manager_bg"
-                android:text="删除" />
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:gravity="center"
+                android:paddingLeft="30px"
+                android:paddingTop="5px"
+                android:paddingRight="30px"
+                android:paddingBottom="5px"
+                android:text="删除"
+                android:textColor="@color/selector_text_manager"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/tv_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginLeft="10px"
-                android:paddingLeft="30px"
-                android:paddingRight="30px"
-                android:paddingTop="5px"
-                android:paddingBottom="5px"
-                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
-                android:textColor="@color/selector_text_manager"
-                android:textSize="20sp"
                 android:background="@drawable/selector_manager_bg"
-                android:text="取消" />
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:gravity="center"
+                android:paddingLeft="30px"
+                android:paddingTop="5px"
+                android:paddingRight="30px"
+                android:paddingBottom="5px"
+                android:text="取消"
+                android:textColor="@color/selector_text_manager"
+                android:textSize="20sp" />
 
         </LinearLayout>
 
@@ -114,7 +114,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="420px"
@@ -126,13 +126,13 @@
                 android:id="@+id/tv_all_picture"
                 android:layout_width="match_parent"
                 android:layout_height="110px"
-                android:gravity="center"
                 android:layout_marginLeft="10px"
                 android:layout_marginRight="10px"
+                android:background="@drawable/selector_type_bg_select"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:gravity="center"
                 android:text="全部图片"
                 android:textColor="@color/selector_text_select"
-                android:background="@drawable/selector_type_bg_select"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -140,14 +140,14 @@
                 android:id="@+id/tv_sd_picture"
                 android:layout_width="match_parent"
                 android:layout_height="110px"
-                android:gravity="center"
-                android:layout_marginTop="-20px"
                 android:layout_marginLeft="10px"
+                android:layout_marginTop="-20px"
                 android:layout_marginRight="10px"
+                android:background="@drawable/selector_type_bg_select"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:gravity="center"
                 android:text="TF图片"
                 android:textColor="@color/selector_text_select"
-                android:background="@drawable/selector_type_bg_select"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -155,14 +155,14 @@
                 android:id="@+id/tv_usb_picture"
                 android:layout_width="match_parent"
                 android:layout_height="110px"
-                android:gravity="center"
-                android:layout_marginTop="-20px"
                 android:layout_marginLeft="10px"
+                android:layout_marginTop="-20px"
                 android:layout_marginRight="10px"
+                android:background="@drawable/selector_type_bg_select"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:gravity="center"
                 android:text="U盘图片"
                 android:textColor="@color/selector_text_select"
-                android:background="@drawable/selector_type_bg_select"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -170,14 +170,14 @@
                 android:id="@+id/tv_local_picture"
                 android:layout_width="match_parent"
                 android:layout_height="110px"
-                android:gravity="center"
-                android:layout_marginTop="-20px"
                 android:layout_marginLeft="10px"
+                android:layout_marginTop="-20px"
                 android:layout_marginRight="10px"
+                android:background="@drawable/selector_type_bg_select"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:gravity="center"
                 android:text="本地图片"
                 android:textColor="@color/selector_text_select"
-                android:background="@drawable/selector_type_bg_select"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -194,26 +194,32 @@
             android:orientation="vertical"
             android:overScrollMode="never" />
 
-        <com.sansan.picture.widget.ScrollableRecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_picture"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="24px"
             android:layout_marginRight="100px"
-            android:visibility="gone"/>
+            android:scrollbarFadeDuration="0"
+            android:scrollbarSize="4dp"
+            android:scrollbarStyle="outsideInset"
+            android:scrollbarThumbVertical="@color/teal_700"
+            android:scrollbarTrackVertical="@color/color_B6D1EE"
+            android:scrollbars="vertical"
+            android:visibility="gone" />
 
         <FrameLayout
             android:id="@+id/view_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone" >
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_gravity="center"
                 android:gravity="center_horizontal"
-                android:layout_gravity="center" >
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -224,9 +230,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                    android:text="暂无相关内容"
                     android:textColor="@color/color_49535F"
-                    android:textSize="24sp"
-                    android:text="暂无相关内容" />
+                    android:textSize="24sp" />
 
             </LinearLayout>
 
