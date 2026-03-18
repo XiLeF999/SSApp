@@ -201,10 +201,10 @@
             android:layout_marginLeft="24px"
             android:layout_marginRight="100px"
             android:scrollbarFadeDuration="0"
-            android:scrollbarSize="4dp"
+            android:scrollbarSize="8dp"
             android:scrollbarStyle="outsideInset"
-            android:scrollbarThumbVertical="@color/teal_700"
-            android:scrollbarTrackVertical="@color/color_B6D1EE"
+            android:scrollbarThumbVertical="@drawable/thumb_drawable"
+            android:scrollbarTrackVertical="@drawable/track_drawable"
             android:scrollbars="vertical"
             android:visibility="gone" />
 
