@@ -5,10 +5,11 @@
     android:background="@mipmap/img_bg_dialog">
 
     <LinearLayout
+        android:id="@+id/ll_delete"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -57,9 +58,70 @@
                 android:textSize="20sp" />
 
         </LinearLayout>
-
-
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_delete_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal">
+
+            <com.sansan.picture.widget.RotateImageView
+                android:id="@+id/iv_progress"
+                android:layout_width="120px"
+                android:layout_height="120px"
+                android:src="@mipmap/img_executing"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:text="删除中……"
+                android:layout_marginTop="25px"
+                android:textColor="@color/color_49535F"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_delete_success"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal">
+
+            <ImageView
+                android:layout_width="120px"
+                android:layout_height="120px"
+                android:src="@mipmap/img_executed"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                android:text="删除成功!"
+                android:layout_marginTop="25px"
+                android:textColor="@color/color_49535F"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 
 </FrameLayout>

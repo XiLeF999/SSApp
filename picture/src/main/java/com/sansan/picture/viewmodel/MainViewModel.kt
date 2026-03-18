@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.sansan.picture.model.Picture
 import com.sansan.picture.model.PictureFolder
 import com.sansan.picture.repository.PictureRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -21,8 +23,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _pictureFolderList = MutableStateFlow<List<PictureFolder>>(emptyList())
     val pictureFolderList: StateFlow<List<PictureFolder>> = _pictureFolderList
 
-    private val _deletePictureCount = MutableStateFlow(0)
-    val deletePictureCount: StateFlow<Int> = _deletePictureCount
+    private val _deletePictureCount = MutableSharedFlow<Int>()
+    val deletePictureCount: SharedFlow<Int> = _deletePictureCount
 
     private var folderId = ""
     private var storageType = PictureRepository.StorageType.ALL
@@ -53,8 +55,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun deletePictures(pictureList: List<Picture>) {
         viewModelScope.launch {
-            _deletePictureCount.value = pictureRepository.deletePictures(pictureList)
+            _deletePictureCount.emit(pictureRepository.deletePictures(pictureList))
         }
+
     }
 
 

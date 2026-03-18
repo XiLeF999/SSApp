@@ -168,9 +168,11 @@ class MainActivity : AppCompatActivity() {
             viewModel.deletePictureCount.collectLatest { count ->
 
                 if(count > 0) {
-
+                    deletePictureDialog.deleteSuccess()
                     viewModel.getPicturesInFolder()
 
+                } else {
+                    deletePictureDialog.deleteFail()
                 }
 
             }
@@ -271,7 +273,7 @@ class MainActivity : AppCompatActivity() {
                 if (selectCount <= 0){
                     Toast.makeText(this@MainActivity, "请选择图片", Toast.LENGTH_SHORT).show()
                 } else {
-                    deletePictureDialog.show()
+                    deletePictureDialog.showDeleteDialog()
                 }
 
             }
