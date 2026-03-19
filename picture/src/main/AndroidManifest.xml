@@ -5,7 +5,7 @@
     <application
         android:name=".PictureApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/img_icon"
         android:label="@string/app_name"
         android:persistent="true"
         android:supportsRtl="true"
