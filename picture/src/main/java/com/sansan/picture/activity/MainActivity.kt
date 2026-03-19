@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                 val itemDecoration = PictureItemDecoration(
                     spanCount = 5,
                     spacingX = 0,
-                    spacingY = 8
+                    spacingY = 12
                 )
                 addItemDecoration(itemDecoration)
             }
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                 val itemDecoration = PictureItemDecoration(
                     spanCount = 5,
                     spacingX = 0,
-                    spacingY = 8
+                    spacingY = 12
                 )
                 addItemDecoration(itemDecoration)
             }

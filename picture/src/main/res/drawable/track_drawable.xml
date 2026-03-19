@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#33000000" /> <!-- 灰色半透明轨道 -->
+    <solid android:color="@color/color_0085FA" /> <!-- 灰色半透明轨道 -->
     <corners android:radius="4px" />
     <size android:width="8px" />
 </shape>
