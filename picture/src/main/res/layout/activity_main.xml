@@ -218,7 +218,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_marginTop="20px"
+                android:layout_marginLeft="420px"
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
@@ -233,7 +234,7 @@
                     android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                     android:text="暂无相关内容"
                     android:textColor="@color/color_49535F"
-                    android:textSize="24sp" />
+                    android:textSize="20sp" />
 
             </LinearLayout>
 
