@@ -212,6 +212,11 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = false
                 tvLocalPicture.isSelected = false
 
+                tvAllPicture.textSize = 26f
+                tvUsbPicture.textSize = 18f
+                tvSdPicture.textSize = 18f
+                tvLocalPicture.textSize = 18f
+
                 rvFolderPicture.hide()
                 rvPicture.hide()
                 pictureAdapter.setData(emptyList())
@@ -230,6 +235,11 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = false
                 tvLocalPicture.isSelected = false
 
+                tvAllPicture.textSize = 18f
+                tvUsbPicture.textSize = 26f
+                tvSdPicture.textSize = 18f
+                tvLocalPicture.textSize = 18f
+
                 rvFolderPicture.hide()
                 rvPicture.hide()
                 pictureAdapter.setData(emptyList())
@@ -247,6 +257,11 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = true
                 tvLocalPicture.isSelected = false
 
+                tvAllPicture.textSize = 18f
+                tvUsbPicture.textSize = 18f
+                tvSdPicture.textSize = 26f
+                tvLocalPicture.textSize = 18f
+
                 rvFolderPicture.hide()
                 rvPicture.hide()
                 pictureAdapter.setData(emptyList())
@@ -263,6 +278,11 @@ class MainActivity : AppCompatActivity() {
                 tvUsbPicture.isSelected = false
                 tvSdPicture.isSelected = false
                 tvLocalPicture.isSelected = true
+
+                tvAllPicture.textSize = 18f
+                tvUsbPicture.textSize = 18f
+                tvSdPicture.textSize = 18f
+                tvLocalPicture.textSize = 26f
 
                 rvFolderPicture.hide()
                 rvPicture.hide()
