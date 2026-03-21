@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.sansan.video.R
 import com.sansan.video.model.Picture
 import com.sansan.video.model.Video
@@ -71,12 +72,21 @@ class VideoAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val bean = videoList[position]
 
-//        Glide.with(mContext).load(bean.uri).transform(
-//            MultiTransformation(
-//                CenterCrop(),
-//                RoundedCorners(8)
-//            )
-//        ).into(holder.ivPicture)
+        Glide.with(mContext)
+            .asBitmap()
+            .load(bean.path)
+            .transform(
+                MultiTransformation(
+                    CenterCrop(),
+                    RoundedCorners(8)
+                )
+            )
+            .apply(
+                RequestOptions()
+                    .frame(0)  //第一帧
+                    .override(256, 144)  // 缩略图大小
+            )
+            .into(holder.ivPicture)
 
         if(isManager){
             holder.ivSelect.show()
@@ -119,7 +129,7 @@ class VideoAdapter(
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-//        val ivPicture: ImageView = itemView.findViewById(R.id.iv_video)
+        val ivPicture: ImageView = itemView.findViewById(R.id.iv_picture)
         val ivSelect: ImageView = itemView.findViewById(R.id.iv_select)
     }
 
