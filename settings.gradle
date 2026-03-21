@@ -27,3 +27,4 @@ rootProject.name = "Apps"
 include ':app'
 include ':radio'
 include ':picture'
+include ':video'

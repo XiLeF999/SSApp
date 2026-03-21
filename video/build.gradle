@@ -1,0 +1,117 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
+}
+
+android {
+    namespace 'com.sansan.video'
+    compileSdk {
+        version = release(36) {
+            minorApiLevel = 1
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.sansan.video"
+        minSdk 30
+        targetSdk 36
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs{
+        signConfig {
+            storeFile file ('../platform.jks')//签名文件路径，
+            //keystore的路径通常使用项目根目录的相对路径，但也可以是使用绝对路径，尽管这不推荐
+            storePassword '123456' //密码
+            keyAlias 'platform_key'
+            keyPassword '123456'  //密码
+        }
+    }
+
+    buildTypes {
+        release {
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.signConfig
+            minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled false
+        }
+        debug {
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.signConfig
+            minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    //打包文件名
+    androidComponents {
+        onVariants(selector().all(), { variant ->
+            variant.outputs.forEach { output ->
+                def newName = "Picture.apk"
+                output.outputFileName.set(newName)
+            }
+        })
+    }
+
+
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            Set<File> fileSet = options.bootstrapClasspath.getFiles()
+            List<File> newFileList = new ArrayList<>();
+            newFileList.add(new File("../libs/framework.jar"))
+            newFileList.addAll(fileSet)
+            options.bootstrapClasspath = files(
+                    newFileList.toArray()
+            )
+        }
+    }
+
+
+    buildFeatures {
+        compose true
+    }
+
+
+    viewBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.activity.compose
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.ui.graphics
+    implementation libs.androidx.compose.ui.tooling.preview
+    implementation libs.androidx.compose.material3
+
+    implementation libs.androidx.appcompat
+
+    implementation libs.material
+
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
+    androidTestImplementation platform(libs.androidx.compose.bom)
+    androidTestImplementation libs.androidx.compose.ui.test.junit4
+    debugImplementation libs.androidx.compose.ui.tooling
+    debugImplementation libs.androidx.compose.ui.test.manifest
+
+    implementation 'com.github.bumptech.glide:glide:4.13.0'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
+    implementation 'com.github.sparrow007:carouselrecyclerview:1.2.6'
+
+    //内存泄漏检查
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
+}
