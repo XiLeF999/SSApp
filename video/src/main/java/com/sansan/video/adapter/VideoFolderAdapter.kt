@@ -50,10 +50,9 @@ class VideoFolderAdapter(
             )
             .apply(
                 RequestOptions()
-                    .frame(1000000)  // 1毫秒处，获取第一帧
+                    .frame(0)  //第一帧
                     .override(256, 144)  // 缩略图大小
             )
-            .transition(BitmapTransitionOptions.withCrossFade(300))
             .into(holder.ivCoverPicture)
 
         holder.tvName.text = bean.name
