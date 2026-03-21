@@ -12,20 +12,21 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.sansan.video.R
 import com.sansan.video.model.Picture
+import com.sansan.video.model.Video
 import com.sansan.video.utils.hide
 import com.sansan.video.utils.show
 
-class PictureAdapter(
+class VideoAdapter(
     private val mContext: Context
-) : RecyclerView.Adapter<PictureAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<VideoAdapter.ViewHolder>() {
 
-    private var pictureList: List<Picture> = emptyList()
+    private var videoList: List<Video> = emptyList()
     private var isManager: Boolean = false
     private var onItemClickListener: OnItemClickListener? = null
     private var onSelectItemListener: OnSelectItemListener? = null
 
-    fun setData(list: List<Picture>) {
-        pictureList = list
+    fun setData(list: List<Video>) {
+        videoList = list
 
         notifyDataSetChanged()
     }
@@ -39,7 +40,7 @@ class PictureAdapter(
     }
 
     fun setAllSelect() {
-        pictureList.forEach {
+        videoList.forEach {
             it.isSelect = true
         }
 
@@ -49,7 +50,7 @@ class PictureAdapter(
     }
 
     fun setCancelManager() {
-        pictureList.forEach {
+        videoList.forEach {
             it.isSelect = false
         }
 
@@ -62,20 +63,20 @@ class PictureAdapter(
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(mContext).inflate(R.layout.layout_picture_item, parent, false)
+        val view = LayoutInflater.from(mContext).inflate(R.layout.layout_video_item, parent, false)
         return ViewHolder(view)
     }
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val bean = pictureList[position]
+        val bean = videoList[position]
 
-        Glide.with(mContext).load(bean.uri).transform(
-            MultiTransformation(
-                CenterCrop(),
-                RoundedCorners(8)
-            )
-        ).into(holder.ivPicture)
+//        Glide.with(mContext).load(bean.uri).transform(
+//            MultiTransformation(
+//                CenterCrop(),
+//                RoundedCorners(8)
+//            )
+//        ).into(holder.ivPicture)
 
         if(isManager){
             holder.ivSelect.show()
@@ -102,23 +103,23 @@ class PictureAdapter(
 
 
         holder.itemView.setOnClickListener {
-            onItemClickListener?.onItemClick(pictureList, bean, position)
+            onItemClickListener?.onItemClick(videoList, bean, position)
         }
 
     }
 
-    override fun getItemCount(): Int = pictureList.size
+    override fun getItemCount(): Int = videoList.size
 
-    fun getList(): List<Picture> = pictureList
+    fun getList(): List<Video> = videoList
 
 
     fun getSelectCount(): Int {
-        return pictureList.count { it.isSelect }
+        return videoList.count { it.isSelect }
     }
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val ivPicture: ImageView = itemView.findViewById(R.id.iv_picture)
+//        val ivPicture: ImageView = itemView.findViewById(R.id.iv_video)
         val ivSelect: ImageView = itemView.findViewById(R.id.iv_select)
     }
 
@@ -127,7 +128,7 @@ class PictureAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClick(pictureList: List<Picture>, bean: Picture, position: Int)
+        fun onItemClick(videoList: List<Video>, bean: Video, position: Int)
     }
 
     fun setOnSelectItemListener(listener: OnSelectItemListener) {

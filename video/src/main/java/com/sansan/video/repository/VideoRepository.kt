@@ -2,42 +2,44 @@ package com.sansan.video.repository
 
 import android.content.ContentResolver
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.provider.MediaStore
-import com.sansan.video.model.Picture
-import com.sansan.video.model.PictureFolder
+import com.sansan.video.model.Video
+import com.sansan.video.model.VideoFolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlin.collections.forEach
 
 class VideoRepository(private val context: Context) {
 
     enum class StorageType {
-        ALL,        // 所有图片
+        ALL,        // 所有视频
         INTERNAL,   // 内部存储
         SD_CARD,    // SD卡
         USB         // USB设备
     }
 
-    // 获取所有包含图片的文件夹
-    suspend fun getPictureFolders(storageType: StorageType = StorageType.ALL): List<PictureFolder> = withContext(Dispatchers.IO) {
-        val folderMap = HashMap<String, PictureFolder>()
-        val folders = mutableListOf<PictureFolder>()
 
+    // 获取所有视频
+    suspend fun getVideos(storageType: StorageType = StorageType.ALL): List<Video> = withContext(Dispatchers.IO) {
+        val videos = mutableListOf<Video>()
         val contentResolver: ContentResolver = context.contentResolver
 
         val projection = arrayOf(
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.DATA,
-            MediaStore.Images.Media.DATE_TAKEN,
-            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-            MediaStore.Images.Media.BUCKET_ID
+            MediaStore.Video.Media._ID,
+            MediaStore.Video.Media.DISPLAY_NAME,
+            MediaStore.Video.Media.DATA,
+            MediaStore.Video.Media.RELATIVE_PATH,
+            MediaStore.Video.Media.SIZE,
+            MediaStore.Video.Media.DATE_TAKEN,
+            MediaStore.Video.Media.DURATION,
+            MediaStore.Video.Media.WIDTH,
+            MediaStore.Video.Media.HEIGHT,
+            MediaStore.Video.Media.MIME_TYPE
         )
 
-        val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
+        val sortOrder = "${MediaStore.Video.Media.DATE_TAKEN} DESC"
 
         val cursor = contentResolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
             projection,
             null,
             null,
@@ -45,10 +47,87 @@ class VideoRepository(private val context: Context) {
         )
 
         cursor?.use {
-            val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            val dataColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            val bucketNameColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-            val bucketIdColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
+            val idColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
+            val nameColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
+            val pathColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
+            val relativePathColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.RELATIVE_PATH)
+            val sizeColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)
+            val dateColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_TAKEN)
+            val durationColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION)
+            val widthColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.WIDTH)
+            val heightColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.HEIGHT)
+            val mimeColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE)
+
+            while (it.moveToNext()) {
+                val id = it.getLong(idColumn)
+                val name = it.getString(nameColumn)
+                val path = it.getString(pathColumn) ?: ""
+                val relativePath = it.getString(relativePathColumn) ?: ""
+                val size = it.getLong(sizeColumn)
+                val dateTaken = it.getLong(dateColumn)
+                val duration = it.getLong(durationColumn)
+                val width = it.getInt(widthColumn)
+                val height = it.getInt(heightColumn)
+                val mimeType = it.getString(mimeColumn) ?: "video/*"
+
+                val detectedType = detectStorageType(path)
+
+                if (storageType == StorageType.ALL || storageType == detectedType) {
+                    val uri = "${MediaStore.Video.Media.EXTERNAL_CONTENT_URI}/$id"
+
+                    videos.add(
+                        Video(
+                            id = id,
+                            name = name,
+                            path = path,
+                            relativePath = relativePath,
+                            uri = uri,
+                            size = size,
+                            dateTaken = dateTaken,
+                            duration = duration,
+                            width = width,
+                            height = height,
+                            mimeType = mimeType,
+                            storageType = detectedType
+                        )
+                    )
+                }
+            }
+        }
+
+        return@withContext videos
+    }
+
+    // 获取所有包含视频的文件夹
+    suspend fun getVideoFolders(storageType: StorageType = StorageType.ALL): List<VideoFolder> = withContext(Dispatchers.IO) {
+        val folderMap = HashMap<String, VideoFolder>()
+        val folders = mutableListOf<VideoFolder>()
+
+        val contentResolver: ContentResolver = context.contentResolver
+
+        val projection = arrayOf(
+            MediaStore.Video.Media._ID,
+            MediaStore.Video.Media.DATA,
+            MediaStore.Video.Media.DATE_TAKEN,
+            MediaStore.Video.Media.BUCKET_DISPLAY_NAME,
+            MediaStore.Video.Media.BUCKET_ID
+        )
+
+        val sortOrder = "${MediaStore.Video.Media.DATE_TAKEN} DESC"
+
+        val cursor = contentResolver.query(
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+            projection,
+            null,
+            null,
+            sortOrder
+        )
+
+        cursor?.use {
+            val idColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
+            val dataColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
+            val bucketNameColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
+            val bucketIdColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_ID)
 
             while (it.moveToNext()) {
                 val id = it.getLong(idColumn)
@@ -70,7 +149,7 @@ class VideoRepository(private val context: Context) {
                             ""
                         }
 
-                        val newFolder = PictureFolder(
+                        val newFolder = VideoFolder(
                             id = bucketId,
                             name = bucketName,
                             path = folderPath,
@@ -87,34 +166,35 @@ class VideoRepository(private val context: Context) {
             }
         }
 
-        // 按图片数量排序
+        // 按视频数量排序
         return@withContext folders.sortedByDescending { it.count }
     }
 
-    // 获取指定文件夹下的所有图片
-    suspend fun getPicturesInFolder(folderId: String): List<Picture> = withContext(Dispatchers.IO) {
-        val pictures = mutableListOf<Picture>()
+    // 获取指定文件夹下的所有视频
+    suspend fun getVideosInFolder(folderId: String): List<Video> = withContext(Dispatchers.IO) {
+        val videos = mutableListOf<Video>()
         val contentResolver: ContentResolver = context.contentResolver
 
         val projection = arrayOf(
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.DISPLAY_NAME,
-            MediaStore.Images.Media.DATA,
-            MediaStore.Images.Media.RELATIVE_PATH,
-            MediaStore.Images.Media.SIZE,
-            MediaStore.Images.Media.DATE_TAKEN,
-            MediaStore.Images.Media.WIDTH,
-            MediaStore.Images.Media.HEIGHT,
-            MediaStore.Images.Media.MIME_TYPE,
-            MediaStore.Images.Media.BUCKET_ID
+            MediaStore.Video.Media._ID,
+            MediaStore.Video.Media.DISPLAY_NAME,
+            MediaStore.Video.Media.DATA,
+            MediaStore.Video.Media.RELATIVE_PATH,
+            MediaStore.Video.Media.SIZE,
+            MediaStore.Video.Media.DATE_TAKEN,
+            MediaStore.Video.Media.DURATION,
+            MediaStore.Video.Media.WIDTH,
+            MediaStore.Video.Media.HEIGHT,
+            MediaStore.Video.Media.MIME_TYPE,
+            MediaStore.Video.Media.BUCKET_ID
         )
 
-        val selection = "${MediaStore.Images.Media.BUCKET_ID} = ?"
+        val selection = "${MediaStore.Video.Media.BUCKET_ID} = ?"
         val selectionArgs = arrayOf(folderId)
-        val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
+        val sortOrder = "${MediaStore.Video.Media.DATE_TAKEN} DESC"
 
         val cursor = contentResolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
             projection,
             selection,
             selectionArgs,
@@ -122,15 +202,16 @@ class VideoRepository(private val context: Context) {
         )
 
         cursor?.use {
-            val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            val nameColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-            val pathColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            val relativePathColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.RELATIVE_PATH)
-            val sizeColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
-            val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
-            val widthColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)
-            val heightColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)
-            val mimeColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+            val idColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
+            val nameColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
+            val pathColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
+            val relativePathColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.RELATIVE_PATH)
+            val sizeColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)
+            val dateColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_TAKEN)
+            val durationColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION)
+            val widthColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.WIDTH)
+            val heightColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.HEIGHT)
+            val mimeColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE)
 
             while (it.moveToNext()) {
                 val id = it.getLong(idColumn)
@@ -139,22 +220,16 @@ class VideoRepository(private val context: Context) {
                 val relativePath = it.getString(relativePathColumn) ?: ""
                 val size = it.getLong(sizeColumn)
                 val dateTaken = it.getLong(dateColumn)
-                var width = it.getInt(widthColumn)
-                if(width <= 0){
-                    width = getImageWidth(path)
-                }
-                var height = it.getInt(heightColumn)
-                if(height <= 0){
-                    height = getImageHeight(path)
-                }
-                val mimeType = it.getString(mimeColumn) ?: "image/*"
+                val duration = it.getLong(durationColumn)
+                val width = it.getInt(widthColumn)
+                val height = it.getInt(heightColumn)
+                val mimeType = it.getString(mimeColumn) ?: "video/*"
 
                 val detectedType = detectStorageType(path)
+                val uri = "${MediaStore.Video.Media.EXTERNAL_CONTENT_URI}/$id"
 
-                val uri = "${MediaStore.Images.Media.EXTERNAL_CONTENT_URI}/$id"
-
-                pictures.add(
-                    Picture(
+                videos.add(
+                    Video(
                         id = id,
                         name = name,
                         path = path,
@@ -162,6 +237,7 @@ class VideoRepository(private val context: Context) {
                         uri = uri,
                         size = size,
                         dateTaken = dateTaken,
+                        duration = duration,
                         width = width,
                         height = height,
                         mimeType = mimeType,
@@ -171,55 +247,17 @@ class VideoRepository(private val context: Context) {
             }
         }
 
-        return@withContext pictures
+        return@withContext videos
     }
 
-
-
-    /**
-     * 获取图片宽
-     */
-    fun getImageWidth(filePath: String): Int {
-        return try {
-            val options = BitmapFactory.Options().apply {
-                inJustDecodeBounds = true
-            }
-            BitmapFactory.decodeFile(filePath, options)
-            options.outWidth
-        } catch (e: Exception) {
-            0
-        }
-    }
-
-
-    /**
-     * 获取图片高
-     */
-    fun getImageHeight(filePath: String): Int {
-        return try {
-            val options = BitmapFactory.Options().apply {
-                inJustDecodeBounds = true
-            }
-            BitmapFactory.decodeFile(filePath, options)
-            options.outHeight
-        } catch (e: Exception) {
-            0
-        }
-    }
-
-
-
-    /**
-     * 删除一张图片
-     */
-    suspend fun deletePicture(imagePath: String): Boolean = withContext(Dispatchers.IO) {
-
+    // 删除单个视频
+    suspend fun deleteVideo(videoPath: String): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
-            val selection = "${MediaStore.Images.Media.DATA} = ?"
-            val selectionArgs = arrayOf(imagePath)
+            val selection = "${MediaStore.Video.Media.DATA} = ?"
+            val selectionArgs = arrayOf(videoPath)
 
             val rowsDeleted = context.contentResolver.delete(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                 selection,
                 selectionArgs
             )
@@ -228,25 +266,19 @@ class VideoRepository(private val context: Context) {
         } catch (e: Exception) {
             false
         }
-
-
     }
 
-
-
-    /**
-     * 批量删除图片
-     */
-    suspend fun deletePictures(pictureList: List<Picture>): Int = withContext(Dispatchers.IO) {
+    // 批量删除视频
+    suspend fun deleteVideos(videoList: List<Video>): Int = withContext(Dispatchers.IO) {
         return@withContext try {
             var totalDeleted = 0
 
-            pictureList.forEach { picture ->
-                val selection = "${MediaStore.Images.Media.DATA} = ?"
-                val selectionArgs = arrayOf(picture.path)
+            videoList.forEach { video ->
+                val selection = "${MediaStore.Video.Media.DATA} = ?"
+                val selectionArgs = arrayOf(video.path)
 
                 val rowsDeleted = context.contentResolver.delete(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                     selection,
                     selectionArgs
                 )
@@ -262,25 +294,15 @@ class VideoRepository(private val context: Context) {
         }
     }
 
-
-
-
-
-    // 获取指定存储类型的所有文件夹
-    suspend fun getImageFoldersByType(storageType: StorageType): List<PictureFolder> {
-        val allFolders = getPictureFolders(StorageType.ALL)
+    // 获取指定存储类型的所有视频文件夹
+    suspend fun getVideoFoldersByType(storageType: StorageType): List<VideoFolder> {
+        val allFolders = getVideoFolders(StorageType.ALL)
         return allFolders.filter { it.storageType == storageType }
-    }
-
-    // 按图片数量筛选文件夹
-    suspend fun getImageFoldersWithMinCount(minCount: Int = 1): List<PictureFolder> {
-        val allFolders = getPictureFolders(StorageType.ALL)
-        return allFolders.filter { it.count >= minCount }
     }
 
     // 获取文件夹统计信息
     suspend fun getFolderStatistics(): Map<StorageType, Int> = withContext(Dispatchers.IO) {
-        val folders = getPictureFolders(StorageType.ALL)
+        val folders = getVideoFolders(StorageType.ALL)
         val statistics = mutableMapOf<StorageType, Int>()
 
         StorageType.values().forEach { type ->
@@ -293,81 +315,20 @@ class VideoRepository(private val context: Context) {
         return@withContext statistics
     }
 
-    // 保留你原有的方法
-    suspend fun getPictures(storageType: StorageType = StorageType.ALL): List<Picture> = withContext(Dispatchers.IO) {
-        val pictures = mutableListOf<Picture>()
-        val contentResolver: ContentResolver = context.contentResolver
-
-        val projection = arrayOf(
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.DISPLAY_NAME,
-            MediaStore.Images.Media.DATA,
-            MediaStore.Images.Media.RELATIVE_PATH,
-            MediaStore.Images.Media.SIZE,
-            MediaStore.Images.Media.DATE_TAKEN,
-            MediaStore.Images.Media.WIDTH,
-            MediaStore.Images.Media.HEIGHT,
-            MediaStore.Images.Media.MIME_TYPE
-        )
-
-        val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
-
-        val cursor = contentResolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            projection,
-            null,
-            null,
-            sortOrder
-        )
-
-        cursor?.use {
-            val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            val nameColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-            val pathColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            val relativePathColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.RELATIVE_PATH)
-            val sizeColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
-            val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
-            val widthColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)
-            val heightColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)
-            val mimeColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
-
-            while (it.moveToNext()) {
-                val id = it.getLong(idColumn)
-                val name = it.getString(nameColumn)
-                val path = it.getString(pathColumn) ?: ""
-                val relativePath = it.getString(relativePathColumn) ?: ""
-                val size = it.getLong(sizeColumn)
-                val dateTaken = it.getLong(dateColumn)
-                val width = it.getInt(widthColumn)
-                val height = it.getInt(heightColumn)
-                val mimeType = it.getString(mimeColumn) ?: "image/*"
-
-                val detectedType = detectStorageType(path)
-
-                if (storageType == StorageType.ALL || storageType == detectedType) {
-                    val uri = "${MediaStore.Images.Media.EXTERNAL_CONTENT_URI}/$id"
-
-                    pictures.add(
-                        Picture(
-                            id = id,
-                            name = name,
-                            path = path,
-                            relativePath = relativePath,
-                            uri = uri,
-                            size = size,
-                            dateTaken = dateTaken,
-                            width = width,
-                            height = height,
-                            mimeType = mimeType,
-                            storageType = detectedType
-                        )
-                    )
-                }
-            }
-        }
-
-        return@withContext pictures
+    // 按视频数量筛选文件夹
+    suspend fun getVideoFoldersWithMinCount(minCount: Int = 1): List<VideoFolder> {
+        val allFolders = getVideoFolders(StorageType.ALL)
+        return allFolders.filter { it.count >= minCount }
     }
+
+    // 获取USB设备中的视频
+    suspend fun getUSBVideos(): List<Video> = getVideos(StorageType.USB)
+
+    // 获取内部存储中的视频
+    suspend fun getInternalVideos(): List<Video> = getVideos(StorageType.INTERNAL)
+
+    // 获取SD卡中的视频
+    suspend fun getSDCardVideos(): List<Video> = getVideos(StorageType.SD_CARD)
 
     private fun detectStorageType(path: String): StorageType {
         if (path.isBlank()) return StorageType.INTERNAL
@@ -410,10 +371,4 @@ class VideoRepository(private val context: Context) {
 
         return StorageType.INTERNAL
     }
-
-    suspend fun getUSBPhotos(): List<Picture> = getPictures(StorageType.USB)
-
-    suspend fun getInternalPhotos(): List<Picture> = getPictures(StorageType.INTERNAL)
-
-    suspend fun getSDCardPhotos(): List<Picture> = getPictures(StorageType.SD_CARD)
 }

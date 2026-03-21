@@ -4,33 +4,29 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.sansan.video.adapter.PictureAdapter
-import com.sansan.video.adapter.PictureFolderAdapter
+import com.sansan.video.adapter.VideoAdapter
+import com.sansan.video.adapter.VideoFolderAdapter
 import com.sansan.video.databinding.ActivityMainBinding
-import com.sansan.video.dialog.DeletePictureDialog
-import com.sansan.video.model.Picture
-import com.sansan.video.model.PictureFolder
+import com.sansan.video.dialog.DeleteVideoDialog
+import com.sansan.video.model.Video
+import com.sansan.video.model.VideoFolder
 import com.sansan.video.repository.VideoRepository
 import com.sansan.video.utils.hide
 import com.sansan.video.utils.setTransparentStatusBar
 import com.sansan.video.utils.show
 import com.sansan.video.viewmodel.MainViewModel
-import com.sansan.video.widget.PictureItemDecoration
-import kotlinx.coroutines.delay
+import com.sansan.video.widget.VideoItemDecoration
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.collections.filter
 import kotlin.getValue
-import kotlin.jvm.java
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,10 +34,10 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private val deletePictureDialog by lazy { DeletePictureDialog(this) }
+    private val deleteVideoDialog by lazy { DeleteVideoDialog(this) }
 
-    private lateinit var pictureFolderAdapter: PictureFolderAdapter
-    private lateinit var pictureAdapter: PictureAdapter
+    private lateinit var videoFolderAdapter: VideoFolderAdapter
+    private lateinit var videoAdapter: VideoAdapter
 
     private var usbScanReceiver: BroadcastReceiver? = null
 
@@ -53,29 +49,29 @@ class MainActivity : AppCompatActivity() {
 
         registerUsbScanReceiver()
 
-        pictureFolderAdapter = PictureFolderAdapter(this)
-        pictureAdapter = PictureAdapter(this)
+        videoFolderAdapter = VideoFolderAdapter(this)
+        videoAdapter = VideoAdapter(this)
 
         binding.apply {
 
-            binding.tvAllPicture.isSelected = true
+            binding.tvAllVideo.isSelected = true
 
-            rvFolderPicture.apply {
+            rvFolderVideo.apply {
                 layoutManager = GridLayoutManager(this@MainActivity, 5)
-                adapter = pictureFolderAdapter
+                adapter = videoFolderAdapter
 
-                val itemDecoration = PictureItemDecoration(
+                val itemDecoration = VideoItemDecoration(
                     spanCount = 5,
                     spacingX = 0,
                     spacingY = 12
                 )
                 addItemDecoration(itemDecoration)
             }
-            rvPicture.apply {
+            rvVideo.apply {
                 layoutManager = GridLayoutManager(this@MainActivity, 5)
-                adapter = pictureAdapter
+                adapter = videoAdapter
 
-                val itemDecoration = PictureItemDecoration(
+                val itemDecoration = VideoItemDecoration(
                     spanCount = 5,
                     spacingX = 0,
                     spacingY = 12
@@ -84,33 +80,33 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.getPictureFolderList(VideoRepository.StorageType.ALL)
+        viewModel.getVideoFolderList(VideoRepository.StorageType.ALL)
 
         click()
 
 
-        pictureFolderAdapter.setOnItemClickListener(object : PictureFolderAdapter.OnItemClickListener {
-            override fun onItemClick(bean: PictureFolder, position: Int) {
+        videoFolderAdapter.setOnItemClickListener(object : VideoFolderAdapter.OnItemClickListener {
+            override fun onItemClick(bean: VideoFolder, position: Int) {
 
-                binding.rvFolderPicture.hide()
-                binding.rvPicture.show()
+                binding.rvFolderVideo.hide()
+                binding.rvVideo.show()
                 binding.tvSelectNum.hide()
 
-                viewModel.getPicturesInFolder(bean.id)
+                viewModel.getVideosInFolder(bean.id)
 
             }
         })
 
 
-        pictureAdapter.setOnItemClickListener(object : PictureAdapter.OnItemClickListener {
-            override fun onItemClick(pictureList: List<Picture>, bean: Picture, position: Int) {
+        videoAdapter.setOnItemClickListener(object : VideoAdapter.OnItemClickListener {
+            override fun onItemClick(videoList: List<Video>, bean: Video, position: Int) {
 
-//                val intent = Intent(this@MainActivity, PictureActivity::class.java)
+//                val intent = Intent(this@MainActivity, VideoActivity::class.java)
 //
 //                // 传递整个列表
-//                intent.putExtra("picture_list", ArrayList(pictureList))
+//                intent.putExtra("video_list", ArrayList(videoList))
 //                // 传递当前点击的图片
-//                intent.putExtra("current_picture", bean)
+//                intent.putExtra("current_video", bean)
 //                // 传递当前位置
 //                intent.putExtra("position", position)
 //
@@ -119,7 +115,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        pictureAdapter.setOnSelectItemListener(object : PictureAdapter.OnSelectItemListener {
+        videoAdapter.setOnSelectItemListener(object : VideoAdapter.OnSelectItemListener {
             override fun onSelectNum(num: Int) {
 
                 binding.tvSelectNum.text = "已选中($num)"
@@ -128,11 +124,11 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        deletePictureDialog.setOnPictureDialogClickListener(object : DeletePictureDialog.OnPictureDialogClickListener {
+        deleteVideoDialog.setOnVideoDialogClickListener(object : DeleteVideoDialog.OnVideoDialogClickListener {
             override fun onSure() {
 
-                val selectedPictures = pictureAdapter.getList().filter { it.isSelect }
-                viewModel.deletePictures(selectedPictures)
+                val selectedVideos = videoAdapter.getList().filter { it.isSelect }
+                viewModel.deleteVideos(selectedVideos)
 
             }
         })
@@ -141,15 +137,15 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
-            viewModel.pictureFolderList.collectLatest { list ->
-                pictureFolderAdapter.setData(list)
+            viewModel.videoFolderList.collectLatest { list ->
+                videoFolderAdapter.setData(list)
 
                 if (list.isEmpty()) {
-                    binding.rvFolderPicture.hide()
+                    binding.rvFolderVideo.hide()
                     binding.viewEmpty.show()
 
                 } else {
-                    binding.rvFolderPicture.show()
+                    binding.rvFolderVideo.show()
                     binding.viewEmpty.hide()
                 }
 
@@ -159,20 +155,20 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
-            viewModel.pictureList.collectLatest { list ->
-                pictureAdapter.setData(list)
+            viewModel.videoList.collectLatest { list ->
+                videoAdapter.setData(list)
 
                 if (list.isEmpty()) {
                     binding.tvManager.hide()
 
-                    binding.rvPicture.hide()
+                    binding.rvVideo.hide()
                     binding.viewEmpty.show()
 
                 } else {
 
                     binding.tvManager.show()
 
-                    binding.rvPicture.show()
+                    binding.rvVideo.show()
                     binding.viewEmpty.hide()
 
                 }
@@ -184,14 +180,14 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
-            viewModel.deletePictureCount.collectLatest { count ->
+            viewModel.deleteVideoCount.collectLatest { count ->
 
                 if(count > 0) {
-                    deletePictureDialog.deleteSuccess()
-                    viewModel.getPicturesInFolder()
+                    deleteVideoDialog.deleteSuccess()
+                    viewModel.getVideosInFolder()
 
                 } else {
-                    deletePictureDialog.deleteFail()
+                    deleteVideoDialog.deleteFail()
                 }
 
             }
@@ -207,93 +203,93 @@ class MainActivity : AppCompatActivity() {
 
         binding.apply {
 
-            tvAllPicture.setOnClickListener {
+            tvAllVideo.setOnClickListener {
 
-                tvAllPicture.isSelected = true
-                tvUsbPicture.isSelected = false
-                tvSdPicture.isSelected = false
-                tvLocalPicture.isSelected = false
+                tvAllVideo.isSelected = true
+                tvUsbVideo.isSelected = false
+                tvSdVideo.isSelected = false
+                tvLocalVideo.isSelected = false
 
-                tvAllPicture.textSize = 26f
-                tvUsbPicture.textSize = 18f
-                tvSdPicture.textSize = 18f
-                tvLocalPicture.textSize = 18f
+                tvAllVideo.textSize = 26f
+                tvUsbVideo.textSize = 18f
+                tvSdVideo.textSize = 18f
+                tvLocalVideo.textSize = 18f
 
-                rvFolderPicture.hide()
-                rvPicture.hide()
-                pictureAdapter.setData(emptyList())
+                rvFolderVideo.hide()
+                rvVideo.hide()
+                videoAdapter.setData(emptyList())
                 tvSelectNum.hide()
-                pictureAdapter.setCancelManager()
+                videoAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
-                viewModel.getPictureFolderList(VideoRepository.StorageType.ALL)
+                viewModel.getVideoFolderList(VideoRepository.StorageType.ALL)
 
             }
 
-            tvUsbPicture.setOnClickListener {
+            tvUsbVideo.setOnClickListener {
 
-                tvAllPicture.isSelected = false
-                tvUsbPicture.isSelected = true
-                tvSdPicture.isSelected = false
-                tvLocalPicture.isSelected = false
+                tvAllVideo.isSelected = false
+                tvUsbVideo.isSelected = true
+                tvSdVideo.isSelected = false
+                tvLocalVideo.isSelected = false
 
-                tvAllPicture.textSize = 18f
-                tvUsbPicture.textSize = 26f
-                tvSdPicture.textSize = 18f
-                tvLocalPicture.textSize = 18f
+                tvAllVideo.textSize = 18f
+                tvUsbVideo.textSize = 26f
+                tvSdVideo.textSize = 18f
+                tvLocalVideo.textSize = 18f
 
-                rvFolderPicture.hide()
-                rvPicture.hide()
-                pictureAdapter.setData(emptyList())
+                rvFolderVideo.hide()
+                rvVideo.hide()
+                videoAdapter.setData(emptyList())
                 tvSelectNum.hide()
-                pictureAdapter.setCancelManager()
+                videoAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
-                viewModel.getPictureFolderList(VideoRepository.StorageType.USB)
+                viewModel.getVideoFolderList(VideoRepository.StorageType.USB)
             }
 
-            tvSdPicture.setOnClickListener {
+            tvSdVideo.setOnClickListener {
 
-                tvAllPicture.isSelected = false
-                tvUsbPicture.isSelected = false
-                tvSdPicture.isSelected = true
-                tvLocalPicture.isSelected = false
+                tvAllVideo.isSelected = false
+                tvUsbVideo.isSelected = false
+                tvSdVideo.isSelected = true
+                tvLocalVideo.isSelected = false
 
-                tvAllPicture.textSize = 18f
-                tvUsbPicture.textSize = 18f
-                tvSdPicture.textSize = 26f
-                tvLocalPicture.textSize = 18f
+                tvAllVideo.textSize = 18f
+                tvUsbVideo.textSize = 18f
+                tvSdVideo.textSize = 26f
+                tvLocalVideo.textSize = 18f
 
-                rvFolderPicture.hide()
-                rvPicture.hide()
-                pictureAdapter.setData(emptyList())
+                rvFolderVideo.hide()
+                rvVideo.hide()
+                videoAdapter.setData(emptyList())
                 tvSelectNum.hide()
-                pictureAdapter.setCancelManager()
+                videoAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
-                viewModel.getPictureFolderList(VideoRepository.StorageType.SD_CARD)
+                viewModel.getVideoFolderList(VideoRepository.StorageType.SD_CARD)
             }
 
-            tvLocalPicture.setOnClickListener {
+            tvLocalVideo.setOnClickListener {
 
-                tvAllPicture.isSelected = false
-                tvUsbPicture.isSelected = false
-                tvSdPicture.isSelected = false
-                tvLocalPicture.isSelected = true
+                tvAllVideo.isSelected = false
+                tvUsbVideo.isSelected = false
+                tvSdVideo.isSelected = false
+                tvLocalVideo.isSelected = true
 
-                tvAllPicture.textSize = 18f
-                tvUsbPicture.textSize = 18f
-                tvSdPicture.textSize = 18f
-                tvLocalPicture.textSize = 26f
+                tvAllVideo.textSize = 18f
+                tvUsbVideo.textSize = 18f
+                tvSdVideo.textSize = 18f
+                tvLocalVideo.textSize = 26f
 
-                rvFolderPicture.hide()
-                rvPicture.hide()
-                pictureAdapter.setData(emptyList())
+                rvFolderVideo.hide()
+                rvVideo.hide()
+                videoAdapter.setData(emptyList())
                 tvSelectNum.hide()
-                pictureAdapter.setCancelManager()
+                videoAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
-                viewModel.getPictureFolderList(VideoRepository.StorageType.INTERNAL)
+                viewModel.getVideoFolderList(VideoRepository.StorageType.INTERNAL)
             }
 
             tvManager.setOnClickListener {
@@ -301,22 +297,22 @@ class MainActivity : AppCompatActivity() {
                 tvManager.hide()
                 llManager.show()
                 tvSelectNum.show()
-                pictureAdapter.setManager(true)
+                videoAdapter.setManager(true)
 
 
             }
 
             tvAllSelect.setOnClickListener {
-                pictureAdapter.setAllSelect()
+                videoAdapter.setAllSelect()
             }
 
             tvDelete.setOnClickListener {
 
-                val selectCount = pictureAdapter.getSelectCount()
+                val selectCount = videoAdapter.getSelectCount()
                 if (selectCount <= 0){
                     Toast.makeText(this@MainActivity, "请选择图片", Toast.LENGTH_SHORT).show()
                 } else {
-                    deletePictureDialog.showDeleteDialog()
+                    deleteVideoDialog.showDeleteDialog()
                 }
 
             }
@@ -325,7 +321,7 @@ class MainActivity : AppCompatActivity() {
                 tvManager.show()
                 llManager.hide()
                 binding.tvSelectNum.hide()
-                pictureAdapter.setCancelManager()
+                videoAdapter.setCancelManager()
             }
 
         }
@@ -350,16 +346,16 @@ class MainActivity : AppCompatActivity() {
 
                         Intent.ACTION_MEDIA_SCANNER_FINISHED -> {
                             Log.e("wwww","系统媒体库扫描完成")
-                            viewModel.getPictureFolderList()
-                            viewModel.getPicturesInFolder()
+                            viewModel.getVideoFolderList()
+                            viewModel.getVideosInFolder()
                         }
 
                         Intent.ACTION_MEDIA_UNMOUNTED,
                         Intent.ACTION_MEDIA_EJECT,
                         Intent.ACTION_MEDIA_BAD_REMOVAL -> {
                             Log.e("wwww","USB设备已拔出")
-                            viewModel.getPictureFolderList()
-                            viewModel.getPicturesInFolder()
+                            viewModel.getVideoFolderList()
+                            viewModel.getVideosInFolder()
                         }
 
                     }

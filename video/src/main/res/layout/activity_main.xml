@@ -123,7 +123,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_all_picture"
+                android:id="@+id/tv_all_video"
                 android:layout_width="match_parent"
                 android:layout_height="110px"
                 android:layout_marginLeft="10px"
@@ -137,7 +137,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tv_sd_picture"
+                android:id="@+id/tv_sd_video"
                 android:layout_width="match_parent"
                 android:layout_height="110px"
                 android:layout_marginLeft="10px"
@@ -152,7 +152,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tv_usb_picture"
+                android:id="@+id/tv_usb_video"
                 android:layout_width="match_parent"
                 android:layout_height="110px"
                 android:layout_marginLeft="10px"
@@ -167,7 +167,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tv_local_picture"
+                android:id="@+id/tv_local_video"
                 android:layout_width="match_parent"
                 android:layout_height="110px"
                 android:layout_marginLeft="10px"
@@ -185,7 +185,7 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_folder_picture"
+            android:id="@+id/rv_folder_video"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="24px"
@@ -195,7 +195,7 @@
             android:overScrollMode="never" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_picture"
+            android:id="@+id/rv_video"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="24px"

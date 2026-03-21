@@ -4,45 +4,40 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.MultiTransformation
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.sansan.video.R
-import com.sansan.video.model.PictureFolder
+import com.sansan.video.model.VideoFolder
 
-class PictureFolderAdapter(
+class VideoFolderAdapter(
     private val mContext: Context
-) : RecyclerView.Adapter<PictureFolderAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<VideoFolderAdapter.ViewHolder>() {
 
-    private var pictureFolderList: List<PictureFolder> = emptyList()
+    private var videoFolderList: List<VideoFolder> = emptyList()
     private var onItemClickListener: OnItemClickListener? = null
 
-    fun setData(list: List<PictureFolder>) {
-        pictureFolderList = list
+    fun setData(list: List<VideoFolder>) {
+        videoFolderList = list
 
         notifyDataSetChanged()
     }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(mContext).inflate(R.layout.layout_picture_folder_item, parent, false)
+        val view = LayoutInflater.from(mContext).inflate(R.layout.layout_video_folder_item, parent, false)
         return ViewHolder(view)
     }
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val bean = pictureFolderList[position]
+        val bean = videoFolderList[position]
 
-        Glide.with(mContext).load(bean.coverPath).transform(
-            MultiTransformation(
-                CenterCrop(),
-                RoundedCorners(8)
-            )
-        ).into(holder.ivCoverPicture)
+//        Glide.with(mContext).load(bean.coverPath).transform(
+//            MultiTransformation(
+//                CenterCrop(),
+//                RoundedCorners(8)
+//            )
+//        ).into(holder.ivCoverVideo)
 
         holder.tvName.text = bean.name
         holder.tvCount.text = bean.count.toString()
@@ -53,13 +48,13 @@ class PictureFolderAdapter(
 
     }
 
-    override fun getItemCount(): Int = pictureFolderList.size
+    override fun getItemCount(): Int = videoFolderList.size
 
-    fun getList(): List<PictureFolder> = pictureFolderList
+    fun getList(): List<VideoFolder> = videoFolderList
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val ivCoverPicture: ImageView = itemView.findViewById(R.id.iv_cover_picture)
+//        val ivCoverVideo: ImageView = itemView.findViewById(R.id.iv_cover_video)
         val tvName: TextView = itemView.findViewById(R.id.tv_name)
         val tvCount: TextView = itemView.findViewById(R.id.tv_count)
     }
@@ -69,7 +64,7 @@ class PictureFolderAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClick(bean: PictureFolder, position: Int)
+        fun onItemClick(bean: VideoFolder, position: Int)
     }
 
 

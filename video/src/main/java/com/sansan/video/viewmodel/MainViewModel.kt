@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.sansan.video.model.Picture
 import com.sansan.video.model.PictureFolder
+import com.sansan.video.model.Video
+import com.sansan.video.model.VideoFolder
 import com.sansan.video.repository.VideoRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,45 +16,45 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val pictureRepository  = VideoRepository(application.applicationContext)
+    private val videoRepository  = VideoRepository(application.applicationContext)
 
-    private val _pictureList = MutableSharedFlow<List<Picture>>()
-    val pictureList: SharedFlow<List<Picture>> = _pictureList
+    private val _videoList = MutableSharedFlow<List<Video>>()
+    val videoList: SharedFlow<List<Video>> = _videoList
 
     //包含图片的文件夹
-    private val _pictureFolderList = MutableSharedFlow<List<PictureFolder>>()
-    val pictureFolderList: SharedFlow<List<PictureFolder>> = _pictureFolderList
+    private val _videoFolderList = MutableSharedFlow<List<VideoFolder>>()
+    val videoFolderList: SharedFlow<List<VideoFolder>> = _videoFolderList
 
-    private val _deletePictureCount = MutableSharedFlow<Int>()
-    val deletePictureCount: SharedFlow<Int> = _deletePictureCount
+    private val _deleteVideoCount = MutableSharedFlow<Int>()
+    val deleteVideoCount: SharedFlow<Int> = _deleteVideoCount
 
     private var folderId = ""
     private var storageType = VideoRepository.StorageType.ALL
 
 
-    fun getPicturesInFolder(folderId: String = this.folderId) {
+    fun getVideosInFolder(folderId: String = this.folderId) {
 
         this.folderId = folderId
 
         viewModelScope.launch {
-            _pictureList.emit(pictureRepository.getPicturesInFolder(folderId))
+            _videoList.emit(videoRepository.getVideosInFolder(folderId))
         }
     }
 
-    fun getPictureFolderList(storageType: VideoRepository.StorageType = this.storageType) {
+    fun getVideoFolderList(storageType: VideoRepository.StorageType = this.storageType) {
 
         this.storageType = storageType
 
         viewModelScope.launch {
-            _pictureFolderList.emit(pictureRepository.getPictureFolders(storageType))
+            _videoFolderList.emit(videoRepository.getVideoFolders(storageType))
         }
     }
 
 
 
-    fun deletePictures(pictureList: List<Picture>) {
+    fun deleteVideos(videoList: List<Video>) {
         viewModelScope.launch {
-            _deletePictureCount.emit(pictureRepository.deletePictures(pictureList))
+            _deleteVideoCount.emit(videoRepository.deleteVideos(videoList))
         }
 
     }

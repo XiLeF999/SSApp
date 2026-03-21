@@ -1,12 +1,10 @@
 package com.sansan.video.widget
 
-import android.content.Context
-import android.content.res.Resources
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
-class PictureItemDecoration(
+class VideoItemDecoration(
     private val spanCount: Int,  // 列数
     private val spacingX: Int,    // 水平间距
     private val spacingY: Int // 垂直间距

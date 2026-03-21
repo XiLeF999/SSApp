@@ -11,9 +11,9 @@ import com.sansan.video.utils.hide
 import com.sansan.video.utils.show
 import com.sansan.video.widget.RotateImageView
 
-class DeletePictureDialog(context: Context) : Dialog(context, R.style.DeletePictureDialogStyle) {
+class DeleteVideoDialog(context: Context) : Dialog(context, R.style.DeleteVideoDialogStyle) {
 
-    private var onPictureDialogClickListener: OnPictureDialogClickListener? = null
+    private var onVideoDialogClickListener: OnVideoDialogClickListener? = null
 
     private var llDelete: LinearLayout? = null
     private var flDeleteProgress: FrameLayout? = null
@@ -24,7 +24,7 @@ class DeletePictureDialog(context: Context) : Dialog(context, R.style.DeletePict
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_delete_picture_dialog)
+        setContentView(R.layout.layout_delete_video_dialog)
 
         llDelete = findViewById(R.id.ll_delete)
         flDeleteProgress = findViewById(R.id.fl_delete_progress)
@@ -42,7 +42,7 @@ class DeletePictureDialog(context: Context) : Dialog(context, R.style.DeletePict
             flDeleteProgress?.show()
             ivProgress?.startRotate()
 
-            onPictureDialogClickListener?.onSure()
+            onVideoDialogClickListener?.onSure()
 
         }
 
@@ -74,11 +74,11 @@ class DeletePictureDialog(context: Context) : Dialog(context, R.style.DeletePict
 
 
 
-    fun setOnPictureDialogClickListener(listener: OnPictureDialogClickListener) {
-        this.onPictureDialogClickListener = listener
+    fun setOnVideoDialogClickListener(listener: OnVideoDialogClickListener) {
+        this.onVideoDialogClickListener = listener
     }
 
-    interface OnPictureDialogClickListener {
+    interface OnVideoDialogClickListener {
         fun onSure()
     }
 
