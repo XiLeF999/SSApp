@@ -17,7 +17,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="40px"
             android:fontFamily="@font/alibabapuhuiti_3_65_medium"
-            android:text="图片"
+            android:text="视频"
             android:textColor="@color/color_49535F"
             android:textSize="26sp" />
 
@@ -131,7 +131,7 @@
                 android:background="@drawable/selector_type_bg_select"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:gravity="center"
-                android:text="全部图片"
+                android:text="全部视频"
                 android:textColor="@color/selector_text_select"
                 android:textSize="26sp"
                 android:textStyle="bold" />
@@ -146,7 +146,7 @@
                 android:background="@drawable/selector_type_bg_select"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:gravity="center"
-                android:text="TF图片"
+                android:text="TF视频"
                 android:textColor="@color/selector_text_select"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -161,7 +161,7 @@
                 android:background="@drawable/selector_type_bg_select"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:gravity="center"
-                android:text="U盘图片"
+                android:text="U盘视频"
                 android:textColor="@color/selector_text_select"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -176,7 +176,7 @@
                 android:background="@drawable/selector_type_bg_select"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                 android:gravity="center"
-                android:text="本地图片"
+                android:text="本地视频"
                 android:textColor="@color/selector_text_select"
                 android:textSize="18sp"
                 android:textStyle="bold" />
