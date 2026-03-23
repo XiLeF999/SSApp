@@ -12,39 +12,50 @@
         app:show_buffering="when_playing"
         app:use_controller="false" />
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/iv_play_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@mipmap/img_pic_ic_play" />
+
+    <FrameLayout
         android:id="@+id/custom_controls"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="#66000000"
-        android:orientation="horizontal"
-        android:padding="16dp">
-
-        <!-- 播放/暂停按钮 -->
-        <ImageView
-            android:id="@+id/iv_play_pause"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/img_pic_ic_play" />
+        android:layout_height="100px"
+        android:layout_gravity="bottom" >
 
         <SeekBar
             android:id="@+id/seek_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:progress="50"
             android:progressDrawable="@drawable/video_seekbar_track"
             android:thumb="@drawable/video_seekbar_thumb"
             android:thumbOffset="0px" />
 
-        <!-- 时间显示 -->
         <TextView
-            android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00 / 00:00"
-            android:textColor="@color/white" />
+            android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+            android:layout_marginLeft="24px"
+            android:layout_marginTop="6px"
+            android:layout_gravity="top|left"
+            android:text="00:00/00:00"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
 
-    </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+            android:layout_marginRight="24px"
+            android:layout_gravity="top|right"
+            android:text="倍速"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+    </FrameLayout>
 
 </FrameLayout>
