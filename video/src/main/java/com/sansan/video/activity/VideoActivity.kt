@@ -1,10 +1,13 @@
 package com.sansan.video.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.PlaybackException
+import com.google.android.exoplayer2.Player
 import com.sansan.video.R
 import com.sansan.video.databinding.ActivityVideoBinding
 import com.sansan.video.model.Video
@@ -31,6 +34,8 @@ class VideoActivity : AppCompatActivity() {
 
         player = ExoPlayer.Builder(this).build()
 
+        player?.addListener(playerListener)
+
         binding.playerView.player = player
 
         val mediaItem = MediaItem.fromUri(currentVideo.path)
@@ -53,6 +58,47 @@ class VideoActivity : AppCompatActivity() {
         }
 
     }
+
+
+
+    var playerListener = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            when (playbackState) {
+                Player.STATE_ENDED -> {
+                    // 播放结束时的处理
+                    Log.e("wwww", "视频播放结束")
+                    binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_pause)
+                    // 这里可以添加其他逻辑，比如显示重播按钮、自动播放下一个视频等
+                }
+                Player.STATE_BUFFERING -> {
+                    Log.e("wwww", "正在缓冲")
+                }
+                Player.STATE_READY -> {
+                    Log.e("wwww", "准备就绪")
+                }
+                Player.STATE_IDLE -> {
+                    Log.e("wwww", "空闲状态")
+                }
+            }
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+            // 播放出错时的处理
+            Log.e("wwww", "播放错误: ${error.message}")
+        }
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            // 播放状态变化
+            if (isPlaying) {
+                binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_play)
+            } else {
+                binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_pause)
+            }
+        }
+    }
+
+
+
 
     override fun onPause() {
         super.onPause()
