@@ -3,9 +3,8 @@ package com.sansan.video.activity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.media3.common.MediaItem
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.PlayerView
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 import com.sansan.video.databinding.ActivityVideoBinding
 import com.sansan.video.model.Video
 import com.sansan.video.utils.setFullScreen
