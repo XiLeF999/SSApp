@@ -22,20 +22,21 @@
         android:background="#66000000">
 
         <!-- 播放/暂停按钮 -->
-        <ImageButton
-            android:id="@+id/btn_play_pause"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+        <ImageView
+            android:id="@+id/iv_play_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@mipmap/img_pic_ic_play" />
 
         <!-- 进度条 -->
         <SeekBar
             android:id="@+id/seek_bar"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="5px"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp" />
+            android:layout_marginEnd="8dp"
+            android:background="#00FFFF"/>
 
         <!-- 时间显示 -->
         <TextView

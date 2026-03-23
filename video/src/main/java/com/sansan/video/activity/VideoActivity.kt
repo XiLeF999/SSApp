@@ -40,14 +40,14 @@ class VideoActivity : AppCompatActivity() {
         player?.playWhenReady = true // 准备完成后自动播放
 
 
-        binding.btnPlayPause.setOnClickListener {
+        binding.ivPlayPause.setOnClickListener {
             player?.let { exoPlayer ->
                 if (exoPlayer.isPlaying) {
                     exoPlayer.pause()
-                    binding.btnPlayPause.setImageResource(R.mipmap.img_pic_ic_play)
+                    binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_pause)
                 } else {
                     exoPlayer.play()
-                    binding.btnPlayPause.setImageResource(R.mipmap.img_pic_ic_pause)
+                    binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_play)
                 }
             }
         }
