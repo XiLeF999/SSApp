@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.sansan.video.R
 import com.sansan.video.databinding.ActivityVideoBinding
 import com.sansan.video.model.Video
 import com.sansan.video.utils.setFullScreen
@@ -37,6 +38,19 @@ class VideoActivity : AppCompatActivity() {
 
         player?.prepare()
         player?.playWhenReady = true // 准备完成后自动播放
+
+
+        binding.btnPlayPause.setOnClickListener {
+            player?.let { exoPlayer ->
+                if (exoPlayer.isPlaying) {
+                    exoPlayer.pause()
+                    binding.btnPlayPause.setImageResource(R.mipmap.img_pic_ic_play)
+                } else {
+                    exoPlayer.play()
+                    binding.btnPlayPause.setImageResource(R.mipmap.img_pic_ic_pause)
+                }
+            }
+        }
 
     }
 
