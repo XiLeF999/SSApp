@@ -110,7 +110,9 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
-    implementation 'com.github.sparrow007:carouselrecyclerview:1.2.6'
+
+    implementation "androidx.media3:media3-exoplayer:1.9.3"
+    implementation "androidx.media3:media3-ui:1.9.3"
 
     //内存泄漏检查
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
