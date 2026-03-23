@@ -33,6 +33,7 @@ class VideoActivity : AppCompatActivity() {
         currentVideo = intent.getSerializableExtra("current_video") as Video
 
         player = ExoPlayer.Builder(this).build()
+        player?.repeatMode = Player.REPEAT_MODE_ONE  //自动重播
 
         player?.addListener(playerListener)
 
