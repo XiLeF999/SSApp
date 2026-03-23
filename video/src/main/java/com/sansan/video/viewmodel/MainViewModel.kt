@@ -3,8 +3,6 @@ package com.sansan.video.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.sansan.video.model.Picture
-import com.sansan.video.model.PictureFolder
 import com.sansan.video.model.Video
 import com.sansan.video.model.VideoFolder
 import com.sansan.video.repository.VideoRepository

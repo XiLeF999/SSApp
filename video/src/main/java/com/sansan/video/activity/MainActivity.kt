@@ -101,16 +101,12 @@ class MainActivity : AppCompatActivity() {
         videoAdapter.setOnItemClickListener(object : VideoAdapter.OnItemClickListener {
             override fun onItemClick(videoList: List<Video>, bean: Video, position: Int) {
 
-//                val intent = Intent(this@MainActivity, VideoActivity::class.java)
-//
-//                // 传递整个列表
-//                intent.putExtra("video_list", ArrayList(videoList))
-//                // 传递当前点击的图片
-//                intent.putExtra("current_video", bean)
-//                // 传递当前位置
-//                intent.putExtra("position", position)
-//
-//                startActivity(intent)
+                val intent = Intent(this@MainActivity, VideoActivity::class.java)
+
+                // 传递当前点击的图片
+                intent.putExtra("current_video", bean)
+
+                startActivity(intent)
 
             }
         })

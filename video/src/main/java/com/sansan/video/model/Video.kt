@@ -1,6 +1,7 @@
 package com.sansan.video.model
 
 import com.sansan.video.repository.VideoRepository
+import java.io.Serializable
 
 data class Video(
     val id: Long,
@@ -16,4 +17,4 @@ data class Video(
     val mimeType: String,
     val storageType: VideoRepository.StorageType,
     var isSelect : Boolean = false
-)
+): Serializable
