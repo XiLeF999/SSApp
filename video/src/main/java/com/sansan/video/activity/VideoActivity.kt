@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.PlaybackException
@@ -11,8 +12,12 @@ import com.google.android.exoplayer2.Player
 import com.sansan.video.R
 import com.sansan.video.databinding.ActivityVideoBinding
 import com.sansan.video.model.Video
+import com.sansan.video.utils.hide
 import com.sansan.video.utils.setFullScreen
+import com.sansan.video.utils.show
 import com.sansan.video.viewmodel.VideoViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class VideoActivity : AppCompatActivity() {
 
@@ -58,6 +63,22 @@ class VideoActivity : AppCompatActivity() {
             }
         }
 
+
+        lifecycleScope.launch {
+            //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
+            viewModel.currentProgress.collectLatest { currentProgress ->
+
+                binding.tvCurrentTime.text = currentProgress?.let {
+                    val minutes = it / 1000 / 60
+                    val seconds = it / 1000 % 60
+                    String.format("%02d:%02d", minutes, seconds)
+                }
+
+            }
+        }
+
+
+
     }
 
 
@@ -77,12 +98,14 @@ class VideoActivity : AppCompatActivity() {
                 Player.STATE_READY -> {
                     Log.e("wwww", "准备就绪")
 
-                    var duration =player?.duration
+                    var duration =player?.duration?:0
                     binding.tvTotalTime.text = duration?.let {
                         val minutes = it / 1000 / 60
                         val seconds = it / 1000 % 60
                         String.format("%02d:%02d", minutes, seconds)
                     }
+
+                    viewModel.startProgressUpdates(player)
 
                 }
                 Player.STATE_IDLE -> {
