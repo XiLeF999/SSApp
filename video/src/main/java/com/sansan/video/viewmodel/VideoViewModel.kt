@@ -18,8 +18,12 @@ class VideoViewModel(application: Application) : AndroidViewModel(application) {
     // 当前播放进度
     private val _currentProgress  = MutableStateFlow<Long>(0)
     val currentProgress : StateFlow<Long> = _currentProgress
-
     private var progressJob: Job? = null
+
+    // 显示隐藏
+    private val _isShowController  = MutableSharedFlow<Boolean>()
+    val isShowController : SharedFlow<Boolean> = _isShowController
+    private var showControllerJob: Job? = null
 
     fun startProgressUpdates(player: ExoPlayer?) {
         progressJob?.cancel() // 取消之前的任务
@@ -30,5 +34,16 @@ class VideoViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+
+    fun showVideoControl(){
+        showControllerJob?.cancel() // 取消之前的任务
+        showControllerJob = viewModelScope.launch {
+            _isShowController.emit(true)
+            delay(2500)
+            _isShowController.emit(false)
+        }
+    }
+
 
 }

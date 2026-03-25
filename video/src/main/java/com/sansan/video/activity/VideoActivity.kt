@@ -80,6 +80,18 @@ class VideoActivity : AppCompatActivity() {
         }
 
 
+        lifecycleScope.launch {
+            //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
+            viewModel.isShowController.collectLatest { show ->
+                if (show) {
+                    binding.flVideoController.show()
+                } else {
+                    binding.flVideoController.hide()
+                }
+            }
+        }
+
+
 
     }
 
@@ -107,6 +119,7 @@ class VideoActivity : AppCompatActivity() {
                         String.format("%02d:%02d", minutes, seconds)
                     }
 
+                    viewModel.showVideoControl()
                     viewModel.startProgressUpdates(player)
 
                     binding.seekBar.max = duration.toInt()
