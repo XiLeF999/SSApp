@@ -16,6 +16,7 @@ import com.sansan.video.utils.hide
 import com.sansan.video.utils.setFullScreen
 import com.sansan.video.utils.show
 import com.sansan.video.viewmodel.VideoViewModel
+import com.sansan.video.widget.VideoFrameLayout
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -62,6 +63,13 @@ class VideoActivity : AppCompatActivity() {
                 }
             }
         }
+
+
+        binding.flVideo.setOnVideoFrameLayoutClickListener(object : VideoFrameLayout.OnVideoFrameLayoutClickListener{
+            override fun onVideoFrameLayoutClick() {
+                viewModel.showVideoControl()
+            }
+        })
 
 
         lifecycleScope.launch {
