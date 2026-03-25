@@ -76,6 +76,14 @@ class VideoActivity : AppCompatActivity() {
                 }
                 Player.STATE_READY -> {
                     Log.e("wwww", "准备就绪")
+
+                    var duration =player?.duration
+                    binding.tvTotalTime.text = duration?.let {
+                        val minutes = it / 1000 / 60
+                        val seconds = it / 1000 % 60
+                        String.format("%02d:%02d", minutes, seconds)
+                    }
+
                 }
                 Player.STATE_IDLE -> {
                     Log.e("wwww", "空闲状态")
