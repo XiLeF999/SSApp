@@ -24,10 +24,4 @@ class VideoViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // 停止进度更新
-//    private fun stopProgressUpdates() {
-//        progressUpdateJob?.cancel()
-//        progressUpdateJob = null
-//    }
-
 }
