@@ -2,6 +2,7 @@ package com.sansan.video.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -142,6 +143,8 @@ class VideoActivity : AppCompatActivity() {
         override fun onPlayerError(error: PlaybackException) {
             // 播放出错时的处理
             Log.e("wwww", "播放错误: ${error.message}")
+            Toast.makeText(this@VideoActivity, "不支持播放本视频", Toast.LENGTH_SHORT).show()
+            binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_pause)
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
