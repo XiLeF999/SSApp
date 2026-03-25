@@ -7,15 +7,17 @@ import com.google.android.exoplayer2.ExoPlayer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class VideoViewModel(application: Application) : AndroidViewModel(application) {
 
     // 当前播放进度
-    private val _currentProgress  = MutableSharedFlow<Long>()
-    val currentProgress : SharedFlow<Long> = _currentProgress
+    private val _currentProgress  = MutableStateFlow<Long>(0)
+    val currentProgress : StateFlow<Long> = _currentProgress
 
     private var progressJob: Job? = null
 
@@ -24,7 +26,7 @@ class VideoViewModel(application: Application) : AndroidViewModel(application) {
         progressJob = viewModelScope.launch {
             while (true) {
                 delay(1000)
-                _currentProgress.emit(player?.currentPosition?:0)
+                _currentProgress.value = player?.currentPosition?:0
             }
         }
     }
