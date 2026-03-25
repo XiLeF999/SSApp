@@ -74,6 +74,8 @@ class VideoActivity : AppCompatActivity() {
                     String.format("%02d:%02d", minutes, seconds)
                 }
 
+                binding.seekBar.progress = currentProgress?.toInt() ?: 0
+
             }
         }
 
@@ -106,6 +108,8 @@ class VideoActivity : AppCompatActivity() {
                     }
 
                     viewModel.startProgressUpdates(player)
+
+                    binding.seekBar.max = duration.toInt()
 
                 }
                 Player.STATE_IDLE -> {
