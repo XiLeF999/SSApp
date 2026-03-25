@@ -2,6 +2,7 @@ package com.sansan.video.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -66,9 +67,29 @@ class VideoActivity : AppCompatActivity() {
         }
 
 
-        binding.flVideo.setOnVideoFrameLayoutClickListener(object : VideoFrameLayout.OnVideoFrameLayoutClickListener{
+        binding.flVideo.setOnVideoFrameLayoutClickListener(object :
+            VideoFrameLayout.OnVideoFrameLayoutClickListener {
             override fun onVideoFrameLayoutClick() {
                 viewModel.showVideoControl()
+            }
+        })
+
+
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                p0: SeekBar?,
+                p1: Int,
+                p2: Boolean
+            ) {
+                if (p2) {
+                    player?.seekTo(p1.toLong())
+                }
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
             }
         })
 
@@ -101,9 +122,7 @@ class VideoActivity : AppCompatActivity() {
         }
 
 
-
     }
-
 
 
     var playerListener = object : Player.Listener {
@@ -115,13 +134,15 @@ class VideoActivity : AppCompatActivity() {
                     binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_pause)
                     // 这里可以添加其他逻辑，比如显示重播按钮、自动播放下一个视频等
                 }
+
                 Player.STATE_BUFFERING -> {
                     Log.e("wwww", "正在缓冲")
                 }
+
                 Player.STATE_READY -> {
                     Log.e("wwww", "准备就绪")
 
-                    var duration =player?.duration?:0
+                    var duration = player?.duration ?: 0
                     binding.tvTotalTime.text = duration?.let {
                         val minutes = it / 1000 / 60
                         val seconds = it / 1000 % 60
@@ -134,6 +155,7 @@ class VideoActivity : AppCompatActivity() {
                     binding.seekBar.max = duration.toInt()
 
                 }
+
                 Player.STATE_IDLE -> {
                     Log.e("wwww", "空闲状态")
                 }
@@ -156,8 +178,6 @@ class VideoActivity : AppCompatActivity() {
             }
         }
     }
-
-
 
 
     override fun onPause() {
