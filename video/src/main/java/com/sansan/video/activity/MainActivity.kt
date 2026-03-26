@@ -306,7 +306,7 @@ class MainActivity : AppCompatActivity() {
 
                 val selectCount = videoAdapter.getSelectCount()
                 if (selectCount <= 0){
-                    Toast.makeText(this@MainActivity, "请选择图片", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "请选择视频", Toast.LENGTH_SHORT).show()
                 } else {
                     deleteVideoDialog.showDeleteDialog()
                 }
