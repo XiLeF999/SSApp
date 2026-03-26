@@ -66,6 +66,10 @@ class VideoActivity : AppCompatActivity() {
             }
         }
 
+        binding.ivClose.setOnClickListener {
+            finish()
+        }
+
 
         binding.flVideo.setOnVideoFrameLayoutClickListener(object :
             VideoFrameLayout.OnVideoFrameLayoutClickListener {
