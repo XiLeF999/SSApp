@@ -114,5 +114,5 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
 
     //内存泄漏检查
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
 }
