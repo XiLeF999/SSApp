@@ -2,6 +2,7 @@ package com.sansan.video.repository
 
 import android.content.ContentResolver
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
 import com.sansan.video.model.Video
 import com.sansan.video.model.VideoFolder
@@ -220,7 +221,10 @@ class VideoRepository(private val context: Context) {
                 val relativePath = it.getString(relativePathColumn) ?: ""
                 val size = it.getLong(sizeColumn)
                 val dateTaken = it.getLong(dateColumn)
-                val duration = it.getLong(durationColumn)
+                var duration = it.getLong(durationColumn)
+                if(duration <= 0){
+                    duration = getVideoDurationWithRetriever(path)
+                }
                 val width = it.getInt(widthColumn)
                 val height = it.getInt(heightColumn)
                 val mimeType = it.getString(mimeColumn) ?: "video/*"
@@ -293,6 +297,24 @@ class VideoRepository(private val context: Context) {
             0
         }
     }
+
+
+    suspend fun getVideoDurationWithRetriever(filePath: String): Long = withContext(Dispatchers.IO) {
+        val retriever = MediaMetadataRetriever()
+        return@withContext try {
+            retriever.setDataSource(filePath)
+            val durationStr = retriever.extractMetadata(
+                MediaMetadataRetriever.METADATA_KEY_DURATION
+            )
+            durationStr?.toLongOrNull() ?: 0L
+        } catch (e: Exception) {
+            0L
+        } finally {
+            retriever.release()
+        }
+    }
+
+
 
     // 获取指定存储类型的所有视频文件夹
     suspend fun getVideoFoldersByType(storageType: StorageType): List<VideoFolder> {

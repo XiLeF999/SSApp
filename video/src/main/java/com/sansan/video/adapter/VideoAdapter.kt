@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
@@ -87,6 +88,12 @@ class VideoAdapter(
             )
             .into(holder.ivPicture)
 
+        holder.tvDuration.text = bean.duration.let {
+            val minutes = it / 1000 / 60
+            val seconds = it / 1000 % 60
+            String.format("%02d:%02d", minutes, seconds)
+        }
+
         if(isManager){
             holder.ivSelect.show()
 
@@ -130,6 +137,7 @@ class VideoAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivPicture: ImageView = itemView.findViewById(R.id.iv_picture)
         val ivSelect: ImageView = itemView.findViewById(R.id.iv_select)
+        val tvDuration: TextView = itemView.findViewById(R.id.tv_duration)
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
