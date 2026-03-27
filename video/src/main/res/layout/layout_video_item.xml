@@ -21,7 +21,8 @@
     <FrameLayout
         android:layout_width="256px"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="8px">
 
         <TextView
             android:id="@+id/tv_duration"
@@ -30,7 +31,6 @@
             android:fontFamily="@font/alibabapuhuiti_3_65_medium"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="8px"
-            android:layout_marginBottom="8px"
             android:textColor="@color/white"
             android:text="00:00"
             android:textSize="14sp" />
@@ -40,7 +40,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
             android:layout_marginRight="8px"
-            android:layout_marginBottom="8px"
             android:src="@mipmap/img_pic_set_ic_play"/>
 
 
