@@ -225,8 +225,14 @@ class VideoRepository(private val context: Context) {
                 if(duration <= 0){
                     duration = getVideoDurationWithRetriever(path)
                 }
-                val width = it.getInt(widthColumn)
-                val height = it.getInt(heightColumn)
+                var width = it.getInt(widthColumn)
+                if(width <= 0){
+                    width = getVideoWidth(path)
+                }
+                var height = it.getInt(heightColumn)
+                if(height <= 0){
+                    height = getVideoHeight(path)
+                }
                 val mimeType = it.getString(mimeColumn) ?: "video/*"
 
                 val detectedType = detectStorageType(path)
@@ -299,9 +305,9 @@ class VideoRepository(private val context: Context) {
     }
 
 
-    suspend fun getVideoDurationWithRetriever(filePath: String): Long = withContext(Dispatchers.IO) {
+    fun getVideoDurationWithRetriever(filePath: String): Long {
         val retriever = MediaMetadataRetriever()
-        return@withContext try {
+        return try {
             retriever.setDataSource(filePath)
             val durationStr = retriever.extractMetadata(
                 MediaMetadataRetriever.METADATA_KEY_DURATION
@@ -309,6 +315,41 @@ class VideoRepository(private val context: Context) {
             durationStr?.toLongOrNull() ?: 0L
         } catch (e: Exception) {
             0L
+        } finally {
+            retriever.release()
+        }
+    }
+
+
+    /**
+     * 获取视频宽度
+     */
+    suspend fun getVideoWidth(filePath: String): Int {
+        val retriever = MediaMetadataRetriever()
+        return try {
+            retriever.setDataSource(filePath)
+            retriever.extractMetadata(
+                MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH
+            )?.toIntOrNull() ?: 0
+        } catch (e: Exception) {
+            0
+        } finally {
+            retriever.release()
+        }
+    }
+
+    /**
+     * 获取视频高度
+     */
+    suspend fun getVideoHeight(filePath: String): Int {
+        val retriever = MediaMetadataRetriever()
+        return try {
+            retriever.setDataSource(filePath)
+            retriever.extractMetadata(
+                MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT
+            )?.toIntOrNull() ?: 0
+        } catch (e: Exception) {
+            0
         } finally {
             retriever.release()
         }

@@ -17,6 +17,11 @@ import com.sansan.video.model.Video
 import com.sansan.video.utils.hide
 import com.sansan.video.utils.setFullScreen
 import com.sansan.video.utils.show
+import com.sansan.video.utils.toChineseDate
+import com.sansan.video.utils.toChineseTime
+import com.sansan.video.utils.toKB2Decimal
+import com.sansan.video.utils.truncateMiddle
+import com.sansan.video.utils.wrapEvery
 import com.sansan.video.viewmodel.VideoViewModel
 import com.sansan.video.widget.VideoFrameLayout
 import kotlinx.coroutines.flow.collectLatest
@@ -124,6 +129,14 @@ class VideoActivity : AppCompatActivity() {
                 }
             }
         }
+
+
+        binding.tvVideoDate.text = currentVideo.dateTaken.toChineseDate()
+        binding.tvVideoTime.text = currentVideo.dateTaken.toChineseTime()
+        binding.tvVideoName.text = currentVideo.name.truncateMiddle()
+        binding.tvVideoResolution.text = currentVideo.width.toString() + "*" + currentVideo.height.toString()
+        binding.tvVideoSize.text = currentVideo.size.toKB2Decimal()
+        binding.tvVideoPath.text = ("路径:" + currentVideo.path).wrapEvery()
 
 
     }
