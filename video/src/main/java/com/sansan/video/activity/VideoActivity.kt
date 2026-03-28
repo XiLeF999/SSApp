@@ -2,6 +2,7 @@ package com.sansan.video.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -71,6 +72,16 @@ class VideoActivity : AppCompatActivity() {
             }
         }
 
+        binding.ivVideoInfo.setOnClickListener {
+            binding.llVideoInfo.apply {
+                if (visibility == View.VISIBLE) {
+                    hide()
+                } else {
+                    show()
+                }
+            }
+        }
+
         binding.ivClose.setOnClickListener {
             finish()
         }
@@ -126,6 +137,7 @@ class VideoActivity : AppCompatActivity() {
                     binding.flVideoController.show()
                 } else {
                     binding.flVideoController.hide()
+                    binding.llVideoInfo.hide()
                 }
             }
         }
