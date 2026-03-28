@@ -146,19 +146,20 @@
 
             </LinearLayout>
 
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/alibabapuhuiti_3_65_medium"
-                android:layout_marginRight="24px"
-                android:layout_gravity="top|right"
-                android:text="倍速"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
-
         </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_speed"
+            android:layout_width="100px"
+            android:layout_height="50px"
+            android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+            android:layout_marginRight="24px"
+            android:layout_marginBottom="56px"
+            android:layout_gravity="bottom|right"
+            android:gravity="center"
+            android:text="倍速"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
     </FrameLayout>
 
