@@ -38,6 +38,9 @@ class VideoActivity : AppCompatActivity() {
 
     private var player: ExoPlayer? = null
 
+    private val speedList = listOf(0.5f, 1.0f, 1.5f, 2.0f, 2.0f, 2.5f, 3.0f)
+    private var currentSpeedIndex = 1 // 初始索引指向1.0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityVideoBinding.inflate(layoutInflater)
@@ -80,6 +83,15 @@ class VideoActivity : AppCompatActivity() {
                     show()
                 }
             }
+        }
+
+        binding.tvSpeed.setOnClickListener {
+            currentSpeedIndex = (currentSpeedIndex + 1) % speedList.size
+            val newSpeed = speedList[currentSpeedIndex]
+
+            player?.setPlaybackSpeed(newSpeed)
+
+            binding.tvSpeed.text = String.format("%.1f倍", newSpeed)
         }
 
         binding.ivClose.setOnClickListener {
