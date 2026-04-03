@@ -55,7 +55,7 @@ android {
     androidComponents {
         onVariants(selector().all(), { variant ->
             variant.outputs.forEach { output ->
-                def newName = "Picture.apk"
+                def newName = "SSVideo.apk"
                 output.outputFileName.set(newName)
             }
         })
