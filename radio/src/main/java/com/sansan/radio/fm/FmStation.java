@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2014 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.sansan.radio.fm;
 
 import android.content.ContentValues;
@@ -22,20 +38,19 @@ import java.util.List;
 public class FmStation {
     private static final String TAG = "FmStation";
     // authority use composite content provider uri
-    public static final String AUTHORITY = "com.sansan.radio.fm";
+    public static final String AUTHORITY = "com.asr.fmradio";
     // use to composite content provider uri
     public static final String STATION = "station";
     // store current station in share preference with this key
     public static final String CURRENT_STATION = "curent_station";
 
     public static final String[] COLUMNS = new String[] {
-            Station._ID,
-            Station.FREQUENCY,
-            Station.IS_FAVORITE,
-            Station.IS_SEARCH,
-            Station.STATION_NAME,
-            Station.PROGRAM_SERVICE,
-            Station.RADIO_TEXT,
+        Station._ID,
+        Station.FREQUENCY,
+        Station.IS_FAVORITE,
+        Station.STATION_NAME,
+        Station.PROGRAM_SERVICE,
+        Station.RADIO_TEXT,
     };
 
     /**
@@ -88,6 +103,10 @@ public class FmStation {
      * @param stationName The station name
      */
     public static void insertStationToDb(Context context, int frequency, String stationName) {
+        if(FmUtils.isInvalidStation(frequency)){
+            Log.d(TAG, "insert invalid station: "+frequency);
+            return;
+        }
         ContentValues values = new ContentValues(2);
         values.put(Station.FREQUENCY, frequency);
         values.put(Station.STATION_NAME, stationName);
@@ -182,11 +201,11 @@ public class FmStation {
         Cursor cursor = null;
         try {
             cursor = context.getContentResolver().query(
-                    Station.CONTENT_URI,
-                    new String[] { Station.STATION_NAME },
-                    Station.FREQUENCY + "=?",
-                    new String[] { String.valueOf(frequency) },
-                    null);
+                Station.CONTENT_URI,
+                new String[] { Station.STATION_NAME },
+                Station.FREQUENCY + "=?",
+                new String[] { String.valueOf(frequency) },
+                null);
             if (cursor != null && cursor.moveToFirst()) {
                 isExist = true;
             }
@@ -271,11 +290,11 @@ public class FmStation {
         Cursor cursor = null;
         try {
             cursor = context.getContentResolver().query(
-                    Station.CONTENT_URI,
-                    new String[] { Station.IS_FAVORITE },
-                    Station.FREQUENCY + "=?",
-                    new String[] { String.valueOf(frequency) },
-                    null);
+                Station.CONTENT_URI,
+                new String[] { Station.IS_FAVORITE },
+                Station.FREQUENCY + "=?",
+                new String[] { String.valueOf(frequency) },
+                null);
             if (cursor != null && cursor.moveToFirst()) {
                 isFavorite = cursor.getInt(0) > 0;
             }
@@ -337,9 +356,9 @@ public class FmStation {
                     null,
                     null,
                     null);
-            if (cursor != null) {
-                stationNus = cursor.getCount();
-            }
+                if (cursor != null) {
+                    stationNus = cursor.getCount();
+                }
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -591,4 +610,3 @@ public class FmStation {
 
 
 }
-

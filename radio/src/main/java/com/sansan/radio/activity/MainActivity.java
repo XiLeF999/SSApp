@@ -358,7 +358,7 @@ public class MainActivity extends FragmentActivity {
         fmListFragment.updatePlayAnim(true);
         favListFragment.updatePlayAnim(true);
 
-        mService.tuneStationAsync(currentFrequency);
+        mService.tuneStationAsync(currentFrequency,false);
     }
 
     /**
