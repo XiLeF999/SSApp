@@ -223,7 +223,7 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
     private final String SEEK_STATION = "seekStation";
     private final String START_STATION = "startScan";
     private final String START_FULL_STATION = "startFullScan";
-    private final String channelId= "com.asr.fmradio";
+    private final String channelId= "com.sansan.radio.fm";
     private final int pdFlag= 201326592;
     private final int intentFlag= 268435456;
     private boolean isEnableDenoise = false;
