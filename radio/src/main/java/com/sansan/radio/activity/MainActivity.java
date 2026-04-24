@@ -42,7 +42,7 @@ public class MainActivity extends FragmentActivity {
 
     private MainActivityHandler mHandler;
 
-    private int currentStation = 875;   //用int计算，用float显示UI
+    private int currentStation = 87500;   //用int计算，用float显示UI。每次变化为100
     private boolean animGoOrBack = true;
 
     private boolean mIsServiceBinded = false;
@@ -229,9 +229,9 @@ public class MainActivity extends FragmentActivity {
             int id = v.getId();
 
             if(id == R.id.iv_sub){
-                currentStation -= 1;
-                if (currentStation < 875) {
-                    currentStation = 1085;
+                currentStation -= 100;
+                if (currentStation < 87500) {
+                    currentStation = 108500;
                 }
 
                 ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
@@ -240,9 +240,9 @@ public class MainActivity extends FragmentActivity {
                 fmListFragment.updateStationList(currentStation);
                 favListFragment.updateStationList(currentStation);
             } else if(id == R.id.iv_add){
-                currentStation += 1;
-                if (currentStation > 1085) {
-                    currentStation = 875;
+                currentStation += 100;
+                if (currentStation > 108500) {
+                    currentStation = 87500;
                 }
 
                 ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
@@ -434,13 +434,13 @@ public class MainActivity extends FragmentActivity {
                     }
 
                     if (animGoOrBack) {
-                        currentStation += 1;
-                        if (currentStation > 1085) {
+                        currentStation += 100;
+                        if (currentStation > 108500) {
                             animGoOrBack = false;
                         }
                     } else {
-                        currentStation -= 1;
-                        if (currentStation < 875) {
+                        currentStation -= 100;
+                        if (currentStation < 87500) {
                             animGoOrBack = true;
                         }
                     }
