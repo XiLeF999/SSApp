@@ -152,7 +152,7 @@ public class MainActivity extends FragmentActivity {
         mRadioScaleView.setOnFrequencyChangeListener(new RadioScaleView.OnFrequencyChangeListener() {
             @Override
             public void onFrequencyChanging(float frequency) {
-                tvFrequency.setText(String.valueOf(FmUtils.computeStation(frequency) / 10f));
+                tvFrequency.setText(String.format("%.1f", frequency));
             }
 
             @Override
