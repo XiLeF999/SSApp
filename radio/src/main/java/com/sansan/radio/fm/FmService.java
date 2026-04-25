@@ -793,7 +793,7 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
 
 
             //wuhong test
-            int[] newData = {881, 938, 968, 981, 1018, 1049};
+            int[] newData = {88100, 93800, 96800, 98100, 101800, 104900};
             if(stations == null){
                 stations = new int[0];
             }
