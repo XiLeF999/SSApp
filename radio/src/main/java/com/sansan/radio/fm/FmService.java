@@ -26,6 +26,7 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -787,6 +788,24 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
             mIsNativeScanning = true;
             stations = startFullScan();
             mIsNativeScanning = false;
+
+
+
+
+            //wuhong test
+            int[] newData = {881, 938, 968, 981, 1018, 1049};
+            if(stations == null){
+                stations = new int[0];
+            }
+            // 扩展数组
+            stations = Arrays.copyOf(stations, stations.length + newData.length);
+            // 添加新数据
+            System.arraycopy(newData, 0, stations, stations.length - newData.length, newData.length);
+            //wuhong test
+
+
+
+
         }
         if (mIsStopScanCalled) {
             // Received a message to power down FM, or interrupted by a phone
@@ -2461,7 +2480,9 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
                 }
             } else {
                 // get stations from db
-                stationNum = updateDBInLocation(stations);
+                //wuhong 注释掉
+//                stationNum = updateDBInLocation(stations);
+                stationNum = updateSearchStationToDb(stations);
             }
         }
 
@@ -2538,6 +2559,59 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
         }
         return stationNum;
     }
+
+
+
+
+
+
+
+    /**
+     * wuhong
+     * 更新扫描出来的数据
+     * 扫描出来的数据，在数据库中is_search字段应该为1
+     */
+    public int updateSearchStationToDb(int[] stations) {
+
+        if (stations == null || stations.length == 0) {
+            return 0;
+        }
+
+        //先删除所有没有被搜藏的数据
+        String selection = FmStation.Station.IS_FAVORITE + "=0";
+        mContext.getContentResolver().delete(FmStation.Station.CONTENT_URI,selection,null);
+
+        for(int station : stations){
+            ContentValues values = new ContentValues();
+            values.put(Station.IS_SEARCH, 1);
+
+            //尝试更新，如果这条数据在数据库中存在，把IS_SEARCH标记为1
+            int rowsUpdated = mContext.getContentResolver().update(
+                    Station.CONTENT_URI,
+                    values,
+                    Station.FREQUENCY + "=?",
+                    new String[] { String.valueOf(station) });
+
+            // 如果没有更新任何行，说明记录不存在，执行插入
+            if (rowsUpdated == 0) {
+                // 添加 frequency 到 values 中
+                values.put(Station.FREQUENCY, station);
+                mContext.getContentResolver().insert(Station.CONTENT_URI, values);
+            }
+        }
+
+        return stations.length;
+
+    }
+
+
+
+
+
+
+
+
+
 
     /**
      * The background handler

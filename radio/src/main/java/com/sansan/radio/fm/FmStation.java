@@ -48,6 +48,7 @@ public class FmStation {
         Station._ID,
         Station.FREQUENCY,
         Station.IS_FAVORITE,
+        Station.IS_SEARCH,
         Station.STATION_NAME,
         Station.PROGRAM_SERVICE,
         Station.RADIO_TEXT,
