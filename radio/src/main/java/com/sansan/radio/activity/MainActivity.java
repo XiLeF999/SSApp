@@ -343,6 +343,9 @@ public class MainActivity extends FragmentActivity {
                     mHandler.removeMessages(5001);
                     mHandler.sendEmptyMessage(5001);
 
+                    isPlaying = false;
+                    fmListFragment.updatePlayAnim(false);
+                    favListFragment.updatePlayAnim(false);
 
                 }
             } else if(id == R.id.tv_fm_type){
@@ -445,6 +448,10 @@ public class MainActivity extends FragmentActivity {
                     currentStation = FmStation.getCurrentStation(MainActivity.this);
 
                     fmListFragment.updateStationList(currentStation);
+
+                    isPlaying = true;
+                    fmListFragment.updatePlayAnim(true);
+                    favListFragment.updatePlayAnim(true);
 
                     tuneStation();
 
