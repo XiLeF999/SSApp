@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,6 +27,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.sansan.radio.R;
 import com.sansan.radio.bean.StationInfo;
+import com.sansan.radio.dialog.QuitDialog;
 import com.sansan.radio.fm.FmListener;
 import com.sansan.radio.fm.FmService;
 import com.sansan.radio.fm.FmStation;
@@ -71,6 +73,8 @@ public class MainActivity extends FragmentActivity {
 
     private FmService mService = null;
 
+    private QuitDialog quitDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +82,8 @@ public class MainActivity extends FragmentActivity {
         setTransparentStatusBar();
 
         mHandler = new MainActivityHandler(getMainLooper(), this);
+
+        quitDialog = new QuitDialog(this);
 
         // Should start FM service first.
         //先开始在绑定，退出Activity，Service才会继续工作
@@ -163,6 +169,14 @@ public class MainActivity extends FragmentActivity {
 
                 fmListFragment.updateStationList(currentStation);
                 favListFragment.updateStationList(currentStation);
+            }
+        });
+
+
+        quitDialog.setOnQuitDialogClickListener(new QuitDialog.OnQuitDialogClickListener() {
+            @Override
+            public void onGoBack() {
+                finish();
             }
         });
 
@@ -529,6 +543,23 @@ public class MainActivity extends FragmentActivity {
         }
         mFmRadioListener = null;
         super.onDestroy();
+    }
+
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            if (quitDialog.isShowing()){
+                quitDialog.dismiss();
+            } else {
+                quitDialog.show();
+            }
+
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
 
