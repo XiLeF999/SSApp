@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.TextView
 import com.sansan.radio.R
-import kotlin.system.exitProcess
 
 class QuitDialog(context: Context) : Dialog(context, R.style.QuitDialogStyle) {
 
@@ -23,7 +22,7 @@ class QuitDialog(context: Context) : Dialog(context, R.style.QuitDialogStyle) {
 
         tvSure?.setOnClickListener {
 
-            exitProcess(0)
+            onQuitDialogClickListener?.onQuit()
 
         }
 
@@ -44,6 +43,7 @@ class QuitDialog(context: Context) : Dialog(context, R.style.QuitDialogStyle) {
     }
 
     interface OnQuitDialogClickListener {
+        fun onQuit()
         fun onGoBack()
     }
 

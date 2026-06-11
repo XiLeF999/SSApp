@@ -175,6 +175,24 @@ public class MainActivity extends FragmentActivity {
 
         quitDialog.setOnQuitDialogClickListener(new QuitDialog.OnQuitDialogClickListener() {
             @Override
+            public void onQuit() {
+
+                if (mService != null) {
+                    mService.quitFm();           // 停止所有收音机操作，释放资源，停止服务
+                }
+
+                //解绑服务
+                if (mIsServiceBinded) {
+                    unbindService(mServiceConnection);
+                    mIsServiceBinded = false;
+                }
+
+                //关闭所有 Activity
+                finishAffinity();
+
+            }
+
+            @Override
             public void onGoBack() {
                 finish();
             }
