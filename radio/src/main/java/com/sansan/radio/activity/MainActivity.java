@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,10 +19,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -54,6 +57,8 @@ public class MainActivity extends FragmentActivity {
     private int currentType = 1;
 
     private float scanProgress = 0.0f;
+
+    private FrameLayout flSide;
 
     private FmListFragment fmListFragment;
     private FavListFragment favListFragment;
@@ -93,6 +98,7 @@ public class MainActivity extends FragmentActivity {
         fmListFragment = new FmListFragment();
         favListFragment = new FavListFragment();
 
+        flSide = findViewById(R.id.fl_side);
         mRadioScaleView = findViewById(R.id.view_radio_scale);
         tvFrequency = findViewById(R.id.tv_frequency);
         ivSub = findViewById(R.id.iv_sub);
@@ -198,6 +204,19 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        onConfigurationChanged(getResources().getConfiguration());
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        boolean isHalfScreen = newConfig.screenWidthDp == 640;
+        flSide.setVisibility(isHalfScreen ? View.GONE : View.VISIBLE);
     }
 
 

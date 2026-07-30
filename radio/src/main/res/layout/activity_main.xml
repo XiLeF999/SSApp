@@ -4,11 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:background="@mipmap/img_background"
-    android:paddingBottom="88px">
+    android:paddingBottom="@dimen/padding_bottom">
 
     <LinearLayout
-        android:layout_width="1296px"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:orientation="vertical" >
 
         <TextView
@@ -66,10 +67,11 @@
                 android:text="MHz" />
 
         </LinearLayout>
-        
+
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="1104px"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24px"
             android:layout_gravity="center_horizontal" >
 
             <ImageView
@@ -108,7 +110,8 @@
 
         <com.sansan.radio.widget.RadioScaleView
             android:id="@+id/view_radio_scale"
-            android:layout_width="1154px"
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="24px"
             android:layout_height="120px"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10px" />
@@ -170,7 +173,8 @@
     </LinearLayout>
 
     <FrameLayout
-        android:layout_width="match_parent"
+        android:id="@+id/fl_side"
+        android:layout_width="624px"
         android:layout_height="match_parent">
 
         <ImageView
