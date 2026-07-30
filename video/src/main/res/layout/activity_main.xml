@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     android:background="@mipmap/img_background"
     android:orientation="vertical"
-    android:paddingTop="80px"
-    android:paddingBottom="88px">
+    android:paddingTop="@dimen/padding_top"
+    android:paddingBottom="@dimen/padding_bottom">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -118,6 +118,7 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/ll_menu"
             android:layout_width="420px"
             android:layout_height="match_parent"
             android:gravity="center_horizontal"
