@@ -2,12 +2,16 @@ package com.sansan.video.repository
 
 import android.content.ContentResolver
 import android.content.Context
+import android.database.Cursor
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
+import androidx.exifinterface.media.ExifInterface
 import com.sansan.video.model.Video
 import com.sansan.video.model.VideoFolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class VideoRepository(private val context: Context) {
 
@@ -220,7 +224,7 @@ class VideoRepository(private val context: Context) {
                 val path = it.getString(pathColumn) ?: ""
                 val relativePath = it.getString(relativePathColumn) ?: ""
                 val size = it.getLong(sizeColumn)
-                val dateTaken = it.getLong(dateColumn)
+                val dateTaken = getBestDateTaken(path, it)
                 var duration = it.getLong(durationColumn)
                 if(duration <= 0){
                     duration = getVideoDurationWithRetriever(path)
@@ -317,6 +321,53 @@ class VideoRepository(private val context: Context) {
             0L
         } finally {
             retriever.release()
+        }
+    }
+
+    private fun getBestDateTaken(path: String, cursor: Cursor): Long {
+        val dateTakenColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN)
+        var dateTaken = 0L
+
+        if (dateTakenColumn >= 0) {
+            dateTaken = cursor.getLong(dateTakenColumn)
+            if (dateTaken > 0) {
+                // DATE_TAKEN 是微秒，转毫秒
+                return dateTaken / 1000
+            }
+        }
+
+        // 尝试从 EXIF 读取
+        val exifTime = getExifDateTime(path)
+        if (exifTime != null && exifTime > 0) {
+            return exifTime
+        }
+
+        // 尝试 DATE_MODIFIED
+        val modifiedColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_MODIFIED)
+        if (modifiedColumn >= 0) {
+            val modified = cursor.getLong(modifiedColumn)
+            if (modified > 0) {
+                return modified * 1000  // 秒转毫秒
+            }
+        }
+
+        // 最终回退
+        return System.currentTimeMillis()
+    }
+
+    fun getExifDateTime(path: String): Long? {
+        return try {
+            val exif = ExifInterface(path)
+            val dateTime = exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL)
+                ?: exif.getAttribute(ExifInterface.TAG_DATETIME)
+
+            dateTime?.let {
+                // 格式: "2024:01:15 14:30:25"
+                val sdf = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.getDefault())
+                sdf.parse(it)?.time
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 
