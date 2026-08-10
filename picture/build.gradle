@@ -20,10 +20,10 @@ android {
 
     signingConfigs{
         signConfig {
-            storeFile file ('../platform.jks')//签名文件路径，
+            storeFile file ('../platform15.jks')//签名文件路径，
             //keystore的路径通常使用项目根目录的相对路径，但也可以是使用绝对路径，尽管这不推荐
             storePassword '123456' //密码
-            keyAlias 'platform_key'
+            keyAlias 'platform'
             keyPassword '123456'  //密码
         }
     }
