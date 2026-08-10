@@ -2,61 +2,30 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:sharedUserId="android.uid.system" >
 
-
-    <!-- 1. FM核心权限 -->
-    <uses-permission android:name="android.permission.ACCESS_BROADCAST_RADIO" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FM_RADIO" />
-
-    <!-- 2. 音频权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_ROUTING" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-    <!-- 3. 文件系统权限（解决 /dev/fm 访问问题） -->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-
-    <!-- 4. 蓝牙权限 -->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-
-    <!-- 5. 其他必要权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAPTURE_TUNER_AUDIO_INPUT" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
-    <!-- 系统权限 -->
-    <uses-permission android:name="android.permission.ACCESS_SURFACE_FLINGER"/>
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
-
-    <!-- 位置权限 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-
-    <!-- ========== 根据错误日志添加 ========== -->
-    <uses-permission android:name="android.permission.ACCESS_DEVICE_PROPERTIES" />
-    <uses-permission android:name="android.permission.DEVICE_POWER" />
-
-    <!-- ========== 其他可能需要的 ========== -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_BROADCAST_RADIO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <!-- 硬件特性声明 -->
-    <uses-feature
-        android:name="android.hardware.fm"
-        android:required="true" />
-    <uses-feature
-        android:name="android.hardware.bluetooth"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.microphone"
-        android:required="false" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND" />
 
     <application
         android:name=".SSApplication"
+        android:hardwareAccelerated="true"
         android:allowBackup="true"
         android:icon="@mipmap/app_icon_radio"
         android:label="@string/app_name"
@@ -65,6 +34,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.MainActivity"
+            android:configChanges="screenSize|keyboardHidden|locale"
+            android:usesCleartextTraffic="false"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -73,19 +44,20 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".fm.FmService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="com.android.fmradio.IFmRadioService" />
+            </intent-filter>
+        </service>
+
         <provider
             android:name=".fm.FmProvider"
             android:authorities="com.sansan.radio.fm"
             android:exported="false" >
         </provider>
-
-        <service
-            android:name=".fm.FmService"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="com.android.fmradio.IFmRadioService" />
-            </intent-filter>
-        </service>
 
 
     </application>

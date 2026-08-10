@@ -5,16 +5,13 @@ plugins {
 
 android {
     namespace 'com.sansan.video'
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.sansan.video"
         minSdk 30
-        targetSdk 36
+        //Android 15 的强制全屏（Edge-to-Edge）特性只对 targetSdk >= 35的 App 生效
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 

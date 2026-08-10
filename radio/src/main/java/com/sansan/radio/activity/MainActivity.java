@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,19 +14,23 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.sansan.radio.R;
 import com.sansan.radio.bean.StationInfo;
+import com.sansan.radio.dialog.QuitDialog;
 import com.sansan.radio.fm.FmListener;
 import com.sansan.radio.fm.FmService;
 import com.sansan.radio.fm.FmStation;
@@ -42,7 +47,7 @@ public class MainActivity extends FragmentActivity {
 
     private MainActivityHandler mHandler;
 
-    private int currentStation = 875;   //用int计算，用float显示UI
+    private int currentStation = 87500;   //用int计算，用float显示UI。每次变化为100
     private boolean animGoOrBack = true;
 
     private boolean mIsServiceBinded = false;
@@ -52,6 +57,8 @@ public class MainActivity extends FragmentActivity {
     private int currentType = 1;
 
     private float scanProgress = 0.0f;
+
+    private FrameLayout flSide;
 
     private FmListFragment fmListFragment;
     private FavListFragment favListFragment;
@@ -71,6 +78,8 @@ public class MainActivity extends FragmentActivity {
 
     private FmService mService = null;
 
+    private QuitDialog quitDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +87,8 @@ public class MainActivity extends FragmentActivity {
         setTransparentStatusBar();
 
         mHandler = new MainActivityHandler(getMainLooper(), this);
+
+        quitDialog = new QuitDialog(this);
 
         // Should start FM service first.
         //先开始在绑定，退出Activity，Service才会继续工作
@@ -87,6 +98,7 @@ public class MainActivity extends FragmentActivity {
         fmListFragment = new FmListFragment();
         favListFragment = new FavListFragment();
 
+        flSide = findViewById(R.id.fl_side);
         mRadioScaleView = findViewById(R.id.view_radio_scale);
         tvFrequency = findViewById(R.id.tv_frequency);
         ivSub = findViewById(R.id.iv_sub);
@@ -152,7 +164,7 @@ public class MainActivity extends FragmentActivity {
         mRadioScaleView.setOnFrequencyChangeListener(new RadioScaleView.OnFrequencyChangeListener() {
             @Override
             public void onFrequencyChanging(float frequency) {
-                tvFrequency.setText(String.valueOf(FmUtils.computeStation(frequency) / 10f));
+                tvFrequency.setText(String.format("%.1f", frequency));
             }
 
             @Override
@@ -166,6 +178,45 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+
+        quitDialog.setOnQuitDialogClickListener(new QuitDialog.OnQuitDialogClickListener() {
+            @Override
+            public void onQuit() {
+
+                if (mService != null) {
+                    mService.quitFm();           // 停止所有收音机操作，释放资源，停止服务
+                }
+
+                //解绑服务
+                if (mIsServiceBinded) {
+                    unbindService(mServiceConnection);
+                    mIsServiceBinded = false;
+                }
+
+                //关闭所有 Activity
+                finishAffinity();
+
+            }
+
+            @Override
+            public void onGoBack() {
+                finish();
+            }
+        });
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        onConfigurationChanged(getResources().getConfiguration());
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        boolean isHalfScreen = newConfig.screenWidthDp == 640;
+        flSide.setVisibility(isHalfScreen ? View.GONE : View.VISIBLE);
     }
 
 
@@ -229,9 +280,9 @@ public class MainActivity extends FragmentActivity {
             int id = v.getId();
 
             if(id == R.id.iv_sub){
-                currentStation -= 1;
-                if (currentStation < 875) {
-                    currentStation = 1085;
+                currentStation -= 100;
+                if (currentStation < 87500) {
+                    currentStation = 108500;
                 }
 
                 ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
@@ -240,9 +291,9 @@ public class MainActivity extends FragmentActivity {
                 fmListFragment.updateStationList(currentStation);
                 favListFragment.updateStationList(currentStation);
             } else if(id == R.id.iv_add){
-                currentStation += 1;
-                if (currentStation > 1085) {
-                    currentStation = 875;
+                currentStation += 100;
+                if (currentStation > 108500) {
+                    currentStation = 87500;
                 }
 
                 ivFav.setSelected(FmStation.isFavoriteStation(MainActivity.this, currentStation));
@@ -311,6 +362,9 @@ public class MainActivity extends FragmentActivity {
                     mHandler.removeMessages(5001);
                     mHandler.sendEmptyMessage(5001);
 
+                    isPlaying = false;
+                    fmListFragment.updatePlayAnim(false);
+                    favListFragment.updatePlayAnim(false);
 
                 }
             } else if(id == R.id.tv_fm_type){
@@ -358,7 +412,7 @@ public class MainActivity extends FragmentActivity {
         fmListFragment.updatePlayAnim(true);
         favListFragment.updatePlayAnim(true);
 
-        mService.tuneStationAsync(currentFrequency);
+        mService.tuneStationAsync(currentFrequency,false);
     }
 
     /**
@@ -414,6 +468,10 @@ public class MainActivity extends FragmentActivity {
 
                     fmListFragment.updateStationList(currentStation);
 
+                    isPlaying = true;
+                    fmListFragment.updatePlayAnim(true);
+                    favListFragment.updatePlayAnim(true);
+
                     tuneStation();
 
                     break;
@@ -434,13 +492,13 @@ public class MainActivity extends FragmentActivity {
                     }
 
                     if (animGoOrBack) {
-                        currentStation += 1;
-                        if (currentStation > 1085) {
+                        currentStation += 100;
+                        if (currentStation > 108500) {
                             animGoOrBack = false;
                         }
                     } else {
-                        currentStation -= 1;
-                        if (currentStation < 875) {
+                        currentStation -= 100;
+                        if (currentStation < 87500) {
                             animGoOrBack = true;
                         }
                     }
@@ -529,6 +587,23 @@ public class MainActivity extends FragmentActivity {
         }
         mFmRadioListener = null;
         super.onDestroy();
+    }
+
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            if (quitDialog.isShowing()){
+                quitDialog.dismiss();
+            } else {
+                quitDialog.show();
+            }
+
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
 

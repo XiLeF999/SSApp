@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -11,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.sansan.video.adapter.VideoAdapter
 import com.sansan.video.adapter.VideoFolderAdapter
 import com.sansan.video.databinding.ActivityMainBinding
@@ -40,6 +43,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var videoAdapter: VideoAdapter
 
     private var usbScanReceiver: BroadcastReceiver? = null
+    // 定义列数配置
+    private var columnCount = 5
+
+    private fun isHalfScreen() = Resources.getSystem().configuration.screenWidthDp == 640
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,33 +59,9 @@ class MainActivity : AppCompatActivity() {
         videoFolderAdapter = VideoFolderAdapter(this)
         videoAdapter = VideoAdapter(this)
 
-        binding.apply {
-
-            binding.tvAllVideo.isSelected = true
-
-            rvFolderVideo.apply {
-                layoutManager = GridLayoutManager(this@MainActivity, 5)
-                adapter = videoFolderAdapter
-
-                val itemDecoration = VideoItemDecoration(
-                    spanCount = 5,
-                    spacingX = 0,
-                    spacingY = 12
-                )
-                addItemDecoration(itemDecoration)
-            }
-            rvVideo.apply {
-                layoutManager = GridLayoutManager(this@MainActivity, 5)
-                adapter = videoAdapter
-
-                val itemDecoration = VideoItemDecoration(
-                    spanCount = 5,
-                    spacingX = 0,
-                    spacingY = 12
-                )
-                addItemDecoration(itemDecoration)
-            }
-        }
+        // 根据配置决定列数
+        columnCount = if (isHalfScreen()) 2 else 5
+        setupRecyclerViews()
 
         viewModel.getVideoFolderList(VideoRepository.StorageType.ALL)
 
@@ -192,6 +175,90 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+
+    override fun onStart() {
+        super.onStart()
+        onConfigurationChanged(resources.configuration)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        binding.llMenu.layoutParams.width = if (newConfig.screenWidthDp != 640) {
+            420
+        } else {
+            300
+        }
+        // 配置变化时更新列数
+        columnCount = if (isHalfScreen()) 2 else 5
+        updateRecyclerViewColumns()
+    }
+
+    private fun setupRecyclerViews() {
+        binding.apply {
+            binding.tvAllVideo.isSelected = true
+
+            setupRecyclerView(rvFolderVideo, columnCount)
+            setupRecyclerView(rvVideo, columnCount)
+        }
+    }
+
+    private fun setupRecyclerView(recyclerView: RecyclerView, spanCount: Int) {
+        recyclerView.apply {
+            layoutManager = GridLayoutManager(this@MainActivity, spanCount)
+            adapter = if (recyclerView == binding.rvFolderVideo) {
+                videoFolderAdapter
+            } else {
+                videoAdapter
+            }
+
+            // 移除旧的ItemDecoration
+            repeat(itemDecorationCount) { index ->
+                val decoration = getItemDecorationAt(0)
+                if (decoration is VideoItemDecoration) {
+                    removeItemDecoration(decoration)
+                }
+            }
+
+            // 添加新的ItemDecoration
+            val itemDecoration = VideoItemDecoration(
+                spanCount = spanCount,
+                spacingX = 0,
+                spacingY = 12
+            )
+            addItemDecoration(itemDecoration)
+        }
+    }
+
+    private fun updateRecyclerViewColumns() {
+        // 更新两个RecyclerView的列数
+        updateRecyclerViewLayout(binding.rvFolderVideo, columnCount)
+        updateRecyclerViewLayout(binding.rvVideo, columnCount)
+    }
+
+    private fun updateRecyclerViewLayout(recyclerView: RecyclerView, spanCount: Int) {
+        val gridLayoutManager = recyclerView.layoutManager as? GridLayoutManager
+        gridLayoutManager?.spanCount = spanCount
+
+        // 更新ItemDecoration
+        recyclerView.itemDecorationCount.let { count ->
+            repeat(count) { index ->
+                val decoration = recyclerView.getItemDecorationAt(index)
+                if (decoration is VideoItemDecoration) {
+                    // 重新创建Decoration
+                    recyclerView.removeItemDecoration(decoration)
+                    val newDecoration = VideoItemDecoration(
+                        spanCount = spanCount,
+                        spacingX = 0,
+                        spacingY = 12
+                    )
+                    recyclerView.addItemDecoration(newDecoration)
+                }
+            }
+        }
+    }
+
+
 
 
 

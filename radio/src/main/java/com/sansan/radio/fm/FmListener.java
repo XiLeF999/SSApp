@@ -51,8 +51,8 @@ public interface FmListener {
     String SWITCH_ANTENNA_VALUE = "switch_antenna_value";
     String CALLBACK_FLAG = "callback_flag";
     String KEY_IS_SWITCH_ANTENNA = "key_is_switch_antenna";
-    String KEY_BT_STATE = "key_bt_state";
     String KEY_IS_TUNE = "key_is_tune";
+    String KEY_DIRECTION = "key_direction";
     String KEY_TUNE_TO_STATION = "key_tune_to_station";
     String KEY_IS_SEEK = "key_is_seek";
     String KEY_SEEK_TO_STATION = "key_seek_to_station";
@@ -61,7 +61,6 @@ public interface FmListener {
     String KEY_PS_INFO = "key_ps_info";
     String KEY_RT_INFO = "key_rt_info";
     String KEY_STATION_NUM = "key_station_num";
-    String KEY_IS_STEREOMONO = "key_is_stereomono";
 
     // Audio focus related
     String KEY_AUDIOFOCUS_CHANGED = "key_audiofocus_changed";
@@ -70,10 +69,11 @@ public interface FmListener {
     String KEY_RECORDING_STATE = "key_is_recording_state";
     String KEY_RECORDING_ERROR_TYPE = "key_recording_error_type";
     String KEY_IS_RECORDING_MODE = "key_is_recording_mode";
-    String KEY_RECORDING_NAME = "recording_name";
 
     // For change speaker/earphone mode
     String KEY_IS_SPEAKER_MODE = "key_is_speaker_mode";
+    //
+    String KEY_DENOISE_CHANGED  = "key_denoise_changed";
 
     /**
      * handle message: call back from service to activity
@@ -107,21 +107,12 @@ public interface FmListener {
     int MSGID_SAVERECORDING_FINISHED = 26;
     // Audio focus related
     int MSGID_AUDIOFOCUS_CHANGED = 30;
+    int MSGID_DENOISE_CHANGED = 31;
 
     int NOT_AUDIO_FOCUS = 33;
 
-    int MSGID_BT_STATE_CHANGED = 34;
-
-    int MSGID_STEROMONO_FINISHED = 35;
-
     // For refresh time
     int MSGID_REFRESH = 101;
-
-    int UPDATE_NOTIFICATION = 102;
-
-    // For EM
-    String KEY_IS_POWER_UP = "key_is_power_up";
-
 
     /**
      * Call back method to activity from service
