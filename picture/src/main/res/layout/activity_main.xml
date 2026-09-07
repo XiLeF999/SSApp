@@ -19,7 +19,7 @@
             android:layout_marginLeft="40px"
             android:fontFamily="@font/alibabapuhuiti_3_65_medium"
             android:text="图片"
-            android:textColor="@color/color_49535F"
+            android:textColor="@color/text_secondary"
             android:textSize="26sp" />
 
         <TextView
@@ -29,7 +29,7 @@
             android:layout_gravity="bottom"
             android:layout_marginLeft="442px"
             android:fontFamily="@font/alibabapuhuiti_3_65_medium"
-            android:textColor="@color/color_8593A2"
+            android:textColor="@color/text_quaternary"
             android:textSize="12sp"
             android:visibility="gone" />
 
@@ -235,7 +235,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                     android:text="暂无相关内容"
-                    android:textColor="@color/color_49535F"
+                    android:textColor="@color/text_secondary"
                     android:textSize="20sp" />
 
             </LinearLayout>
