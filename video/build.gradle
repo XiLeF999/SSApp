@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+def device_type = "device_type"
+
 android {
     namespace 'com.sansan.video'
     compileSdk 35
@@ -19,8 +21,14 @@ android {
     }
 
     signingConfigs{
-        signConfig {
-            storeFile file ('../platform15.jks')//签名文件路径，
+        ac8257 {
+            storeFile file('../platform.jks')
+            storePassword '123456'
+            keyAlias 'platform_key'
+            keyPassword '123456'
+        }
+        ac8267 {
+            storeFile file('../platform15.jks')//签名文件路径，
             //keystore的路径通常使用项目根目录的相对路径，但也可以是使用绝对路径，尽管这不推荐
             storePassword '123456' //密码
             keyAlias 'platform'
@@ -31,19 +39,72 @@ android {
     buildTypes {
         release {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.signConfig
             minifyEnabled false
             shrinkResources false
             zipAlignEnabled false
         }
         debug {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.signConfig
             minifyEnabled false
             shrinkResources false
             zipAlignEnabled false
+            signingConfig null
         }
     }
+
+    flavorDimensions device_type
+
+    productFlavors {
+        ac8257 {
+            dimension device_type
+            versionCode 1
+            signingConfig signingConfigs.ac8257
+        }
+
+        ac8267 {
+            dimension device_type
+            versionCode 1
+            signingConfig signingConfigs.ac8267
+        }
+
+        ky1045 {
+            dimension device_type
+            versionCode 1
+            signingConfig signingConfigs.ac8257
+        }
+    }
+
+    sourceSets {
+        main {
+            assets.srcDirs = ['src/main/assets']
+            java.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res']
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+        }
+
+        ac8257 {
+            assets.srcDirs = ['src/ac8257/assets']
+            java.srcDirs = ['src/ac8257/java']
+            res.srcDirs = ['src/ac8257/res']
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+        }
+
+        ac8267 {
+            assets.srcDirs = ['src/ac8267/assets']
+            java.srcDirs = ['src/ac8267/java']
+            res.srcDirs = ['src/ac8267/res']
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+        }
+
+        ky1045 {
+            assets.srcDirs = ['src/ky1045/assets']
+            java.srcDirs = ['src/ky1045/java']
+            res.srcDirs = ['src/ky1045/res']
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+        }
+    }
+
+    //这里只能用1.8，否则导入不了framework.jar
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -52,8 +113,13 @@ android {
     androidComponents {
         onVariants(selector().all(), { variant ->
             variant.outputs.forEach { output ->
-                def newName = "SSVideo.apk"
-                output.outputFileName.set(newName)
+                // 提取所有数字（会提取所有连续的数字）
+                def numbers = flavorName.findAll(/\d+/)  // 返回列表，如 ["8257"]
+                def flavorNameShort = numbers.isEmpty() ? "" : numbers.join("")  // "8257"
+                // 取首字母并转为大写
+                def buildTypeShort = variant.buildType.substring(0, 1).toUpperCase()
+                def versionName = android.defaultConfig.versionName ?: "unknown"
+                output.outputFileName.set("Picture${flavorNameShort}${buildTypeShort}${versionName}_${packageTime()}.apk")
             }
         })
     }
@@ -75,12 +141,14 @@ android {
 
     buildFeatures {
         compose true
+        viewBinding true
     }
 
 
-    viewBinding {
-        enabled = true
-    }
+}
+
+static def packageTime() {
+    return new Date().format("yyMMddHHmm", TimeZone.getTimeZone("GMT+08:00"))
 }
 
 dependencies {
