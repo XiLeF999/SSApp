@@ -55,7 +55,7 @@ class FmAdapter(
 
         val animation = holder.ivAnim.drawable as AnimationDrawable
         if(bean.isSelect){
-            holder.ivBg.setImageResource(R.mipmap.img_radio_select_bg)
+            holder.ivBg.setImageResource(R.drawable.img_radio_select_bg)
 
             if(isPlayAnim){
                 holder.ivAnim.post { animation.start() }
@@ -69,9 +69,9 @@ class FmAdapter(
             holder.tvFrequency.setTextColor(mContext.getColor(R.color.color_363E47))
 
             if(bean.isFavorite == 0){   //false
-                holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select)
+                holder.ivFav.setImageResource(R.drawable.img_radio_list_btn_fav_select)
             } else {
-                holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select_ed)
+                holder.ivFav.setImageResource(R.drawable.img_radio_list_btn_fav_select_ed)
             }
 
         } else {
@@ -85,9 +85,9 @@ class FmAdapter(
             holder.tvFrequency.setTextColor(mContext.getColor(R.color.color_92A7BF))
 
             if(bean.isFavorite == 0){   //false
-                holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav)
+                holder.ivFav.setImageResource(R.drawable.img_radio_list_btn_fav)
             } else {
-                holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select_ed)
+                holder.ivFav.setImageResource(R.drawable.img_radio_list_btn_fav_select_ed)
             }
 
         }

@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="880px"
     android:layout_height="296px"
-    android:background="@mipmap/img_bg_dialog">
+    android:background="@drawable/img_bg_dialog">
 
     <LinearLayout
         android:id="@+id/ll_delete"
@@ -39,7 +39,7 @@
                 android:id="@+id/tv_sure"
                 android:layout_width="180px"
                 android:layout_height="80px"
-                android:background="@mipmap/img_pic_sel_1"
+                android:background="@drawable/img_pic_sel_1"
                 android:gravity="center"
                 android:text="确定"
                 android:textColor="@color/white"
@@ -51,7 +51,7 @@
                 android:layout_width="180px"
                 android:layout_height="80px"
                 android:layout_marginLeft="80px"
-                android:background="@mipmap/img_pic_sel_2"
+                android:background="@drawable/img_pic_sel_2"
                 android:gravity="center"
                 android:text="取消"
                 android:textColor="@color/white"
@@ -77,7 +77,7 @@
                 android:id="@+id/iv_progress"
                 android:layout_width="120px"
                 android:layout_height="120px"
-                android:src="@mipmap/img_executing"/>
+                android:src="@drawable/img_executing"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -108,7 +108,7 @@
             <ImageView
                 android:layout_width="120px"
                 android:layout_height="120px"
-                android:src="@mipmap/img_executed"/>
+                android:src="@drawable/img_executed"/>
 
             <TextView
                 android:layout_width="wrap_content"

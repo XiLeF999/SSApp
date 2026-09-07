@@ -16,7 +16,7 @@
         android:layout_gravity="top|right"
         android:layout_marginTop="10px"
         android:layout_marginRight="10px"
-        android:src="@mipmap/img_pic_set_ic_d"/>
+        android:src="@drawable/img_pic_set_ic_d"/>
 
     <FrameLayout
         android:layout_width="256px"
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
             android:layout_marginRight="8px"
-            android:src="@mipmap/img_pic_set_ic_play"/>
+            android:src="@drawable/img_pic_set_ic_play"/>
 
 
     </FrameLayout>

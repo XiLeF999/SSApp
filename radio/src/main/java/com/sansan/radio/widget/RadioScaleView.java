@@ -81,7 +81,7 @@ public class RadioScaleView extends View {
         mBitmapPaint.setFilterBitmap(true);
 
         // 从资源加载指针片
-        mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.img_radio_hand);
+        mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_radio_hand);
     }
 
     @Override

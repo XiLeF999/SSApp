@@ -4,7 +4,7 @@
     android:layout_height="296px"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:background="@mipmap/img_bg_dialog">
+    android:background="@drawable/img_bg_dialog">
 
     <TextView
         android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
             android:id="@+id/tv_sure"
             android:layout_width="180px"
             android:layout_height="80px"
-            android:background="@mipmap/img_pic_sel_1"
+            android:background="@drawable/img_pic_sel_1"
             android:gravity="center"
             android:text="确定"
             android:textColor="@color/white"
@@ -37,7 +37,7 @@
             android:layout_width="180px"
             android:layout_height="80px"
             android:layout_marginLeft="100px"
-            android:background="@mipmap/img_pic_sel_2"
+            android:background="@drawable/img_pic_sel_2"
             android:gravity="center"
             android:text="进入后台"
             android:textColor="@color/white"

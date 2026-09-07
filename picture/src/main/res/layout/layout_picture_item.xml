@@ -16,6 +16,6 @@
         android:layout_gravity="top|right"
         android:layout_marginTop="10px"
         android:layout_marginRight="10px"
-        android:src="@mipmap/img_pic_set_ic_d"/>
+        android:src="@drawable/img_pic_set_ic_d"/>
 
 </FrameLayout>

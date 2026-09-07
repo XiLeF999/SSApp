@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:background="@mipmap/img_background"
+    android:background="@drawable/img_background"
     android:paddingBottom="@dimen/padding_bottom">
 
     <LinearLayout
@@ -142,7 +142,7 @@
                 android:layout_height="80px"
                 android:layout_marginLeft="80px"
                 android:layout_marginRight="80px"
-                android:background="@mipmap/img_radio_play_bg" >
+                android:background="@drawable/img_radio_play_bg" >
 
                 <ImageView
                     android:id="@+id/iv_play"
@@ -180,7 +180,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/img_radio_side_bg" />
+            android:src="@drawable/img_radio_side_bg" />
 
         <LinearLayout
             android:layout_width="match_parent"

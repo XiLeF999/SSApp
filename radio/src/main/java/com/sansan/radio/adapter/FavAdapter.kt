@@ -53,7 +53,7 @@ class FavAdapter(
 
         val animation = holder.ivAnim.drawable as AnimationDrawable
         if(bean.isSelect){
-            holder.ivBg.setImageResource(R.mipmap.img_radio_select_bg)
+            holder.ivBg.setImageResource(R.drawable.img_radio_select_bg)
 
             if(isPlayAnim){
                 holder.ivAnim.post { animation.start() }
@@ -66,7 +66,7 @@ class FavAdapter(
 
             holder.tvFrequency.setTextColor(mContext.getColor(R.color.color_17A1E6))
 
-            holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_select_ed)
+            holder.ivFav.setImageResource(R.drawable.img_radio_list_btn_fav_select_ed)
 
 
         } else {
@@ -79,7 +79,7 @@ class FavAdapter(
 
             holder.tvFrequency.setTextColor(mContext.getColor(R.color.color_92A7BF))
 
-            holder.ivFav.setImageResource(R.mipmap.img_radio_list_btn_fav_ed)
+            holder.ivFav.setImageResource(R.drawable.img_radio_list_btn_fav_ed)
 
         }
 

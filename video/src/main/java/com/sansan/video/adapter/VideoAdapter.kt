@@ -107,9 +107,9 @@ class VideoAdapter(
             }
 
             if (bean.isSelect){
-                holder.ivSelect.setImageResource(R.mipmap.img_pic_set_ic_ok)
+                holder.ivSelect.setImageResource(R.drawable.img_pic_set_ic_ok)
             } else {
-                holder.ivSelect.setImageResource(R.mipmap.img_pic_set_ic_d)
+                holder.ivSelect.setImageResource(R.drawable.img_pic_set_ic_d)
             }
 
 

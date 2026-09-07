@@ -67,10 +67,10 @@ class VideoActivity : AppCompatActivity() {
             player?.let { exoPlayer ->
                 if (exoPlayer.isPlaying) {
                     exoPlayer.pause()
-                    binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_pause)
+                    binding.ivPlayPause.setImageResource(R.drawable.img_pic_ic_pause)
                 } else {
                     exoPlayer.play()
-                    binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_play)
+                    binding.ivPlayPause.setImageResource(R.drawable.img_pic_ic_play)
                 }
             }
         }
@@ -172,7 +172,7 @@ class VideoActivity : AppCompatActivity() {
                 Player.STATE_ENDED -> {
                     // 播放结束时的处理
                     Log.e("wwww", "视频播放结束")
-                    binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_pause)
+                    binding.ivPlayPause.setImageResource(R.drawable.img_pic_ic_pause)
                     // 这里可以添加其他逻辑，比如显示重播按钮、自动播放下一个视频等
                 }
 
@@ -207,15 +207,15 @@ class VideoActivity : AppCompatActivity() {
             // 播放出错时的处理
             Log.e("wwww", "播放错误: ${error.message}")
             Toast.makeText(this@VideoActivity, "不支持播放本视频", Toast.LENGTH_SHORT).show()
-            binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_pause)
+            binding.ivPlayPause.setImageResource(R.drawable.img_pic_ic_pause)
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             // 播放状态变化
             if (isPlaying) {
-                binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_play)
+                binding.ivPlayPause.setImageResource(R.drawable.img_pic_ic_play)
             } else {
-                binding.ivPlayPause.setImageResource(R.mipmap.img_pic_ic_pause)
+                binding.ivPlayPause.setImageResource(R.drawable.img_pic_ic_pause)
             }
         }
     }
