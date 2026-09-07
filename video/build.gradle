@@ -119,7 +119,7 @@ android {
                 // 取首字母并转为大写
                 def buildTypeShort = variant.buildType.substring(0, 1).toUpperCase()
                 def versionName = android.defaultConfig.versionName ?: "unknown"
-                output.outputFileName.set("Picture${flavorNameShort}${buildTypeShort}${versionName}_${packageTime()}.apk")
+                output.outputFileName.set("Video${flavorNameShort}${buildTypeShort}${versionName}_${packageTime()}.apk")
             }
         })
     }
