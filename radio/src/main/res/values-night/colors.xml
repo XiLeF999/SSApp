@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--基础颜色-->
+    <color name="_18">#FFF8FBFE</color>
+    <color name="_17">#FFF1F6FC</color>
+    <color name="_16">#FFEAF2FA</color>
+    <color name="_15">#FFE2EDF9</color>
+    <color name="_14">#FFDBE9F7</color>
+    <color name="_13">#FFD4E4F5</color>
+    <color name="_12">#FFCCDFF4</color>
+    <color name="_11">#FFC5DBF2</color>
+    <color name="_10">#FFBED6F0</color>
+    <color name="_9">#FFB6D1EE</color>
+    <color name="_8">#FFA4BCD6</color>
+    <color name="_7">#FF92A7BF</color>
+    <color name="_6">#FF7F92A6</color>
+    <color name="_5">#FF6D7D8F</color>
+    <color name="_4">#FF5A6876</color>
+    <color name="_3">#FF49535F</color>
+    <color name="_2">#FF363E47</color>
+    <color name="_1">#FF24292F</color>
+    <color name="_0">#FF111417</color>
+
+</resources>
