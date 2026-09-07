@@ -8,15 +8,40 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="color_transparent">#00000000</color>
+    <color name="transparent">#00000000</color>
 
-    <color name="color_C5DBF2">#C5DBF2</color>
+    <!--基础颜色-->
+
+    <color name="_0">#FFF8FBFE</color>
+    <color name="_1">#FFF1F6FC</color>
+    <color name="_2">#FFEAF2FA</color>
+    <color name="_3">#FFE2EDF9</color>
+    <color name="_4">#FFDBE9F7</color>
+    <color name="_5">#FFD4E4F5</color>
+    <color name="_6">#FFCCDFF4</color>
+    <color name="_7">#FFC5DBF2</color>
+    <color name="_8">#FFBED6F0</color>
+    <color name="_9">#FFB6D1EE</color>
+    <color name="_10">#FFA4BCD6</color>
+    <color name="_11">#FF92A7BF</color>
+    <color name="_12">#FF7F92A6</color>
+    <color name="_13">#FF6D7D8F</color>
+    <color name="_14">#FF5A6876</color>
+    <color name="_15">#FF49535F</color>
+    <color name="_16">#FF363E47</color>
+    <color name="_17">#FF24292F</color>
+    <color name="_18">#FF111417</color>
+
+    <!-- 文字颜色 -->
+    <color name="text_primary">@color/_17</color>
+    <color name="text_secondary">@color/_15</color>
+    <color name="text_tertiary">@color/_13</color>
+    <color name="text_quaternary">@color/_12</color>
+    <color name="text_quinary">@color/_11</color>
+    <color name="text_highlight">@color/white</color>
+    <color name="text_blue">#FF0069FC</color>
+
     <color name="color_8593A2">#8593A2</color>
-    <color name="color_92A7BF">#92A7BF</color>
-    <color name="color_363E47">#363E47</color>
-    <color name="color_6D7D8F">#6D7D8F</color>
-    <color name="color_49535F">#49535F</color>
     <color name="color_17A1E6">#17A1E6</color>
-    <color name="color_B6D1EE">#B6D1EE</color>
 
 </resources>

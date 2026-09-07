@@ -33,7 +33,7 @@
             android:fontFamily="@font/alibabapuhuiti_3_65_medium"
             android:text="暂无可播放电台"
             android:textSize="22sp"
-            android:textColor="@color/color_49535F" />
+            android:textColor="@color/text_secondary" />
 
     </LinearLayout>
 

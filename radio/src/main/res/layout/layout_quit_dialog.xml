@@ -12,7 +12,7 @@
         android:fontFamily="@font/alibabapuhuiti_3_65_medium"
         android:text="退出收音机?"
         android:layout_marginTop="40px"
-        android:textColor="@color/color_49535F"
+        android:textColor="@color/text_secondary"
         android:textSize="24sp" />
 
     <LinearLayout

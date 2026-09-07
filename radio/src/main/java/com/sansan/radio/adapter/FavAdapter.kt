@@ -70,14 +70,14 @@ class FavAdapter(
 
 
         } else {
-            holder.ivBg.setImageResource(R.color.color_transparent)
+            holder.ivBg.setImageResource(R.color.transparent)
 
             animation.stop()
 
             holder.ivAnim.visibility = View.INVISIBLE
             holder.tvId.visibility = View.VISIBLE
 
-            holder.tvFrequency.setTextColor(mContext.getColor(R.color.color_92A7BF))
+            holder.tvFrequency.setTextColor(mContext.getColor(R.color._11))
 
             holder.ivFav.setImageResource(R.drawable.img_radio_list_btn_fav_ed)
 

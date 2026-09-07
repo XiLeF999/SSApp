@@ -135,7 +135,7 @@ public class RadioScaleView extends View {
                 if (intFreq % 2 == 0) {
                     // 每2MHz的大刻度
                     mScalePaint.setStrokeWidth(6);
-                    mScalePaint.setColor(mContext.getColor(R.color.color_92A7BF));
+                    mScalePaint.setColor(mContext.getColor(R.color._11));
                     canvas.drawLine(x, 28, x, 28 + 52, mScalePaint);
 
                     // 绘制大刻度频率数字
@@ -145,14 +145,14 @@ public class RadioScaleView extends View {
                 } else {
                     // 奇数MHz的刻度
                     mScalePaint.setStrokeWidth(4);
-                    mScalePaint.setColor(mContext.getColor(R.color.color_B6D1EE));
+                    mScalePaint.setColor(mContext.getColor(R.color._9));
                     canvas.drawLine(x, 46, x, 46 + 34, mScalePaint);
 
                 }
             } else {
                 // 0.5MHz的小刻度
                 mScalePaint.setStrokeWidth(4);
-                mScalePaint.setColor(mContext.getColor(R.color.color_B6D1EE));
+                mScalePaint.setColor(mContext.getColor(R.color._9));
                 canvas.drawLine(x, 46, x, 46 + 34, mScalePaint);
             }
         }
