@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+    android:gravity="center_vertical"
+    android:paddingStart="12px"
+    android:paddingEnd="12px"
+    android:textColor="#6D7D8F"
+    android:textSize="20px" />

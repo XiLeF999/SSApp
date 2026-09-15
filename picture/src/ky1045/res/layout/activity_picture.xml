@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <com.jackandphantom.carouselrecyclerview.CarouselRecyclerview
+        android:id="@+id/carouselRecyclerview"
+        android:layout_width="@dimen/picture_gallery_width"
+        android:layout_height="720px"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <com.sansan.picture.widget.PictureFrameLayout
+        android:id="@+id/fl_picture"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vp_picture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <FrameLayout
+            android:id="@+id/fl_picture_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/iv_close"
+                android:layout_width="48px"
+                android:layout_height="48px"
+                android:layout_gravity="top|start"
+                android:layout_marginStart="16px"
+                android:layout_marginTop="16px"
+                android:scaleType="centerInside"
+                android:src="@drawable/img_pic_ic_back" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16px"
+                android:layout_marginTop="80px"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_picture_info_bg"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="12px"
+                    android:paddingTop="8px"
+                    android:paddingEnd="16px"
+                    android:paddingBottom="8px">
+
+                    <ImageView
+                        android:layout_width="36px"
+                        android:layout_height="36px"
+                        android:layout_marginEnd="8px"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/img_pic_ic_system_prompt" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_picture_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                            android:textColor="@color/white"
+                            android:textSize="24px" />
+
+                        <TextView
+                            android:id="@+id/tv_picture_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/alibabapuhuiti_3_65_medium"
+                            android:textColor="@color/white"
+                            android:textSize="20px" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="288px"
+                    android:layout_height="168px"
+                    android:layout_marginTop="8px"
+                    android:background="@drawable/shape_picture_info_bg"
+                    android:orientation="vertical"
+                    android:paddingStart="16px"
+                    android:paddingTop="12px"
+                    android:paddingEnd="16px"
+                    android:paddingBottom="12px">
+
+                    <TextView android:id="@+id/tv_picture_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:ellipsize="middle" android:fontFamily="@font/alibabapuhuiti_3_65_medium" android:singleLine="true" android:textColor="@color/white" android:textSize="20px" />
+                    <TextView android:id="@+id/tv_picture_resolution" android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/alibabapuhuiti_3_65_medium" android:textColor="@color/white" android:textSize="20px" />
+                    <TextView android:id="@+id/tv_picture_size" android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/alibabapuhuiti_3_65_medium" android:textColor="@color/white" android:textSize="20px" />
+                    <TextView android:id="@+id/tv_picture_path" android:layout_width="match_parent" android:layout_height="wrap_content" android:ellipsize="end" android:fontFamily="@font/alibabapuhuiti_3_65_medium" android:maxLines="2" android:textColor="@color/white" android:textSize="20px" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+    </com.sansan.picture.widget.PictureFrameLayout>
+</FrameLayout>

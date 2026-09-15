@@ -5,8 +5,8 @@ import androidx.viewpager2.widget.ViewPager2
 import kotlin.math.abs
 
 class PictureGalleryTransformer : ViewPager2.PageTransformer {
-    private val minScale = 0.85f  // 两边图片的缩放比例
-    private val minAlpha = 0.5f   // 两边图片的透明度
+    private val minScale = 0.7f  // 两边图片的缩放比例
+    private val minAlpha = 0.82f   // 两边图片的透明度
 
     override fun transformPage(page: View, position: Float) {
         val pageWidth = page.width

@@ -35,6 +35,7 @@ class VideoActivity : AppCompatActivity() {
     private val viewModel: VideoViewModel by viewModels()
 
     private lateinit var currentVideo: Video
+    private val isKy1045 by lazy { resources.getBoolean(R.bool.is_ky1045) }
 
     private var player: ExoPlayer? = null
 
@@ -99,9 +100,15 @@ class VideoActivity : AppCompatActivity() {
         }
 
 
+        if (isKy1045) {
+            binding.llVideoInfo.show()
+            binding.flVideoController.show()
+        }
+
         binding.flVideo.setOnVideoFrameLayoutClickListener(object :
             VideoFrameLayout.OnVideoFrameLayoutClickListener {
             override fun onVideoFrameLayoutClick() {
+                if (isKy1045) binding.llVideoInfo.show()
                 viewModel.showVideoControl()
             }
         })
@@ -189,7 +196,7 @@ class VideoActivity : AppCompatActivity() {
                         val seconds = it / 1000 % 60
                         String.format("%02d:%02d", minutes, seconds)
                     }
-
+                    if (isKy1045) binding.llVideoInfo.show()
                     viewModel.showVideoControl()
                     viewModel.startProgressUpdates(player)
 
@@ -233,3 +240,8 @@ class VideoActivity : AppCompatActivity() {
     }
 
 }
+
+
+
+
+

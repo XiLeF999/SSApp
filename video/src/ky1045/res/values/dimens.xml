@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="video_name_height">32px</dimen>
+    <dimen name="video_grid_spacing_horizontal">20px</dimen>
+    <dimen name="video_grid_spacing_vertical">16px</dimen>
+    <dimen name="video_list_margin_start">32px</dimen>
+    <dimen name="video_list_margin_end">65px</dimen>
+    <dimen name="video_menu_width">362px</dimen>
+    <dimen name="video_list_width">840px</dimen>
+    <dimen name="video_list_inner_start">32px</dimen>
+    <dimen name="video_scrollbar_area_width">78px</dimen>
+</resources>

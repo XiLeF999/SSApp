@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="picture_name_height">32px</dimen>
+    <dimen name="picture_grid_spacing_horizontal">20px</dimen>
+    <dimen name="picture_grid_spacing_vertical">16px</dimen>
+    <dimen name="picture_list_margin_start">32px</dimen>
+    <dimen name="picture_list_margin_end">65px</dimen>
+    <dimen name="picture_menu_width">362px</dimen>
+    <dimen name="picture_list_width">840px</dimen>
+    <dimen name="picture_list_inner_start">32px</dimen>
+    <dimen name="picture_list_outer_end">78px</dimen>
+    <dimen name="picture_scrollbar_area_width">78px</dimen>
+    <dimen name="picture_gallery_width">1280px</dimen>
+    <dimen name="picture_gallery_item_width">726px</dimen>
+    <dimen name="picture_gallery_item_height">408px</dimen>
+</resources>

@@ -6,29 +6,35 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.sansan.video.R
 import com.sansan.video.adapter.VideoAdapter
 import com.sansan.video.adapter.VideoFolderAdapter
 import com.sansan.video.databinding.ActivityMainBinding
 import com.sansan.video.dialog.DeleteVideoDialog
 import com.sansan.video.model.Video
 import com.sansan.video.model.VideoFolder
-import com.sansan.video.repository.VideoRepository
+import com.sansan.video.repository.VideoRepository.StorageType
 import com.sansan.video.utils.hide
 import com.sansan.video.utils.setTransparentStatusBar
 import com.sansan.video.utils.show
 import com.sansan.video.viewmodel.MainViewModel
 import com.sansan.video.widget.VideoItemDecoration
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.collections.filter
 import kotlin.getValue
 
 class MainActivity : AppCompatActivity() {
@@ -46,13 +52,23 @@ class MainActivity : AppCompatActivity() {
     // 定义列数配置
     private var columnCount = 5
 
+    private var scrollbarArea: View? = null
+    private var scrollbarThumb: View? = null
+
     private fun isHalfScreen() = Resources.getSystem().configuration.screenWidthDp == 640
+
+    private fun getVideoColumnCount(): Int =
+        if (resources.getBoolean(R.bool.is_ky1045)) 3 else if (isHalfScreen()) 2 else 5
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setTransparentStatusBar()
+        scrollbarArea = findViewById(R.id.view_scrollbar_area)
+        scrollbarThumb = findViewById(R.id.view_scrollbar_thumb)
+        applyVideoAreaLayout(resources.configuration)
 
         registerUsbScanReceiver()
 
@@ -60,10 +76,12 @@ class MainActivity : AppCompatActivity() {
         videoAdapter = VideoAdapter(this)
 
         // 根据配置决定列数
-        columnCount = if (isHalfScreen()) 2 else 5
+        columnCount = getVideoColumnCount()
         setupRecyclerViews()
+        setupVideoScrollBar()
 
-        viewModel.getVideoFolderList(VideoRepository.StorageType.ALL)
+
+        viewModel.getVideoFolderList(StorageType.ALL)
 
         click()
 
@@ -73,6 +91,7 @@ class MainActivity : AppCompatActivity() {
 
                 binding.rvFolderVideo.hide()
                 binding.rvVideo.show()
+                binding.rvVideo.post { updateCurrentVideoScrollBar() }
                 binding.tvSelectNum.hide()
 
                 viewModel.getVideosInFolder(bean.id)
@@ -86,8 +105,12 @@ class MainActivity : AppCompatActivity() {
 
                 val intent = Intent(this@MainActivity, VideoActivity::class.java)
 
-                // 传递当前点击的图片
+                // 传递整个列表
+                intent.putExtra("video_list", ArrayList(videoList))
+                // 传递当前点击的视频
                 intent.putExtra("current_video", bean)
+                // 传递当前位置
+                intent.putExtra("position", position)
 
                 startActivity(intent)
 
@@ -97,7 +120,7 @@ class MainActivity : AppCompatActivity() {
         videoAdapter.setOnSelectItemListener(object : VideoAdapter.OnSelectItemListener {
             override fun onSelectNum(num: Int) {
 
-                binding.tvSelectNum.text = "已选中($num)"
+                binding.tvSelectNum.text = "已选中(${num})"
 
             }
         })
@@ -118,13 +141,16 @@ class MainActivity : AppCompatActivity() {
             //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
             viewModel.videoFolderList.collectLatest { list ->
                 videoFolderAdapter.setData(list)
+                binding.rvFolderVideo.post { updateCurrentVideoScrollBar() }
 
                 if (list.isEmpty()) {
                     binding.rvFolderVideo.hide()
+                    scrollbarArea?.hide()
                     binding.viewEmpty.show()
 
                 } else {
                     binding.rvFolderVideo.show()
+                    scrollbarArea?.show()
                     binding.viewEmpty.hide()
                 }
 
@@ -136,11 +162,13 @@ class MainActivity : AppCompatActivity() {
             //快速变化的用户操作，用 collectLatest，只显示最后一次结果。用了这个就不用手动cancel协程Job了
             viewModel.videoList.collectLatest { list ->
                 videoAdapter.setData(list)
+                binding.rvVideo.post { updateCurrentVideoScrollBar() }
 
                 if (list.isEmpty()) {
                     binding.tvManager.hide()
 
                     binding.rvVideo.hide()
+                    scrollbarArea?.hide()
                     binding.viewEmpty.show()
 
                 } else {
@@ -148,6 +176,7 @@ class MainActivity : AppCompatActivity() {
                     binding.tvManager.show()
 
                     binding.rvVideo.show()
+                    scrollbarArea?.show()
                     binding.viewEmpty.hide()
 
                 }
@@ -177,90 +206,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        onConfigurationChanged(resources.configuration)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        binding.llMenu.layoutParams.width = if (newConfig.screenWidthDp != 640) {
-            420
-        } else {
-            300
-        }
-        // 配置变化时更新列数
-        columnCount = if (isHalfScreen()) 2 else 5
-        updateRecyclerViewColumns()
-    }
-
-    private fun setupRecyclerViews() {
-        binding.apply {
-            binding.tvAllVideo.isSelected = true
-
-            setupRecyclerView(rvFolderVideo, columnCount)
-            setupRecyclerView(rvVideo, columnCount)
-        }
-    }
-
-    private fun setupRecyclerView(recyclerView: RecyclerView, spanCount: Int) {
-        recyclerView.apply {
-            layoutManager = GridLayoutManager(this@MainActivity, spanCount)
-            adapter = if (recyclerView == binding.rvFolderVideo) {
-                videoFolderAdapter
-            } else {
-                videoAdapter
-            }
-
-            // 移除旧的ItemDecoration
-            repeat(itemDecorationCount) { index ->
-                val decoration = getItemDecorationAt(0)
-                if (decoration is VideoItemDecoration) {
-                    removeItemDecoration(decoration)
-                }
-            }
-
-            // 添加新的ItemDecoration
-            val itemDecoration = VideoItemDecoration(
-                spanCount = spanCount,
-                spacingX = 0,
-                spacingY = 12
-            )
-            addItemDecoration(itemDecoration)
-        }
-    }
-
-    private fun updateRecyclerViewColumns() {
-        // 更新两个RecyclerView的列数
-        updateRecyclerViewLayout(binding.rvFolderVideo, columnCount)
-        updateRecyclerViewLayout(binding.rvVideo, columnCount)
-    }
-
-    private fun updateRecyclerViewLayout(recyclerView: RecyclerView, spanCount: Int) {
-        val gridLayoutManager = recyclerView.layoutManager as? GridLayoutManager
-        gridLayoutManager?.spanCount = spanCount
-
-        // 更新ItemDecoration
-        recyclerView.itemDecorationCount.let { count ->
-            repeat(count) { index ->
-                val decoration = recyclerView.getItemDecorationAt(index)
-                if (decoration is VideoItemDecoration) {
-                    // 重新创建Decoration
-                    recyclerView.removeItemDecoration(decoration)
-                    val newDecoration = VideoItemDecoration(
-                        spanCount = spanCount,
-                        spacingX = 0,
-                        spacingY = 12
-                    )
-                    recyclerView.addItemDecoration(newDecoration)
-                }
-            }
-        }
-    }
-
-
-
-
 
     fun click() {
 
@@ -285,7 +230,7 @@ class MainActivity : AppCompatActivity() {
                 videoAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
-                viewModel.getVideoFolderList(VideoRepository.StorageType.ALL)
+                viewModel.getVideoFolderList(StorageType.ALL)
 
             }
 
@@ -308,7 +253,7 @@ class MainActivity : AppCompatActivity() {
                 videoAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
-                viewModel.getVideoFolderList(VideoRepository.StorageType.USB)
+                viewModel.getVideoFolderList(StorageType.USB)
             }
 
             tvSdVideo.setOnClickListener {
@@ -330,7 +275,7 @@ class MainActivity : AppCompatActivity() {
                 videoAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
-                viewModel.getVideoFolderList(VideoRepository.StorageType.SD_CARD)
+                viewModel.getVideoFolderList(StorageType.SD_CARD)
             }
 
             tvLocalVideo.setOnClickListener {
@@ -352,7 +297,7 @@ class MainActivity : AppCompatActivity() {
                 videoAdapter.setCancelManager()
                 tvManager.hide()
                 llManager.hide()
-                viewModel.getVideoFolderList(VideoRepository.StorageType.INTERNAL)
+                viewModel.getVideoFolderList(StorageType.INTERNAL)
             }
 
             tvManager.setOnClickListener {
@@ -390,6 +335,211 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        onConfigurationChanged(resources.configuration)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        applyVideoAreaLayout(newConfig)
+        // 配置变化时更新列数
+        columnCount = getVideoColumnCount()
+        updateRecyclerViewColumns()
+    }
+
+    private fun applyVideoAreaLayout(configuration: Configuration) {
+        if (!resources.getBoolean(R.bool.is_ky1045)) {
+            binding.llMenu.layoutParams.width = if (configuration.screenWidthDp != 640) 420 else 300
+            return
+        }
+
+        binding.llMenu.layoutParams = binding.llMenu.layoutParams.apply {
+            width = resources.getDimensionPixelSize(R.dimen.video_menu_width)
+        }
+
+        listOf(binding.rvFolderVideo, binding.rvVideo).forEach { recyclerView ->
+            recyclerView.layoutParams = (recyclerView.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                width = resources.getDimensionPixelSize(R.dimen.video_list_width)
+                marginStart = 0
+                marginEnd = 0
+            }
+            recyclerView.setPadding(
+                resources.getDimensionPixelSize(R.dimen.video_list_inner_start),
+                recyclerView.paddingTop,
+                0,
+                recyclerView.paddingBottom
+            )
+        }
+    }
+    private fun setupVideoScrollBar() {
+        if (!resources.getBoolean(R.bool.is_ky1045)) {
+            scrollbarArea?.hide()
+            return
+        }
+
+        val listener = object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                updateVideoScrollBar(recyclerView)
+            }
+        }
+
+        listOf(binding.rvFolderVideo, binding.rvVideo).forEach { recyclerView ->
+            recyclerView.isVerticalScrollBarEnabled = false
+            recyclerView.addOnScrollListener(listener)
+        }
+        var dragStartY = 0f
+        var thumbStartY = 0f
+        scrollbarArea?.setOnTouchListener { _, event ->
+            val area = scrollbarArea ?: return@setOnTouchListener false
+            val thumb = scrollbarThumb ?: return@setOnTouchListener false
+            val recyclerView = if (binding.rvVideo.visibility == View.VISIBLE) binding.rvVideo else binding.rvFolderVideo
+            val maxScroll = recyclerView.computeVerticalScrollRange() - recyclerView.computeVerticalScrollExtent()
+            val maxThumbOffset = area.height - thumb.height
+            if (maxScroll <= 0 || maxThumbOffset <= 0) return@setOnTouchListener true
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    dragStartY = event.y
+                    thumbStartY = thumb.translationY
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val targetThumb = (thumbStartY + event.y - dragStartY).coerceIn(0f, maxThumbOffset.toFloat())
+                    val targetScroll = (targetThumb / maxThumbOffset * maxScroll).toInt()
+                    recyclerView.scrollBy(0, targetScroll - recyclerView.computeVerticalScrollOffset())
+                    true
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> true
+                else -> true
+            }
+        }
+        scrollbarThumb?.setOnTouchListener { _, event ->
+            val area = scrollbarArea ?: return@setOnTouchListener false
+            val thumb = scrollbarThumb ?: return@setOnTouchListener false
+            val recyclerView = if (binding.rvVideo.visibility == View.VISIBLE) binding.rvVideo else binding.rvFolderVideo
+            val maxScroll = recyclerView.computeVerticalScrollRange() - recyclerView.computeVerticalScrollExtent()
+            val maxThumbOffset = area.height - thumb.height
+            if (maxScroll <= 0 || maxThumbOffset <= 0) return@setOnTouchListener true
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    dragStartY = event.rawY
+                    thumbStartY = thumb.translationY
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val targetThumb = (thumbStartY + event.rawY - dragStartY).coerceIn(0f, maxThumbOffset.toFloat())
+                    val targetScroll = (targetThumb / maxThumbOffset * maxScroll).toInt()
+                    recyclerView.scrollBy(0, targetScroll - recyclerView.computeVerticalScrollOffset())
+                    true
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> true
+                else -> true
+            }
+        }
+        scrollbarArea?.post { updateCurrentVideoScrollBar() }
+    }
+
+    private fun updateCurrentVideoScrollBar() {
+        val recyclerView = if (binding.rvVideo.visibility == View.VISIBLE) {
+            binding.rvVideo
+        } else {
+            binding.rvFolderVideo
+        }
+        updateVideoScrollBar(recyclerView)
+    }
+
+    private fun updateVideoScrollBar(recyclerView: RecyclerView) {
+        val scrollRange = recyclerView.computeVerticalScrollRange()
+        val scrollExtent = recyclerView.computeVerticalScrollExtent()
+        val maxScroll = scrollRange - scrollExtent
+        val area = scrollbarArea ?: return
+        val thumb = scrollbarThumb ?: return
+        val maxThumbOffset = area.height - thumb.height
+
+        thumb.translationY = if (maxScroll > 0 && maxThumbOffset > 0) {
+            recyclerView.computeVerticalScrollOffset().toFloat() / maxScroll * maxThumbOffset
+        } else {
+            0f
+        }
+    }
+    private fun setupRecyclerViews() {
+        binding.apply {
+            binding.tvAllVideo.isSelected = true
+
+            setupRecyclerView(rvFolderVideo, columnCount)
+            setupRecyclerView(rvVideo, columnCount)
+        }
+    }
+
+    private fun setupRecyclerView(recyclerView: RecyclerView, spanCount: Int) {
+        recyclerView.apply {
+            layoutManager = GridLayoutManager(this@MainActivity, spanCount).apply {
+                spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int =
+                        if (recyclerView == binding.rvVideo && recyclerView.adapter?.getItemViewType(position) == 0) spanCount else 1
+                }
+            }
+            adapter = if (recyclerView == binding.rvFolderVideo) {
+                videoFolderAdapter
+            } else {
+                videoAdapter
+            }
+
+            // 移除旧的ItemDecoration
+            repeat(itemDecorationCount) { index ->
+                val decoration = getItemDecorationAt(0)
+                if (decoration is VideoItemDecoration) {
+                    removeItemDecoration(decoration)
+                }
+            }
+
+            // 添加新的ItemDecoration
+            val itemDecoration = VideoItemDecoration(
+                spanCount = spanCount,
+                spacingX = resources.getDimensionPixelSize(R.dimen.video_grid_spacing_horizontal),
+                spacingY = resources.getDimensionPixelSize(R.dimen.video_grid_spacing_vertical),
+                isKy1045 = resources.getBoolean(R.bool.is_ky1045)
+            )
+            addItemDecoration(itemDecoration)
+        }
+    }
+
+    private fun updateRecyclerViewColumns() {
+        // 更新两个RecyclerView的列数
+        updateRecyclerViewLayout(binding.rvFolderVideo, columnCount)
+        updateRecyclerViewLayout(binding.rvVideo, columnCount)
+    }
+
+    private fun updateRecyclerViewLayout(recyclerView: RecyclerView, spanCount: Int) {
+        val gridLayoutManager = recyclerView.layoutManager as? GridLayoutManager
+        gridLayoutManager?.apply {
+            this.spanCount = spanCount
+            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int =
+                    if (recyclerView.adapter?.getItemViewType(position) == 0 && recyclerView == binding.rvVideo) spanCount else 1
+            }
+        }
+
+        // 更新ItemDecoration
+        recyclerView.itemDecorationCount.let { count ->
+            repeat(count) { index ->
+                val decoration = recyclerView.getItemDecorationAt(index)
+                if (decoration is VideoItemDecoration) {
+                    // 重新创建Decoration
+                    recyclerView.removeItemDecoration(decoration)
+                    val newDecoration = VideoItemDecoration(
+                        spanCount = spanCount,
+                        spacingX = resources.getDimensionPixelSize(R.dimen.video_grid_spacing_horizontal),
+                        spacingY = resources.getDimensionPixelSize(R.dimen.video_grid_spacing_vertical),
+                isKy1045 = resources.getBoolean(R.bool.is_ky1045)
+                    )
+                    recyclerView.addItemDecoration(newDecoration)
+                }
+            }
+        }
     }
 
 
@@ -443,3 +593,16 @@ class MainActivity : AppCompatActivity() {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

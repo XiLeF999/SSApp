@@ -69,7 +69,7 @@ class VideoRepository(private val context: Context) {
                 val path = it.getString(pathColumn) ?: ""
                 val relativePath = it.getString(relativePathColumn) ?: ""
                 val size = it.getLong(sizeColumn)
-                val dateTaken = it.getLong(dateColumn)
+                val dateTaken = getBestDateTaken(path, it)
                 val duration = it.getLong(durationColumn)
                 val width = it.getInt(widthColumn)
                 val height = it.getInt(heightColumn)
@@ -324,6 +324,7 @@ class VideoRepository(private val context: Context) {
         }
     }
 
+
     private fun getBestDateTaken(path: String, cursor: Cursor): Long {
         val dateTakenColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN)
         var dateTaken = 0L
@@ -331,8 +332,8 @@ class VideoRepository(private val context: Context) {
         if (dateTakenColumn >= 0) {
             dateTaken = cursor.getLong(dateTakenColumn)
             if (dateTaken > 0) {
-                // DATE_TAKEN 是微秒，转毫秒
-                return dateTaken / 1000
+                // MediaStore DATE_TAKEN is milliseconds; normalize legacy second values.
+                return if (dateTaken < 100000000000L) dateTaken * 1000 else dateTaken
             }
         }
 
@@ -486,3 +487,5 @@ class VideoRepository(private val context: Context) {
         return StorageType.INTERNAL
     }
 }
+
+

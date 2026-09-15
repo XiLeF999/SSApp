@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="delete_dialog_background">#F1F6FC</color>
+    <color name="delete_dialog_border">#C5DBF2</color>
+    <color name="delete_dialog_title">#49535F</color>
+    <color name="delete_dialog_message">#49535F</color>
+    <color name="delete_dialog_cancel_background">#C5DBF2</color>
+    <color name="delete_dialog_cancel_text">#FFFFFF</color>
+</resources>

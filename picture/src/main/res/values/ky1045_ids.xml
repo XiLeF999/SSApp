@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="view_scrollbar_area" type="id" />
+    <item name="view_scrollbar_thumb" type="id" />
+    <item name="view_selected_overlay" type="id" />
+    <item name="tv_name" type="id" />
+</resources>

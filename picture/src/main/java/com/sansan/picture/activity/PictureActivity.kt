@@ -1,12 +1,18 @@
 package com.sansan.picture.activity
 
 import android.os.Bundle
+import android.view.View
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import com.sansan.picture.R
 import com.sansan.picture.adapter.PictureGalleryAdapter
 import com.sansan.picture.databinding.ActivityPictureBinding
 import com.sansan.picture.model.Picture
@@ -34,8 +40,11 @@ class PictureActivity : AppCompatActivity() {
     private lateinit var pictureList: ArrayList<Picture>
 
     private var currentPosition: Int = 0
+    private val isKy1045 by lazy { resources.getBoolean(R.bool.is_ky1045) }
 
-    private var isGalleryShow = false   //是否显示画廊，用于只执行一次
+    private var isGalleryShow = false
+    private var systemBarsJob: Job? = null
+    private var pictureInfoJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,42 +58,17 @@ class PictureActivity : AppCompatActivity() {
         currentPosition = pos
 
 
-        photoAdapter = PhotoAdapter(this).apply {
+photoAdapter = PhotoAdapter(this).apply {
             setData(pictureList)
-            onHidePhotoListener = { currentScale ->
-
-                if (currentScale < 0.7f && !isGalleryShow) {
-
-                    Log.d("wwww", "当前缩放比例：$currentScale")
-
-                    isGalleryShow = true
-
-                    binding.flPictureInfo.hide()
-                    binding.flPicture.hide()
-                    binding.carouselRecyclerview.show()
-
-                    pictureGalleryAdapter
-
-                    binding.carouselRecyclerview.getCarouselLayoutManager()
-                        .scrollToPosition(currentPosition)
-
-                }
-
-            }
-
-            onTogglePhotoInfo = {
-                binding.run {
-                    if (flPictureInfo.isVisible) {
-                        flPictureInfo.hide()
-                    } else {
-                        flPictureInfo.show()
-
-                        bindPictureInfo(pictureList[currentPosition])
-                    }
-                }
-            }
+            onShowGallery = { showGallery() }
+            onTogglePhotoInfo = { togglePictureInfo() }
+            onSwipeUp = { showDeleteDialog() }
+            onSwipeDown = { showSystemBarsTemporarily() }
         }
+
         binding.vpPicture.apply {
+            setPageTransformer(com.sansan.picture.widget.PictureGalleryTransformer())
+            offscreenPageLimit = 2
             adapter = photoAdapter
             setCurrentItem(currentPosition, false)
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -94,6 +78,7 @@ class PictureActivity : AppCompatActivity() {
 
                     if (binding.flPictureInfo.isVisible) {
                         bindPictureInfo(pictureList[currentPosition])
+                        schedulePictureInfoHide()
                     }
                 }
             })
@@ -152,6 +137,67 @@ class PictureActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun togglePictureInfo() {
+        if (binding.flPictureInfo.isVisible) {
+            hidePictureInfo()
+        } else {
+            binding.flPictureInfo.show()
+            bindPictureInfo(pictureList[currentPosition])
+            schedulePictureInfoHide()
+        }
+    }
+
+    private fun schedulePictureInfoHide() {
+        pictureInfoJob?.cancel()
+        pictureInfoJob = lifecycleScope.launch {
+            delay(2500)
+            binding.flPictureInfo.hide()
+        }
+    }
+
+    private fun hidePictureInfo() {
+        pictureInfoJob?.cancel()
+        binding.flPictureInfo.hide()
+    }
+
+    private fun showGallery() {
+        binding.flPictureInfo.hide()
+        binding.flPicture.hide()
+        binding.carouselRecyclerview.show()
+        binding.carouselRecyclerview.getCarouselLayoutManager().scrollToPosition(currentPosition)
+        isGalleryShow = true
+    }
+
+    private fun showDeleteDialog() {
+        val dialog = com.sansan.picture.dialog.DeletePictureDialog(this)
+        dialog.setOnPictureDialogClickListener(object : com.sansan.picture.dialog.DeletePictureDialog.OnPictureDialogClickListener {
+            override fun onSure() {
+                viewModel.deletePicture(pictureList[currentPosition]) { success ->
+                    if (success) {
+                        dialog.dismiss()
+                        pictureList.removeAt(currentPosition)
+                        if (pictureList.isEmpty()) finish() else {
+                            currentPosition = currentPosition.coerceAtMost(pictureList.lastIndex)
+                            photoAdapter.setData(pictureList)
+                            pictureGalleryAdapter.setData(pictureList)
+                            binding.vpPicture.setCurrentItem(currentPosition, false)
+                        }
+                    } else dialog.deleteFail()
+                }
+            }
+        })
+        dialog.showDeleteDialog()
+    }
+
+    private fun showSystemBarsTemporarily() {
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        systemBarsJob?.cancel()
+        systemBarsJob = lifecycleScope.launch {
+            delay(2500)
+            setFullScreen()
+        }
+    }
 
     private val galleryItemClickListener = object : PictureGalleryAdapter.OnItemClickListener {
         override fun onItemClick(pictureList: List<Picture>, bean: Picture, position: Int) {

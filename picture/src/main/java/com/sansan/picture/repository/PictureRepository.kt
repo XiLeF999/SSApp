@@ -107,6 +107,7 @@ class PictureRepository(private val context: Context) {
             MediaStore.Images.Media.SIZE,
             MediaStore.Images.Media.DATE_TAKEN,
             MediaStore.Images.Media.DATE_MODIFIED,
+            MediaStore.Images.Media.DATE_ADDED,
             MediaStore.Images.Media.WIDTH,
             MediaStore.Images.Media.HEIGHT,
             MediaStore.Images.Media.MIME_TYPE,
@@ -179,34 +180,35 @@ class PictureRepository(private val context: Context) {
     }
 
     private fun getBestDateTaken(path: String, cursor: Cursor): Long {
-        val dateTakenColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN)
-        var dateTaken = 0L
+        val dateTaken = getNormalizedDate(cursor, MediaStore.Images.Media.DATE_TAKEN)
+        if (dateTaken > 0) return dateTaken
 
-        if (dateTakenColumn >= 0) {
-            dateTaken = cursor.getLong(dateTakenColumn)
-            if (dateTaken > 0) {
-                // DATE_TAKEN 是微秒，转毫秒
-                return dateTaken / 1000
-            }
-        }
-
-        // 尝试从 EXIF 读取
         val exifTime = getExifDateTime(path)
-        if (exifTime != null && exifTime > 0) {
-            return exifTime
-        }
+        if (exifTime != null && exifTime > 0) return exifTime
 
-        // 尝试 DATE_MODIFIED
-        val modifiedColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_MODIFIED)
-        if (modifiedColumn >= 0) {
-            val modified = cursor.getLong(modifiedColumn)
-            if (modified > 0) {
-                return modified * 1000  // 秒转毫秒
-            }
-        }
+        val dateModified = getNormalizedDate(cursor, MediaStore.Images.Media.DATE_MODIFIED)
+        if (dateModified > 0) return dateModified
 
-        // 最终回退
+        val dateAdded = getNormalizedDate(cursor, MediaStore.Images.Media.DATE_ADDED)
+        if (dateAdded > 0) return dateAdded
+
         return System.currentTimeMillis()
+    }
+
+    private fun getNormalizedDate(cursor: Cursor, columnName: String): Long {
+        val column = cursor.getColumnIndex(columnName)
+        if (column < 0 || cursor.isNull(column)) return 0L
+
+        val value = cursor.getLong(column)
+        if (value <= 0) return 0L
+
+        // MediaStore fields vary between seconds, milliseconds, microseconds and nanoseconds.
+        return when {
+            value >= 100_000_000_000_000_000L -> value / 1_000_000
+            value >= 100_000_000_000_000L -> value / 1000
+            value < 10_000_000_000L -> value * 1000
+            else -> value
+        }
     }
 
     fun getExifDateTime(path: String): Long? {
@@ -356,6 +358,8 @@ class PictureRepository(private val context: Context) {
             MediaStore.Images.Media.RELATIVE_PATH,
             MediaStore.Images.Media.SIZE,
             MediaStore.Images.Media.DATE_TAKEN,
+            MediaStore.Images.Media.DATE_MODIFIED,
+            MediaStore.Images.Media.DATE_ADDED,
             MediaStore.Images.Media.WIDTH,
             MediaStore.Images.Media.HEIGHT,
             MediaStore.Images.Media.MIME_TYPE
@@ -388,7 +392,7 @@ class PictureRepository(private val context: Context) {
                 val path = it.getString(pathColumn) ?: ""
                 val relativePath = it.getString(relativePathColumn) ?: ""
                 val size = it.getLong(sizeColumn)
-                val dateTaken = it.getLong(dateColumn)
+                val dateTaken = getBestDateTaken(path, it)
                 val width = it.getInt(widthColumn)
                 val height = it.getInt(heightColumn)
                 val mimeType = it.getString(mimeColumn) ?: "image/*"
