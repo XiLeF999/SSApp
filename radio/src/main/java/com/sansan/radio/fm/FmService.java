@@ -788,24 +788,6 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
             mIsNativeScanning = true;
             stations = startFullScan();
             mIsNativeScanning = false;
-
-
-
-
-            //wuhong test
-            int[] newData = {88100, 93800, 96800, 98100, 101800, 104900};
-            if(stations == null){
-                stations = new int[0];
-            }
-            // 扩展数组
-            stations = Arrays.copyOf(stations, stations.length + newData.length);
-            // 添加新数据
-            System.arraycopy(newData, 0, stations, stations.length - newData.length, newData.length);
-            //wuhong test
-
-
-
-
         }
         if (mIsStopScanCalled) {
             // Received a message to power down FM, or interrupted by a phone
@@ -1320,25 +1302,40 @@ public class FmService extends Service implements FmRecorder.OnRecorderStateChan
 
     private void initRadioManager() {
         mModules = new ArrayList<>();
-        if (mRadioManager == null) {
-            mRadioManager = (RadioManager) mContext.getSystemService(Context.RADIO_SERVICE);
+        try {
+            if (mRadioManager == null) {
+                mRadioManager = (RadioManager) mContext.getSystemService(Context.RADIO_SERVICE);
+            }
+            if (mRadioManager == null) {
+                Log.w(TAG, "Broadcast radio service is unavailable");
+                return;
+            }
+
+            int status = mRadioManager.listModules(mModules);
+            if (status != RadioManager.STATUS_OK) {
+                Log.w(TAG, "Couldn't get radio module list: " + status);
+                return;
+            }
+            if (mModules.isEmpty()) {
+                Log.i(TAG, "No radio modules on this device");
+                return;
+            }
+            RadioManager.ModuleProperties module = mModules.get(0);
+            mRadioTuner = mRadioManager.openTuner(module.getId(),
+                    null,
+                    true,
+                    mHardwareCallback,
+                    fmRadioHanndler);
+            if (mRadioTuner == null) {
+                Log.w(TAG, "Failed to open the broadcast radio tuner");
+                return;
+            }
+            Log.i(TAG, "mRadioTuner Created successfully");
+        } catch (RuntimeException e) {
+            mRadioManager = null;
+            mRadioTuner = null;
+            Log.e(TAG, "Broadcast radio service is not available on this device", e);
         }
-        int status = mRadioManager.listModules(mModules);
-        if (status != RadioManager.STATUS_OK) {
-            Log.w(TAG, "Couldn't get radio module list: " + status);
-            return;
-        }
-        if (mModules.size() == 0) {
-            Log.i(TAG, "No radio modules on this device");
-            return;
-        }
-        RadioManager.ModuleProperties module = mModules.get(0);
-        mRadioTuner = mRadioManager.openTuner(module.getId(),
-                null,
-                true,
-                mHardwareCallback,
-                fmRadioHanndler);
-        Log.i(TAG, "mRadioTuner Created successfully");
     }
 
     private void registerAudioPortUpdateListener() {

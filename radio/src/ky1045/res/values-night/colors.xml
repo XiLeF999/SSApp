@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The shared layout uses these concrete colors for its primary readout. -->
+    <color name="black">#FFFFFFFF</color>
+    <color name="color_8593A2">#FFA4BCD6</color>
+    <color name="radio_side_bg">#FF111A24</color>
+</resources>

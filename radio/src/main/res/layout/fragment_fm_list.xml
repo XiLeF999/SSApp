@@ -22,11 +22,13 @@
         android:visibility="gone" >
 
         <ImageView
+            android:id="@+id/iv_no_station"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/img_radio_bg" />
 
         <TextView
+            android:id="@+id/tv_no_station"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20px"

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+    <item android:drawable="@drawable/radio_a_17" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_18" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_19" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_20" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_00" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_01" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_02" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_03" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_04" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_05" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_06" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_07" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_08" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_09" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_10" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_11" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_12" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_13" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_14" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_15" android:duration="40" />
+    <item android:drawable="@drawable/radio_a_16" android:duration="40" />
+</animation-list>

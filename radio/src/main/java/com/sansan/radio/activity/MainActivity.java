@@ -22,7 +22,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -45,6 +44,9 @@ import java.util.List;
 
 public class MainActivity extends FragmentActivity {
 
+    private static final int MSG_UPDATE_SCAN_UI = 5001;
+    private static final int MSG_HIDE_SCAN_RESULT = 5003;
+
     private MainActivityHandler mHandler;
 
     private int currentStation = 87500;   //用int计算，用float显示UI。每次变化为100
@@ -57,6 +59,7 @@ public class MainActivity extends FragmentActivity {
     private int currentType = 1;
 
     private float scanProgress = 0.0f;
+    private boolean isKy1045 = false;
 
     private FrameLayout flSide;
 
@@ -67,6 +70,8 @@ public class MainActivity extends FragmentActivity {
     private TextView tvFrequency;
     private ImageView ivSub;
     private TextView tvScanProgress;
+    private ImageView ivSearchDecorLeft;
+    private ImageView ivSearchDecorRight;
     private ImageView ivAdd;
     private ImageView ivFav;
     private ImageView ivPrevious;
@@ -86,6 +91,8 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         setTransparentStatusBar();
 
+        isKy1045 = getResources().getBoolean(R.bool.is_ky1045);
+
         mHandler = new MainActivityHandler(getMainLooper(), this);
 
         quitDialog = new QuitDialog(this);
@@ -104,6 +111,11 @@ public class MainActivity extends FragmentActivity {
         ivSub = findViewById(R.id.iv_sub);
         ivSub.setOnClickListener(onClickListener);
         tvScanProgress = findViewById(R.id.tv_scan_progress);
+        if (isKy1045) {
+            ivSearchDecorLeft = findOptionalImageView("iv_search_decor_left");
+            ivSearchDecorRight = findOptionalImageView("iv_search_decor_right");
+            updateSearchDecor(false);
+        }
         ivAdd = findViewById(R.id.iv_add);
         ivAdd.setOnClickListener(onClickListener);
         ivFav = findViewById(R.id.iv_fav);
@@ -348,23 +360,18 @@ public class MainActivity extends FragmentActivity {
                     }
                 }
             } else if(id == R.id.iv_search){
+                if (mService == null) {
+                    return;
+                }
+
                 if (mService.isScanning()) {
 
                     mService.stopScan();
 
                 } else {
 
-
                     mService.startScanAsync();
-
-                    ivPlay.setSelected(false);
-                    ivSearch.setSelected(true);
-                    mHandler.removeMessages(5001);
-                    mHandler.sendEmptyMessage(5001);
-
-                    isPlaying = false;
-                    fmListFragment.updatePlayAnim(false);
-                    favListFragment.updatePlayAnim(false);
+                    startScanAnimation();
 
                 }
             } else if(id == R.id.tv_fm_type){
@@ -376,6 +383,46 @@ public class MainActivity extends FragmentActivity {
 
         }
     };
+
+    private void startScanAnimation() {
+        scanProgress = 0.0f;
+        ivPlay.setSelected(false);
+        ivSearch.setSelected(true);
+        mHandler.removeMessages(MSG_UPDATE_SCAN_UI);
+        mHandler.removeMessages(MSG_HIDE_SCAN_RESULT);
+        mHandler.sendEmptyMessage(MSG_UPDATE_SCAN_UI);
+
+        isPlaying = false;
+        fmListFragment.updatePlayAnim(false);
+        favListFragment.updatePlayAnim(false);
+        if (isKy1045) {
+            updateSearchDecor(true);
+            fmListFragment.setSearching(true);
+        }
+    }
+
+    private ImageView findOptionalImageView(String resourceName) {
+        int resourceId = getResources().getIdentifier(resourceName, "id", getPackageName());
+        return resourceId == 0 ? null : findViewById(resourceId);
+    }
+
+    private void updateSearchDecor(boolean active) {
+        if (!isKy1045 || ivSearchDecorLeft == null || ivSearchDecorRight == null) {
+            return;
+        }
+
+        setOptionalDrawable(ivSearchDecorLeft,
+                active ? "radio_decor_l_bg_on" : "radio_decor_l_bg_off");
+        setOptionalDrawable(ivSearchDecorRight,
+                active ? "radio_decor_r_bg_on" : "radio_decor_r_bg_off");
+    }
+
+    private void setOptionalDrawable(ImageView imageView, String resourceName) {
+        int resourceId = getResources().getIdentifier(resourceName, "drawable", getPackageName());
+        if (resourceId != 0) {
+            imageView.setImageResource(resourceId);
+        }
+    }
 
 
 
@@ -459,14 +506,22 @@ public class MainActivity extends FragmentActivity {
                     Log.e("ww","FM电台扫描结束:" + isScan + ";" + searchedNum);
 
                     ivSearch.setSelected(false);
-                    mHandler.removeMessages(5001);
-
-                    tvScanProgress.setVisibility(View.GONE);
+                    mHandler.removeMessages(MSG_UPDATE_SCAN_UI);
                     scanProgress = 0.0f;
 
                     currentStation = FmStation.getCurrentStation(MainActivity.this);
 
                     fmListFragment.updateStationList(currentStation);
+
+                    if (isKy1045 && isScan) {
+                        updateSearchDecor(true);
+                        fmListFragment.setSearching(false);
+                        tvScanProgress.setText("电台搜索完成");
+                        tvScanProgress.setVisibility(View.VISIBLE);
+                        mHandler.sendEmptyMessageDelayed(MSG_HIDE_SCAN_RESULT, 1500L);
+                    } else {
+                        tvScanProgress.setVisibility(View.GONE);
+                    }
 
                     isPlaying = true;
                     fmListFragment.updatePlayAnim(true);
@@ -476,7 +531,7 @@ public class MainActivity extends FragmentActivity {
 
                     break;
 
-                case 5001:   //更新扫描UI
+                case MSG_UPDATE_SCAN_UI:   //更新扫描UI
 
                     float currentFrequency = FmUtils.computeFrequency(currentStation);
 
@@ -486,7 +541,7 @@ public class MainActivity extends FragmentActivity {
 
                     tvScanProgress.setVisibility(View.VISIBLE);
                     tvScanProgress.setText("电台搜索" + (int)scanProgress + "%");
-                    scanProgress += 0.32;
+                    scanProgress += 0.32f;
                     if(scanProgress > 99){
                         scanProgress = 99.0f;
                     }
@@ -503,7 +558,13 @@ public class MainActivity extends FragmentActivity {
                         }
                     }
 
-                    mHandler.sendEmptyMessageDelayed(5001,30);
+                    mHandler.sendEmptyMessageDelayed(MSG_UPDATE_SCAN_UI,30);
+
+                    break;
+
+                case MSG_HIDE_SCAN_RESULT:
+                    tvScanProgress.setVisibility(View.GONE);
+                    scanProgress = 0.0f;
 
                     break;
 

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sansan.radio.R
 import com.sansan.radio.adapter.FmAdapter
 import com.sansan.radio.bean.StationInfo
 import com.sansan.radio.databinding.FragmentFmListBinding
@@ -20,6 +21,9 @@ class FmListFragment : Fragment() {
     private var mFmAdapter: FmAdapter? = null
 
     private var onFmListFragmentListener: OnFmListFragmentListener? = null
+
+    private val isKy1045: Boolean
+        get() = resources.getBoolean(R.bool.is_ky1045)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,12 +64,38 @@ class FmListFragment : Fragment() {
         if (stationInfoList.isEmpty()){
             binding.llNoStation.show()
             binding.rvFmList.hide()
+            if (isKy1045) {
+                setKy1045Illustration("radio_bg")
+                binding.tvNoStation.text = "暂无可播放电台"
+                binding.tvNoStation.setTextColor(requireContext().getColor(R.color.text_secondary))
+            }
         } else {
             binding.llNoStation.hide()
             binding.rvFmList.show()
 
             stationInfoList.firstOrNull { it.station == currentStation }?.let { it.isSelect = true }
             mFmAdapter?.setData(stationInfoList, onFmListFragmentListener?.isPlaying() ?: true)
+        }
+    }
+
+    fun setSearching(searching: Boolean) {
+        if (!isKy1045 || !this::binding.isInitialized) return
+
+        if (searching) {
+            binding.rvFmList.hide()
+            binding.llNoStation.show()
+            setKy1045Illustration("radio_sle_bg")
+            binding.tvNoStation.text = "正在搜索电台中..."
+            binding.tvNoStation.setTextColor(requireContext().getColor(R.color.color_17A1E6))
+        } else {
+            updateStationList(FmStation.getCurrentStation(context))
+        }
+    }
+
+    private fun setKy1045Illustration(resourceName: String) {
+        val resourceId = resources.getIdentifier(resourceName, "drawable", requireContext().packageName)
+        if (resourceId != 0) {
+            binding.ivNoStation.setImageResource(resourceId)
         }
     }
 

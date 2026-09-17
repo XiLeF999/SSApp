@@ -53,9 +53,11 @@ class PictureActivity : AppCompatActivity() {
         setFullScreen()
 
         pictureList = intent.getSerializableExtra("picture_list") as ArrayList<Picture>
-        val pos = intent.getIntExtra("position", 0)
+        val pos = savedInstanceState?.getInt("current_position")
+            ?: intent.getIntExtra("position", 0)
 
         currentPosition = pos
+        isGalleryShow = savedInstanceState?.getBoolean("gallery_visible") ?: false
 
 
 photoAdapter = PhotoAdapter(this).apply {
@@ -124,6 +126,14 @@ photoAdapter = PhotoAdapter(this).apply {
 
         binding.ivClose.setOnClickListener { finish() }
 
+        if (isGalleryShow) showGallery()
+
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt("current_position", currentPosition)
+        outState.putBoolean("gallery_visible", isGalleryShow)
+        super.onSaveInstanceState(outState)
     }
 
     private fun bindPictureInfo(picture: Picture) {

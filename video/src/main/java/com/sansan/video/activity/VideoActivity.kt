@@ -61,7 +61,8 @@ class VideoActivity : AppCompatActivity() {
         player?.setMediaItem(mediaItem)
 
         player?.prepare()
-        player?.playWhenReady = true // 准备完成后自动播放
+        player?.seekTo(savedInstanceState?.getLong("playback_position") ?: 0L)
+        player?.playWhenReady = savedInstanceState?.getBoolean("play_when_ready") ?: true
 
 
         binding.ivPlayPause.setOnClickListener {
@@ -231,6 +232,12 @@ class VideoActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         player?.pause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putLong("playback_position", player?.currentPosition ?: 0L)
+        outState.putBoolean("play_when_ready", player?.playWhenReady ?: false)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onDestroy() {

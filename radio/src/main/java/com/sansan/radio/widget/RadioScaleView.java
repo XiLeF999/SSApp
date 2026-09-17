@@ -1,46 +1,56 @@
 package com.sansan.radio.widget;
 
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.sansan.radio.R;
 
+import java.util.Locale;
+
 public class RadioScaleView extends View {
 
-    private Context mContext;
+    private static final float FREQUENCY_STEP = 0.1f;
+    private static final float PIXELS_PER_MHZ = 140f;
+    private static final float TOUCH_SLOP = 3f;
+    private static final float CENTER_INDICATOR_WIDTH = 44f;
+    private static final float CENTER_INDICATOR_HEIGHT = 90f;
+    private static final float INTEGER_TICK_WIDTH = 6f;
+    private static final float INTEGER_TICK_HEIGHT = 36f;
+    private static final float HALF_TICK_HEIGHT = 24f;
+    private static final float MINOR_TICK_WIDTH = 4f;
+    private static final float MINOR_TICK_HEIGHT = 15f;
+    private static final float TICK_BASELINE_GAP = 4f;
+    private static final float SCALE_BACKGROUND_WIDTH = 500f;
+    private static final float SCALE_BACKGROUND_HEIGHT = 82f;
+    private static final float EDGE_MASK_WIDTH = 125f;
+    private static final float EDGE_MASK_HEIGHT = 120f;
 
-    // 频率范围 - 标准FM广播范围
-    private float mMinFrequency = 87.5f;  // 最小频率
-    private float mMaxFrequency = 108.5f; // 最大频率
-    private float mCurrentFrequency = 98f; // 当前频率
+    private float mMinFrequency = 87.5f;
+    private float mMaxFrequency = 108.5f;
+    private float mCurrentFrequency = 98f;
 
-    // 绘制工具
-    private Paint mScalePaint;
-    private Paint mTextPaint;
-    private Paint mIndicatorPaint;
-    private Paint mPointerPaint;
-    private Paint mBitmapPaint;
+    private final Paint mScalePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint mBitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+    private Bitmap mPointerBitmap;
+    private Bitmap mScaleBackgroundBitmap;
+    private Bitmap mLeftMaskBitmap;
+    private Bitmap mRightMaskBitmap;
 
-    // 尺寸
-    private int mWidth, mHeight;
-    private float mScaleStartX;  // 刻度开始位置
-    private float mScaleEndX;    // 刻度结束位置
-    private float mScaleLength;  // 刻度总长度
+    private float mCenterX;
+    private float mLastTouchX;
+    private float mDownTouchX;
+    private boolean mIsDragging;
 
-    // 刻度间隔
-    private static final float SMALL_SCALE_SPACING = 0.5f;  // 小刻度间隔 0.5MHz
-
-    // 指针相关
-    private float mPointerX;  // 指针的水平位置
-    private boolean mIsDragging = false;
-    private float mPointerTouchOffset = 0;  // 触摸点与指针中心的偏移
-    private Bitmap mBitmap;
-
-    // 每MHz对应的像素数
-    private float mPixelsPerMHz;
+    private OnFrequencyChangeListener mOnFrequencyChangeListener;
 
     public RadioScaleView(Context context) {
         this(context, null);
@@ -48,233 +58,221 @@ public class RadioScaleView extends View {
 
     public RadioScaleView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
         init();
     }
 
     private void init() {
-        // 初始化刻度线画笔
-        mScalePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mScalePaint.setColor(Color.parseColor("#666666"));
-        mScalePaint.setStrokeWidth(2);
-        mScalePaint.setStrokeCap(Paint.Cap.ROUND);  // 设置为圆形端部
-
-        // 初始化文字画笔
-        mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setColor(Color.BLACK);
-        mTextPaint.setTextSize(30);
+        mScalePaint.setStrokeCap(Paint.Cap.ROUND);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
+        mPointerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_radio_hand);
+        mScaleBackgroundBitmap = loadOptionalBitmap("radio_rs_bg");
+        mLeftMaskBitmap = loadOptionalBitmap("radio_hide_l_bg");
+        mRightMaskBitmap = loadOptionalBitmap("radio_hide_r_bg");
+        setClickable(true);
+    }
 
-        // 初始化指示线画笔
-        mIndicatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mIndicatorPaint.setColor(Color.RED);
-        mIndicatorPaint.setStrokeWidth(4);
-
-        // 初始化指针画笔
-        mPointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPointerPaint.setColor(Color.RED);
-        mPointerPaint.setStyle(Paint.Style.FILL);
-
-        // 初始化图片指针画笔
-        mBitmapPaint = new Paint();
-        mBitmapPaint.setAntiAlias(true);
-        mBitmapPaint.setFilterBitmap(true);
-
-        // 从资源加载指针片
-        mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_radio_hand);
+    private Bitmap loadOptionalBitmap(String resourceName) {
+        int resourceId = getResources().getIdentifier(resourceName, "drawable",
+                getContext().getPackageName());
+        return resourceId == 0 ? null : BitmapFactory.decodeResource(getResources(), resourceId);
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mWidth = w;
-        mHeight = h;
-
-        // 计算刻度区域
-        int padding = 50;  // 左右边距
-        mScaleStartX = padding;
-        mScaleEndX = w - padding;
-        mScaleLength = mScaleEndX - mScaleStartX;
-
-        // 计算每MHz对应的像素数
-        float frequencyRange = mMaxFrequency - mMinFrequency;
-        mPixelsPerMHz = mScaleLength / frequencyRange;
-
-        // 初始化指针位置
-        updatePointerPosition();
-    }
-
-    private void updatePointerPosition() {
-        // 根据当前频率计算指针位置
-        mPointerX = mScaleStartX + (mCurrentFrequency - mMinFrequency) * mPixelsPerMHz;
+        mCenterX = w / 2f;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        // 绘制所有刻度
-        drawAllScales(canvas);
-
-        // 绘制指针
-        drawPointer(canvas);
-
+        drawScaleBackground(canvas);
+        drawScaleWindow(canvas);
+        drawEdgeMasks(canvas);
+        drawFixedPointer(canvas);
     }
 
-    private void drawAllScales(Canvas canvas) {
-        // 绘制刻度线
-        for (float freq = mMinFrequency; freq <= mMaxFrequency; freq += SMALL_SCALE_SPACING) {
-            float x = mScaleStartX + (freq - mMinFrequency) * mPixelsPerMHz;
+    private void drawScaleBackground(Canvas canvas) {
+        if (mScaleBackgroundBitmap == null) {
+            return;
+        }
+        float left = mCenterX - SCALE_BACKGROUND_WIDTH / 2f;
+        float bottom = getScaleBaseline() + 1f;
+        RectF destination = new RectF(left, bottom - SCALE_BACKGROUND_HEIGHT,
+                left + SCALE_BACKGROUND_WIDTH, bottom);
+        canvas.drawBitmap(mScaleBackgroundBitmap, null, destination, mBitmapPaint);
+    }
 
-            // 判断是否为整数MHz
-            boolean isInteger = Math.abs(freq - Math.round(freq)) < 0.001f;
+    private void drawEdgeMasks(Canvas canvas) {
+        float top = (getHeight() - EDGE_MASK_HEIGHT) / 2f;
+        if (mLeftMaskBitmap != null) {
+            RectF leftDestination = new RectF(0f, top, EDGE_MASK_WIDTH,
+                    top + EDGE_MASK_HEIGHT);
+            canvas.drawBitmap(mLeftMaskBitmap, null, leftDestination, mBitmapPaint);
+        }
+        if (mRightMaskBitmap != null) {
+            RectF rightDestination = new RectF(getWidth() - EDGE_MASK_WIDTH, top,
+                    getWidth(), top + EDGE_MASK_HEIGHT);
+            canvas.drawBitmap(mRightMaskBitmap, null, rightDestination, mBitmapPaint);
+        }
+    }
 
-            if (isInteger) {
-                int intFreq = Math.round(freq);
+    private void drawScaleWindow(Canvas canvas) {
+        float baseline = getScaleBaseline();
+        float visibleRange = getWidth() / PIXELS_PER_MHZ / 2f + FREQUENCY_STEP;
+        int firstStep = (int) Math.floor((mCurrentFrequency - visibleRange) / FREQUENCY_STEP);
+        int lastStep = (int) Math.ceil((mCurrentFrequency + visibleRange) / FREQUENCY_STEP);
 
-                if (intFreq % 2 == 0) {
-                    // 每2MHz的大刻度
-                    mScalePaint.setStrokeWidth(6);
-                    mScalePaint.setColor(mContext.getColor(R.color._11));
-                    canvas.drawLine(x, 28, x, 28 + 52, mScalePaint);
+        for (int step = firstStep; step <= lastStep; step++) {
+            float frequency = step * FREQUENCY_STEP;
+            if (frequency < mMinFrequency - 0.001f || frequency > mMaxFrequency + 0.001f) {
+                continue;
+            }
 
-                    // 绘制大刻度频率数字
-                    mTextPaint.setTextSize(20);
-                    mTextPaint.setColor(Color.BLACK);
-                    canvas.drawText(String.format("%.0f", freq), x, mHeight - 10, mTextPaint);
-                } else {
-                    // 奇数MHz的刻度
-                    mScalePaint.setStrokeWidth(4);
-                    mScalePaint.setColor(mContext.getColor(R.color._9));
-                    canvas.drawLine(x, 46, x, 46 + 34, mScalePaint);
+            float x = mCenterX + (frequency - mCurrentFrequency) * PIXELS_PER_MHZ;
+            boolean wholeMHz = isWholeMHz(step);
+            boolean halfMHz = !wholeMHz && step % 5 == 0;
+            float width = wholeMHz ? INTEGER_TICK_WIDTH : MINOR_TICK_WIDTH;
+            float distanceInSteps = Math.abs(x - mCenterX)
+                    / (PIXELS_PER_MHZ * FREQUENCY_STEP);
+            float height = getTickHeight(distanceInSteps, wholeMHz, halfMHz);
+            int edgeAlpha = getEdgeAlpha(x);
 
-                }
-            } else {
-                // 0.5MHz的小刻度
-                mScalePaint.setStrokeWidth(4);
-                mScalePaint.setColor(mContext.getColor(R.color._9));
-                canvas.drawLine(x, 46, x, 46 + 34, mScalePaint);
+            mScalePaint.setColor(getResources().getColor(R.color._9, getContext().getTheme()));
+            mScalePaint.setAlpha(edgeAlpha);
+            mScalePaint.setStyle(Paint.Style.FILL);
+            float tickBottom = baseline - TICK_BASELINE_GAP;
+            RectF tickBounds = new RectF(x - width / 2f, tickBottom - height,
+                    x + width / 2f, tickBottom);
+            canvas.drawRoundRect(tickBounds, width / 2f, width / 2f, mScalePaint);
+
+            if (wholeMHz) {
+                mTextPaint.setColor(getResources().getColor(R.color.text_secondary, getContext().getTheme()));
+                mTextPaint.setAlpha(edgeAlpha);
+                mTextPaint.setTextSize(20f);
+                canvas.drawText(String.format(Locale.US, "%.1f", frequency), x, getHeight() - 5f, mTextPaint);
             }
         }
 
     }
 
-    private void drawPointer(Canvas canvas) {
-        if (mBitmap == null) {
-            return;
-        }
-        canvas.drawBitmap(mBitmap, mPointerX - mBitmap.getWidth() / 2f, 4, mBitmapPaint);
+    private boolean isWholeMHz(int step) {
+        return step % 10 == 0;
     }
 
+    private float getTickHeight(float distanceInSteps, boolean wholeMHz, boolean halfMHz) {
+        float centerHeight = INTEGER_TICK_HEIGHT
+                - Math.min(4f, distanceInSteps) * 5.25f;
+        float levelHeight = wholeMHz
+                ? INTEGER_TICK_HEIGHT
+                : (halfMHz ? HALF_TICK_HEIGHT : MINOR_TICK_HEIGHT);
+        return Math.max(levelHeight, centerHeight);
+    }
+
+    private int getEdgeAlpha(float x) {
+        float halfWidth = Math.max(1f, getWidth() / 2f);
+        float progress = Math.min(1f, Math.abs(x - mCenterX) / halfWidth);
+        return Math.round(255f - progress * 200f);
+    }
+
+    private void drawFixedPointer(Canvas canvas) {
+        if (mPointerBitmap == null) {
+            return;
+        }
+        float left = mCenterX - CENTER_INDICATOR_WIDTH / 2f;
+        float bottom = getScaleBaseline() - TICK_BASELINE_GAP;
+        RectF destination = new RectF(left, bottom - CENTER_INDICATOR_HEIGHT,
+                left + CENTER_INDICATOR_WIDTH, bottom);
+        canvas.drawBitmap(mPointerBitmap, null, destination, mBitmapPaint);
+    }
+
+    private float getScaleBaseline() {
+        return getHeight() - 31f;
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
-
-        switch (event.getAction()) {
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                // 检查是否点击了指针区域
-                float pointerRadius = 40;
-                if (Math.abs(x - mPointerX) < pointerRadius && y > mHeight - 150) {
-                    mIsDragging = true;
-                    mPointerTouchOffset = x - mPointerX;
-                    return true;
-                }
-                return false;
+                mDownTouchX = event.getX();
+                mLastTouchX = mDownTouchX;
+                mIsDragging = true;
+                getParent().requestDisallowInterceptTouchEvent(true);
+                return true;
 
             case MotionEvent.ACTION_MOVE:
-                if (mIsDragging) {
-                    // 计算新的指针位置
-                    float newX = x - mPointerTouchOffset;
-
-                    // 限制指针在刻度范围内
-                    newX = Math.max(mScaleStartX, Math.min(mScaleEndX, newX));
-
-                    // 更新指针位置
-                    mPointerX = newX;
-
-                    // 计算对应的频率
-                    mCurrentFrequency = mMinFrequency + (mPointerX - mScaleStartX) / mPixelsPerMHz;
-                    mCurrentFrequency = Math.max(mMinFrequency, Math.min(mMaxFrequency, mCurrentFrequency));
-
-                    invalidate();
-
-                    // 实时回调频率变化
-                    if (mOnFrequencyChangeListener != null) {
-                        mOnFrequencyChangeListener.onFrequencyChanging(mCurrentFrequency);
-                    }
-                    return true;
+                if (!mIsDragging) {
+                    return false;
                 }
-                return false;
+                float deltaX = event.getX() - mLastTouchX;
+                mLastTouchX = event.getX();
+                updateFrequency(mCurrentFrequency - deltaX / PIXELS_PER_MHZ, true);
+                return true;
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (mIsDragging) {
-                    mIsDragging = false;
-
-                    // 对齐到最近的0.1MHz刻度
-                    float alignedFreq = Math.round(mCurrentFrequency * 10) / 10.0f;
-                    alignedFreq = Math.max(mMinFrequency, Math.min(mMaxFrequency, alignedFreq));
-
-                    mCurrentFrequency = alignedFreq;
-                    updatePointerPosition();
-                    invalidate();
-
-                    // 触发最终频率变化回调
-                    if (mOnFrequencyChangeListener != null) {
-                        mOnFrequencyChangeListener.onFrequencyChanged(mCurrentFrequency);
-                    }
-                    return true;
+                if (!mIsDragging) {
+                    return false;
                 }
-                return false;
+                mIsDragging = false;
+                getParent().requestDisallowInterceptTouchEvent(false);
+                mCurrentFrequency = clamp(Math.round(mCurrentFrequency * 10f) / 10f);
+                invalidate();
+                if (Math.abs(event.getX() - mDownTouchX) <= TOUCH_SLOP) {
+                    performClick();
+                }
+                if (mOnFrequencyChangeListener != null) {
+                    mOnFrequencyChangeListener.onFrequencyChanged(mCurrentFrequency);
+                }
+                return true;
+
+            default:
+                return super.onTouchEvent(event);
         }
-        return super.onTouchEvent(event);
     }
 
-    // 设置频率
-    public void setFrequency(float frequency) {
-        mCurrentFrequency = Math.max(mMinFrequency, Math.min(mMaxFrequency, frequency));
-        updatePointerPosition();
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        return true;
+    }
+
+    private void updateFrequency(float frequency, boolean notifyChanging) {
+        mCurrentFrequency = clamp(frequency);
         invalidate();
+        if (notifyChanging && mOnFrequencyChangeListener != null) {
+            mOnFrequencyChangeListener.onFrequencyChanging(mCurrentFrequency);
+        }
     }
 
-    // 获取当前频率
+    private float clamp(float frequency) {
+        return Math.max(mMinFrequency, Math.min(mMaxFrequency, frequency));
+    }
+
+    public void setFrequency(float frequency) {
+        updateFrequency(frequency, false);
+    }
+
     public float getCurrentFrequency() {
         return mCurrentFrequency;
     }
 
-    // 设置频率范围
     public void setFrequencyRange(float min, float max) {
         mMinFrequency = min;
         mMaxFrequency = max;
-        mCurrentFrequency = Math.max(min, Math.min(max, mCurrentFrequency));
-
-        if (mScaleLength > 0) {
-            float frequencyRange = mMaxFrequency - mMinFrequency;
-            mPixelsPerMHz = mScaleLength / frequencyRange;
-        }
-
-        updatePointerPosition();
+        mCurrentFrequency = clamp(mCurrentFrequency);
         invalidate();
     }
 
-
-
-    public void startScan(){
-
+    public void startScan() {
+        invalidate();
     }
 
-
-
-
-    // 频率变化监听器接口
     public interface OnFrequencyChangeListener {
         void onFrequencyChanging(float frequency);
+
         void onFrequencyChanged(float frequency);
     }
-
-    private OnFrequencyChangeListener mOnFrequencyChangeListener;
 
     public void setOnFrequencyChangeListener(OnFrequencyChangeListener listener) {
         mOnFrequencyChangeListener = listener;

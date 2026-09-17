@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.sansan.video.R
 import com.sansan.video.adapter.VideoAdapter
 import com.sansan.video.adapter.VideoFolderAdapter
@@ -54,6 +55,15 @@ class MainActivity : AppCompatActivity() {
 
     private var scrollbarArea: View? = null
     private var scrollbarThumb: View? = null
+
+    // Keep the scroll metrics stable while dragging. RecyclerView refines its estimated
+    // range as new date groups are laid out, which otherwise makes the thumb feel stuck.
+    private var scrollbarDragMaxScroll = 0
+    private var scrollbarDragMaxThumbOffset = 0f
+    private var scrollbarDragTargetScroll = 0
+    private var scrollbarDragStartY = 0f
+    private var scrollbarDragStartThumbY = 0f
+    private var isScrollbarDragging = false
 
     private fun isHalfScreen() = Resources.getSystem().configuration.screenWidthDp == 640
 
@@ -383,7 +393,9 @@ class MainActivity : AppCompatActivity() {
 
         val listener = object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                updateVideoScrollBar(recyclerView)
+                if (!isScrollbarDragging) {
+                    updateVideoScrollBar(recyclerView)
+                }
             }
         }
 
@@ -391,54 +403,72 @@ class MainActivity : AppCompatActivity() {
             recyclerView.isVerticalScrollBarEnabled = false
             recyclerView.addOnScrollListener(listener)
         }
-        var dragStartY = 0f
-        var thumbStartY = 0f
-        scrollbarArea?.setOnTouchListener { _, event ->
-            val area = scrollbarArea ?: return@setOnTouchListener false
-            val thumb = scrollbarThumb ?: return@setOnTouchListener false
-            val recyclerView = if (binding.rvVideo.visibility == View.VISIBLE) binding.rvVideo else binding.rvFolderVideo
-            val maxScroll = recyclerView.computeVerticalScrollRange() - recyclerView.computeVerticalScrollExtent()
-            val maxThumbOffset = area.height - thumb.height
-            if (maxScroll <= 0 || maxThumbOffset <= 0) return@setOnTouchListener true
-            when (event.actionMasked) {
-                MotionEvent.ACTION_DOWN -> {
-                    dragStartY = event.y
-                    thumbStartY = thumb.translationY
-                    true
+        fun attachScrollbarTouchListener(view: View?, useRawY: Boolean) {
+            view?.setOnTouchListener { _, event ->
+                val area = scrollbarArea ?: return@setOnTouchListener false
+                val thumb = scrollbarThumb ?: return@setOnTouchListener false
+                val recyclerView = if (binding.rvVideo.visibility == View.VISIBLE) {
+                    binding.rvVideo
+                } else {
+                    binding.rvFolderVideo
                 }
-                MotionEvent.ACTION_MOVE -> {
-                    val targetThumb = (thumbStartY + event.y - dragStartY).coerceIn(0f, maxThumbOffset.toFloat())
-                    val targetScroll = (targetThumb / maxThumbOffset * maxScroll).toInt()
-                    recyclerView.scrollBy(0, targetScroll - recyclerView.computeVerticalScrollOffset())
-                    true
+
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_DOWN -> {
+                        val maxScroll = recyclerView.computeVerticalScrollRange() -
+                                recyclerView.computeVerticalScrollExtent()
+                        val maxThumbOffset = area.height - thumb.height
+                        if (maxScroll <= 0 || maxThumbOffset <= 0) return@setOnTouchListener true
+
+                        scrollbarDragMaxScroll = maxScroll
+                        scrollbarDragMaxThumbOffset = maxThumbOffset.toFloat()
+                        scrollbarDragTargetScroll = recyclerView.computeVerticalScrollOffset()
+                        scrollbarDragStartY = if (useRawY) event.rawY else event.y
+                        scrollbarDragStartThumbY = thumb.translationY
+                        isScrollbarDragging = true
+                        // Avoid thumbnail decoding competing with layout at date boundaries.
+                        Glide.with(this@MainActivity).pauseRequests()
+                        true
+                    }
+
+                    MotionEvent.ACTION_MOVE -> {
+                        if (scrollbarDragMaxScroll <= 0 || scrollbarDragMaxThumbOffset <= 0f) {
+                            return@setOnTouchListener true
+                        }
+                        val y = if (useRawY) event.rawY else event.y
+                        val targetThumb = (
+                                scrollbarDragStartThumbY + y - scrollbarDragStartY
+                                ).coerceIn(0f, scrollbarDragMaxThumbOffset)
+                        val targetScroll = (
+                                targetThumb / scrollbarDragMaxThumbOffset * scrollbarDragMaxScroll
+                                ).toInt()
+                        val delta = targetScroll - scrollbarDragTargetScroll
+                        if (delta != 0) {
+                            recyclerView.scrollBy(0, delta)
+                            scrollbarDragTargetScroll = targetScroll
+                        }
+                        thumb.translationY = targetThumb
+                        true
+                    }
+
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        scrollbarDragMaxScroll = 0
+                        scrollbarDragMaxThumbOffset = 0f
+                        if (isScrollbarDragging) {
+                            isScrollbarDragging = false
+                            Glide.with(this@MainActivity).resumeRequests()
+                            recyclerView.post { updateVideoScrollBar(recyclerView) }
+                        }
+                        true
+                    }
+
+                    else -> true
                 }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> true
-                else -> true
             }
         }
-        scrollbarThumb?.setOnTouchListener { _, event ->
-            val area = scrollbarArea ?: return@setOnTouchListener false
-            val thumb = scrollbarThumb ?: return@setOnTouchListener false
-            val recyclerView = if (binding.rvVideo.visibility == View.VISIBLE) binding.rvVideo else binding.rvFolderVideo
-            val maxScroll = recyclerView.computeVerticalScrollRange() - recyclerView.computeVerticalScrollExtent()
-            val maxThumbOffset = area.height - thumb.height
-            if (maxScroll <= 0 || maxThumbOffset <= 0) return@setOnTouchListener true
-            when (event.actionMasked) {
-                MotionEvent.ACTION_DOWN -> {
-                    dragStartY = event.rawY
-                    thumbStartY = thumb.translationY
-                    true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    val targetThumb = (thumbStartY + event.rawY - dragStartY).coerceIn(0f, maxThumbOffset.toFloat())
-                    val targetScroll = (targetThumb / maxThumbOffset * maxScroll).toInt()
-                    recyclerView.scrollBy(0, targetScroll - recyclerView.computeVerticalScrollOffset())
-                    true
-                }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> true
-                else -> true
-            }
-        }
+
+        attachScrollbarTouchListener(scrollbarArea, useRawY = false)
+        attachScrollbarTouchListener(scrollbarThumb, useRawY = true)
         scrollbarArea?.post { updateCurrentVideoScrollBar() }
     }
 
@@ -476,6 +506,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRecyclerView(recyclerView: RecyclerView, spanCount: Int) {
         recyclerView.apply {
+            setHasFixedSize(true)
+            itemAnimator = null
+            setItemViewCacheSize(6)
             layoutManager = GridLayoutManager(this@MainActivity, spanCount).apply {
                 spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                     override fun getSpanSize(position: Int): Int =
