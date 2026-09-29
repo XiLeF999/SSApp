@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -28,26 +31,39 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private var folderId = ""
     private var storageType = VideoRepository.StorageType.ALL
+    private var folderLoadJob: Job? = null
+    private var videoLoadJob: Job? = null
+    private var folderScanJob: Deferred<List<VideoFolder>>? = null
+    private val folderVideoCache = mutableMapOf<String, List<Video>>()
 
 
     fun getVideosInFolder(folderId: String = this.folderId) {
-
         this.folderId = folderId
 
-        viewModelScope.launch {
-            _videoList.emit(videoRepository.getVideosInFolder(folderId))
+        videoLoadJob?.cancel()
+        videoLoadJob = viewModelScope.launch {
+            val videos = folderVideoCache[folderId] ?: videoRepository.getVideosInFolder(folderId).also {
+                folderVideoCache[folderId] = it
+            }
+            _videoList.emit(videos)
         }
     }
 
     fun getVideoFolderList(storageType: VideoRepository.StorageType = this.storageType) {
-
         this.storageType = storageType
 
-        viewModelScope.launch {
-            _videoFolderList.emit(videoRepository.getVideoFolders(storageType))
+        folderLoadJob?.cancel()
+        folderLoadJob = viewModelScope.launch {
+            // Scan MediaStore once after entering the app, then filter the cached result.
+            val allFolders = folderScanJob?.await() ?: viewModelScope.async {
+                videoRepository.getVideoFolders(VideoRepository.StorageType.ALL)
+            }.also { folderScanJob = it }.await()
+            _videoFolderList.emit(
+                if (storageType == VideoRepository.StorageType.ALL) allFolders
+                else allFolders.filter { it.storageType == storageType }
+            )
         }
     }
-
 
 
     fun deleteVideos(videoList: List<Video>) {

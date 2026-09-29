@@ -10,6 +10,8 @@ import com.sansan.video.model.Video
 import com.sansan.video.model.VideoFolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -64,13 +66,17 @@ class VideoRepository(private val context: Context) {
             val mimeColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE)
 
             while (it.moveToNext()) {
+                currentCoroutineContext().ensureActive()
                 val id = it.getLong(idColumn)
                 val name = it.getString(nameColumn)
                 val path = it.getString(pathColumn) ?: ""
                 val relativePath = it.getString(relativePathColumn) ?: ""
                 val size = it.getLong(sizeColumn)
                 val dateTaken = getBestDateTaken(path, it)
-                val duration = it.getLong(durationColumn)
+                val duration = it.getLong(durationColumn).let { value ->
+                    if (value > 0) value else getVideoDurationWithRetriever(path)
+                }
+                if (duration <= 0) continue
                 val width = it.getInt(widthColumn)
                 val height = it.getInt(heightColumn)
                 val mimeType = it.getString(mimeColumn) ?: "video/*"
@@ -114,6 +120,7 @@ class VideoRepository(private val context: Context) {
             MediaStore.Video.Media._ID,
             MediaStore.Video.Media.DATA,
             MediaStore.Video.Media.DATE_TAKEN,
+            MediaStore.Video.Media.DURATION,
             MediaStore.Video.Media.BUCKET_DISPLAY_NAME,
             MediaStore.Video.Media.BUCKET_ID
         )
@@ -131,12 +138,18 @@ class VideoRepository(private val context: Context) {
         cursor?.use {
             val idColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
             val dataColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
+            val durationColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION)
             val bucketNameColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
             val bucketIdColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_ID)
 
             while (it.moveToNext()) {
+                currentCoroutineContext().ensureActive()
                 val id = it.getLong(idColumn)
                 val path = it.getString(dataColumn) ?: ""
+                val duration = it.getLong(durationColumn).let { value ->
+                    if (value > 0) value else getVideoDurationWithRetriever(path)
+                }
+                if (duration <= 0) continue
                 val bucketName = it.getString(bucketNameColumn) ?: "未知文件夹"
                 val bucketId = it.getString(bucketIdColumn) ?: id.toString()
 
@@ -219,6 +232,7 @@ class VideoRepository(private val context: Context) {
             val mimeColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE)
 
             while (it.moveToNext()) {
+                currentCoroutineContext().ensureActive()
                 val id = it.getLong(idColumn)
                 val name = it.getString(nameColumn)
                 val path = it.getString(pathColumn) ?: ""
@@ -229,6 +243,7 @@ class VideoRepository(private val context: Context) {
                 if(duration <= 0){
                     duration = getVideoDurationWithRetriever(path)
                 }
+                if (duration <= 0) continue
                 var width = it.getInt(widthColumn)
                 if(width <= 0){
                     width = getVideoWidth(path)

@@ -83,7 +83,7 @@ android {
         ky1045 {
             dimension device_type
             versionCode 1
-            signingConfig signingConfigs.ac8257
+            signingConfig signingConfigs.ac8267
         }
     }
 

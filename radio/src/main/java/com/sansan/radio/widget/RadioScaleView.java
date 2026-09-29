@@ -158,7 +158,7 @@ public class RadioScaleView extends View {
                 mTextPaint.setColor(getResources().getColor(R.color.text_secondary, getContext().getTheme()));
                 mTextPaint.setAlpha(edgeAlpha);
                 mTextPaint.setTextSize(20f);
-                canvas.drawText(String.format(Locale.US, "%.1f", frequency), x, getHeight() - 12f, mTextPaint);
+                canvas.drawText(String.format(Locale.US, "%.1f", frequency), x, getHeight() - 5f, mTextPaint);
             }
         }
 

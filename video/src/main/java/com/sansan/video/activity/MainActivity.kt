@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
     private var usbScanReceiver: BroadcastReceiver? = null
     // 定义列数配置
     private var columnCount = 5
+    private var showingFolderList = true
 
     private var scrollbarArea: View? = null
     private var scrollbarThumb: View? = null
@@ -100,6 +101,8 @@ class MainActivity : AppCompatActivity() {
 
         videoFolderAdapter.setOnItemClickListener(object : VideoFolderAdapter.OnItemClickListener {
             override fun onItemClick(bean: VideoFolder, position: Int) {
+
+                showingFolderList = false
 
                 binding.rvFolderVideo.hide()
                 binding.rvVideo.show()
@@ -156,11 +159,12 @@ class MainActivity : AppCompatActivity() {
                 binding.rvFolderVideo.post { updateCurrentVideoScrollBar() }
 
                 if (list.isEmpty()) {
-                    binding.rvFolderVideo.hide()
-                    scrollbarArea?.hide()
-                    binding.viewEmpty.show()
-
-                } else {
+                    if (showingFolderList) {
+                        binding.rvFolderVideo.hide()
+                        scrollbarArea?.hide()
+                        binding.viewEmpty.show()
+                    }
+                } else if (showingFolderList) {
                     binding.rvFolderVideo.show()
                     scrollbarArea?.show()
                     binding.viewEmpty.hide()
@@ -177,13 +181,13 @@ class MainActivity : AppCompatActivity() {
                 binding.rvVideo.post { updateCurrentVideoScrollBar() }
 
                 if (list.isEmpty()) {
-                    binding.tvManager.hide()
-
-                    binding.rvVideo.hide()
-                    scrollbarArea?.hide()
-                    binding.viewEmpty.show()
-
-                } else {
+                    if (!showingFolderList) {
+                        binding.tvManager.hide()
+                        binding.rvVideo.hide()
+                        scrollbarArea?.hide()
+                        binding.viewEmpty.show()
+                    }
+                } else if (!showingFolderList) {
 
                     binding.tvManager.show()
 
@@ -240,6 +244,7 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
 
             tvAllVideo.setOnClickListener {
+                showingFolderList = true
 
                 tvAllVideo.isSelected = true
                 tvUsbVideo.isSelected = false
@@ -248,8 +253,7 @@ class MainActivity : AppCompatActivity() {
 
                 updateVideoMenuTextSizes(tvAllVideo)
 
-                rvFolderVideo.hide()
-                rvVideo.hide()
+                scrollbarArea?.hide()
                 videoAdapter.setData(emptyList())
                 tvSelectNum.hide()
                 videoAdapter.setCancelManager()
@@ -260,6 +264,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             tvUsbVideo.setOnClickListener {
+                showingFolderList = true
 
                 tvAllVideo.isSelected = false
                 tvUsbVideo.isSelected = true
@@ -268,8 +273,7 @@ class MainActivity : AppCompatActivity() {
 
                 updateVideoMenuTextSizes(tvUsbVideo)
 
-                rvFolderVideo.hide()
-                rvVideo.hide()
+                scrollbarArea?.hide()
                 videoAdapter.setData(emptyList())
                 tvSelectNum.hide()
                 videoAdapter.setCancelManager()
@@ -279,6 +283,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             tvSdVideo.setOnClickListener {
+                showingFolderList = true
 
                 tvAllVideo.isSelected = false
                 tvUsbVideo.isSelected = false
@@ -287,8 +292,7 @@ class MainActivity : AppCompatActivity() {
 
                 updateVideoMenuTextSizes(tvSdVideo)
 
-                rvFolderVideo.hide()
-                rvVideo.hide()
+                scrollbarArea?.hide()
                 videoAdapter.setData(emptyList())
                 tvSelectNum.hide()
                 videoAdapter.setCancelManager()
@@ -298,6 +302,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             tvLocalVideo.setOnClickListener {
+                showingFolderList = true
 
                 tvAllVideo.isSelected = false
                 tvUsbVideo.isSelected = false
@@ -306,8 +311,7 @@ class MainActivity : AppCompatActivity() {
 
                 updateVideoMenuTextSizes(tvLocalVideo)
 
-                rvFolderVideo.hide()
-                rvVideo.hide()
+                scrollbarArea?.hide()
                 videoAdapter.setData(emptyList())
                 tvSelectNum.hide()
                 videoAdapter.setCancelManager()
