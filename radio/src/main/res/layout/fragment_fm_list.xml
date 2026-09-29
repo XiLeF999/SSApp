@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:visibility="gone"
-        android:layout_marginTop="22px"
+        android:layout_marginTop="@dimen/radio_list_margin_top"
         android:layout_marginBottom="23px"/>
 
     <LinearLayout
@@ -31,10 +31,10 @@
             android:id="@+id/tv_no_station"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20px"
+            android:layout_marginTop="50px"
             android:fontFamily="@font/alibabapuhuiti_3_65_medium"
             android:text="暂无可播放电台"
-            android:textSize="22sp"
+            android:textSize="30px"
             android:textColor="@color/text_secondary" />
 
     </LinearLayout>

@@ -40,7 +40,7 @@
         android:paddingEnd="12px"
         android:ellipsize="middle"
         android:singleLine="true"
-        android:textColor="@color/text_primary"
-        android:textSize="16sp" />
+        android:textColor="@color/picture_list_text"
+        android:textSize="20px" />
 
 </LinearLayout>

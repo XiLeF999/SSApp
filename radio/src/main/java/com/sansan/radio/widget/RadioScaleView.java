@@ -18,15 +18,20 @@ import java.util.Locale;
 public class RadioScaleView extends View {
 
     private static final float FREQUENCY_STEP = 0.1f;
-    private static final float PIXELS_PER_MHZ = 140f;
+    private static final float TICK_SPACING = 10f;
+    private static final float PIXELS_PER_MHZ = TICK_SPACING / FREQUENCY_STEP;
+    private static final int MINOR_TICK_COLOR = Color.rgb(146, 167, 191);
+    private static final int MEDIUM_TICK_COLOR = Color.rgb(109, 125, 143);
     private static final float TOUCH_SLOP = 3f;
     private static final float CENTER_INDICATOR_WIDTH = 44f;
     private static final float CENTER_INDICATOR_HEIGHT = 90f;
     private static final float INTEGER_TICK_WIDTH = 6f;
     private static final float INTEGER_TICK_HEIGHT = 36f;
-    private static final float HALF_TICK_HEIGHT = 24f;
     private static final float MINOR_TICK_WIDTH = 4f;
     private static final float MINOR_TICK_HEIGHT = 15f;
+    private static final float FIRST_ADJACENT_TICK_HEIGHT = 30f;
+    private static final float SECOND_ADJACENT_TICK_HEIGHT = 25f;
+    private static final float STEP_DISTANCE_EPSILON = 0.001f;
     private static final float TICK_BASELINE_GAP = 4f;
     private static final float SCALE_BACKGROUND_WIDTH = 500f;
     private static final float SCALE_BACKGROUND_HEIGHT = 82f;
@@ -87,8 +92,8 @@ public class RadioScaleView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         drawScaleBackground(canvas);
-        drawScaleWindow(canvas);
         drawEdgeMasks(canvas);
+        drawScaleWindow(canvas);
         drawFixedPointer(canvas);
     }
 
@@ -132,13 +137,16 @@ public class RadioScaleView extends View {
             float x = mCenterX + (frequency - mCurrentFrequency) * PIXELS_PER_MHZ;
             boolean wholeMHz = isWholeMHz(step);
             boolean halfMHz = !wholeMHz && step % 5 == 0;
-            float width = wholeMHz ? INTEGER_TICK_WIDTH : MINOR_TICK_WIDTH;
             float distanceInSteps = Math.abs(x - mCenterX)
                     / (PIXELS_PER_MHZ * FREQUENCY_STEP);
-            float height = getTickHeight(distanceInSteps, wholeMHz, halfMHz);
+            int adjacentLevel = getAdjacentLevel(distanceInSteps);
+            float width = adjacentLevel > 0
+                    ? MINOR_TICK_WIDTH : (wholeMHz ? INTEGER_TICK_WIDTH : MINOR_TICK_WIDTH);
+            float height = getTickHeight(adjacentLevel, wholeMHz);
             int edgeAlpha = getEdgeAlpha(x);
 
-            mScalePaint.setColor(getResources().getColor(R.color._9, getContext().getTheme()));
+            mScalePaint.setColor(wholeMHz || halfMHz
+                    ? MEDIUM_TICK_COLOR : MINOR_TICK_COLOR);
             mScalePaint.setAlpha(edgeAlpha);
             mScalePaint.setStyle(Paint.Style.FILL);
             float tickBottom = baseline - TICK_BASELINE_GAP;
@@ -150,7 +158,7 @@ public class RadioScaleView extends View {
                 mTextPaint.setColor(getResources().getColor(R.color.text_secondary, getContext().getTheme()));
                 mTextPaint.setAlpha(edgeAlpha);
                 mTextPaint.setTextSize(20f);
-                canvas.drawText(String.format(Locale.US, "%.1f", frequency), x, getHeight() - 5f, mTextPaint);
+                canvas.drawText(String.format(Locale.US, "%.1f", frequency), x, getHeight() - 12f, mTextPaint);
             }
         }
 
@@ -160,13 +168,27 @@ public class RadioScaleView extends View {
         return step % 10 == 0;
     }
 
-    private float getTickHeight(float distanceInSteps, boolean wholeMHz, boolean halfMHz) {
-        float centerHeight = INTEGER_TICK_HEIGHT
-                - Math.min(4f, distanceInSteps) * 5.25f;
-        float levelHeight = wholeMHz
-                ? INTEGER_TICK_HEIGHT
-                : (halfMHz ? HALF_TICK_HEIGHT : MINOR_TICK_HEIGHT);
-        return Math.max(levelHeight, centerHeight);
+    private int getAdjacentLevel(float distanceInSteps) {
+        if (distanceInSteps < STEP_DISTANCE_EPSILON) {
+            return 0;
+        }
+        if (distanceInSteps <= 1f + STEP_DISTANCE_EPSILON) {
+            return 1;
+        }
+        if (distanceInSteps <= 2f + STEP_DISTANCE_EPSILON) {
+            return 2;
+        }
+        return 0;
+    }
+
+    private float getTickHeight(int adjacentLevel, boolean wholeMHz) {
+        if (adjacentLevel == 1) {
+            return FIRST_ADJACENT_TICK_HEIGHT;
+        }
+        if (adjacentLevel == 2) {
+            return SECOND_ADJACENT_TICK_HEIGHT;
+        }
+        return wholeMHz ? INTEGER_TICK_HEIGHT : MINOR_TICK_HEIGHT;
     }
 
     private int getEdgeAlpha(float x) {

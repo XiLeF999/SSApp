@@ -201,7 +201,6 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/selector_radio_type"
                     android:textSize="22sp"
-                    android:textStyle="bold"
                     android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                     android:drawableBottom="@drawable/selector_radio_type_bar"
                     android:text="FM列表" />
@@ -220,7 +219,6 @@
                     android:layout_marginLeft="60px"
                     android:textColor="@color/selector_radio_type"
                     android:textSize="22sp"
-                    android:textStyle="bold"
                     android:fontFamily="@font/alibabapuhuiti_3_65_medium"
                     android:drawableBottom="@drawable/selector_radio_type_bar"
                     android:text="收藏列表" />

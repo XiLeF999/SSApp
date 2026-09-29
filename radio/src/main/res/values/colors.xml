@@ -41,6 +41,10 @@
     <color name="text_highlight">@color/white</color>
     <color name="text_blue">#FF0069FC</color>
 
+    <!-- The quit dialog keeps a light bitmap background in both UI modes. -->
+    <color name="quit_dialog_title_text">#FF49535F</color>
+    <color name="quit_dialog_secondary_button_text">#FF36414D</color>
+
     <color name="color_8593A2">#8593A2</color>
     <color name="color_17A1E6">#17A1E6</color>
 

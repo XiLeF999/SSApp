@@ -9,9 +9,11 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -217,6 +219,22 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    private fun updateVideoMenuTextSizes(selectedView: TextView) {
+        val isKy1045 = resources.getBoolean(R.bool.is_ky1045)
+        val unit = if (isKy1045) TypedValue.COMPLEX_UNIT_PX else TypedValue.COMPLEX_UNIT_SP
+        val selectedSize = if (isKy1045) 34f else 26f
+        val normalSize = if (isKy1045) 28f else 18f
+
+        listOf(
+            binding.tvAllVideo,
+            binding.tvUsbVideo,
+            binding.tvSdVideo,
+            binding.tvLocalVideo
+        ).forEach { view ->
+            view.setTextSize(unit, if (view === selectedView) selectedSize else normalSize)
+        }
+    }
+
     fun click() {
 
         binding.apply {
@@ -228,10 +246,7 @@ class MainActivity : AppCompatActivity() {
                 tvSdVideo.isSelected = false
                 tvLocalVideo.isSelected = false
 
-                tvAllVideo.textSize = 26f
-                tvUsbVideo.textSize = 18f
-                tvSdVideo.textSize = 18f
-                tvLocalVideo.textSize = 18f
+                updateVideoMenuTextSizes(tvAllVideo)
 
                 rvFolderVideo.hide()
                 rvVideo.hide()
@@ -251,10 +266,7 @@ class MainActivity : AppCompatActivity() {
                 tvSdVideo.isSelected = false
                 tvLocalVideo.isSelected = false
 
-                tvAllVideo.textSize = 18f
-                tvUsbVideo.textSize = 26f
-                tvSdVideo.textSize = 18f
-                tvLocalVideo.textSize = 18f
+                updateVideoMenuTextSizes(tvUsbVideo)
 
                 rvFolderVideo.hide()
                 rvVideo.hide()
@@ -273,10 +285,7 @@ class MainActivity : AppCompatActivity() {
                 tvSdVideo.isSelected = true
                 tvLocalVideo.isSelected = false
 
-                tvAllVideo.textSize = 18f
-                tvUsbVideo.textSize = 18f
-                tvSdVideo.textSize = 26f
-                tvLocalVideo.textSize = 18f
+                updateVideoMenuTextSizes(tvSdVideo)
 
                 rvFolderVideo.hide()
                 rvVideo.hide()
@@ -295,10 +304,7 @@ class MainActivity : AppCompatActivity() {
                 tvSdVideo.isSelected = false
                 tvLocalVideo.isSelected = true
 
-                tvAllVideo.textSize = 18f
-                tvUsbVideo.textSize = 18f
-                tvSdVideo.textSize = 18f
-                tvLocalVideo.textSize = 26f
+                updateVideoMenuTextSizes(tvLocalVideo)
 
                 rvFolderVideo.hide()
                 rvVideo.hide()

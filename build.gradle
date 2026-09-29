@@ -3,3 +3,66 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.compose) apply false
 }
+
+def releaseLogStartedAt = System.currentTimeMillis()
+
+tasks.register('updateReleaseLog') {
+    group = 'release'
+    description = 'Append APKs created by this build to the release log.'
+
+    doLast {
+        def apkFiles = fileTree(rootProject.projectDir) {
+            include '**/build/outputs/apk/**/*.apk'
+            exclude '**/build/outputs/apk/androidTest/**'
+        }.files.findAll { it.lastModified() >= releaseLogStartedAt }
+                .sort { a, b -> b.lastModified() <=> a.lastModified() }
+
+        if (apkFiles.isEmpty()) {
+            logger.lifecycle('No APK was created by this build; release log was not changed.')
+            return
+        }
+
+        apkFiles.groupBy { it.parentFile }.each { apkDirectory, directoryApks ->
+            def moduleDirectory = apkDirectory
+            while (moduleDirectory.parentFile != null && moduleDirectory.name != 'build') {
+                moduleDirectory = moduleDirectory.parentFile
+            }
+            def moduleRoot = moduleDirectory.parentFile
+            def variantDirectory = new File(moduleRoot, "release-apk/${apkDirectory.parentFile.name}/${apkDirectory.name}")
+            variantDirectory.mkdirs()
+
+            directoryApks.each { apk ->
+                copy {
+                    from apk
+                    into variantDirectory
+                }
+            }
+
+            def logFile = new File(variantDirectory, 'releaselog.md')
+            def latestApkName = directoryApks.sort { a, b -> b.lastModified() <=> a.lastModified() }.first().name
+            def installFooter = """**#### 安装方式：**\n\n```shell\nadb install ${latestApkName}\n```"""
+            def rawContent = logFile.exists() ? logFile.getText('UTF-8').trim() : ''
+            def existingContent = rawContent.replaceFirst(/(?s)\n?\*\*#### 安装方式：\*\*.*$/, '').trim()
+            def newEntries = directoryApks.collect { apk ->
+                "#### ${apk.name}\n\n-"
+            }.findAll { entry ->
+                def apkName = entry.readLines()[0]
+                !existingContent.contains("${apkName}\n")
+            }
+
+            def prefix = existingContent ? "${existingContent}\n\n" : ''
+            def entries = newEntries ? newEntries.join('\n\n') : ''
+            def middle = [prefix, entries].findAll { it }.join('\n')
+            logFile.setText("${middle ? middle + '\n\n' : ''}${installFooter}\n", 'UTF-8')
+            logger.lifecycle("Updated release log: ${logFile.absolutePath}")
+        }
+    }
+}
+
+subprojects {
+    plugins.withId('com.android.application') {
+        tasks.matching { it.name.startsWith('assemble') }.configureEach {
+            finalizedBy(rootProject.tasks.named('updateReleaseLog'))
+        }
+    }
+}

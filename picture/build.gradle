@@ -70,7 +70,7 @@ android {
         ky1045 {
             dimension device_type
             versionCode 1
-            signingConfig signingConfigs.ac8257
+            signingConfig signingConfigs.ac8267
         }
     }
 
@@ -150,7 +150,7 @@ android {
 }
 
 static def packageTime() {
-    return new Date().format("yyMMddHHmm", TimeZone.getTimeZone("GMT+08:00"))
+    return new Date().format("yyMMddHHmmss", TimeZone.getTimeZone("GMT+08:00"))
 }
 
 dependencies {

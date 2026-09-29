@@ -9,9 +9,11 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -218,6 +220,22 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    private fun updatePictureMenuTextSizes(selectedView: TextView) {
+        val isKy1045 = resources.getBoolean(R.bool.is_ky1045)
+        val unit = if (isKy1045) TypedValue.COMPLEX_UNIT_PX else TypedValue.COMPLEX_UNIT_SP
+        val selectedSize = if (isKy1045) 34f else 26f
+        val normalSize = if (isKy1045) 28f else 18f
+
+        listOf(
+            binding.tvAllPicture,
+            binding.tvUsbPicture,
+            binding.tvSdPicture,
+            binding.tvLocalPicture
+        ).forEach { view ->
+            view.setTextSize(unit, if (view === selectedView) selectedSize else normalSize)
+        }
+    }
+
     fun click() {
 
         binding.apply {
@@ -229,10 +247,7 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = false
                 tvLocalPicture.isSelected = false
 
-                tvAllPicture.textSize = 26f
-                tvUsbPicture.textSize = 18f
-                tvSdPicture.textSize = 18f
-                tvLocalPicture.textSize = 18f
+                updatePictureMenuTextSizes(tvAllPicture)
 
                 rvFolderPicture.hide()
                 rvPicture.hide()
@@ -252,10 +267,7 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = false
                 tvLocalPicture.isSelected = false
 
-                tvAllPicture.textSize = 18f
-                tvUsbPicture.textSize = 26f
-                tvSdPicture.textSize = 18f
-                tvLocalPicture.textSize = 18f
+                updatePictureMenuTextSizes(tvUsbPicture)
 
                 rvFolderPicture.hide()
                 rvPicture.hide()
@@ -274,10 +286,7 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = true
                 tvLocalPicture.isSelected = false
 
-                tvAllPicture.textSize = 18f
-                tvUsbPicture.textSize = 18f
-                tvSdPicture.textSize = 26f
-                tvLocalPicture.textSize = 18f
+                updatePictureMenuTextSizes(tvSdPicture)
 
                 rvFolderPicture.hide()
                 rvPicture.hide()
@@ -296,10 +305,7 @@ class MainActivity : AppCompatActivity() {
                 tvSdPicture.isSelected = false
                 tvLocalPicture.isSelected = true
 
-                tvAllPicture.textSize = 18f
-                tvUsbPicture.textSize = 18f
-                tvSdPicture.textSize = 18f
-                tvLocalPicture.textSize = 26f
+                updatePictureMenuTextSizes(tvLocalPicture)
 
                 rvFolderPicture.hide()
                 rvPicture.hide()

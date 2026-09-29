@@ -2,27 +2,26 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fl_item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginHorizontal="36px"
-    android:orientation="vertical">
+    android:layout_height="80px"
+    android:layout_marginHorizontal="36px">
 
     <ImageView
         android:id="@+id/iv_bg"
         android:layout_width="match_parent"
-        android:layout_height="108px"
+        android:layout_height="match_parent"
         android:scaleType="fitXY"
         android:layout_gravity="center" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="108px"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center_vertical" >
 
         <FrameLayout
             android:layout_width="72px"
             android:layout_height="72px"
-            android:layout_marginLeft="60px">
+            android:layout_marginLeft="40px">
 
             <TextView
                 android:id="@+id/tv_id"
@@ -31,13 +30,13 @@
                 android:visibility="invisible"
                 android:layout_gravity="center"
                 android:textColor="@color/selector_radio_type"
-                android:textSize="26sp"
+                android:textSize="32px"
                 android:fontFamily="@font/alibabapuhuiti_3_65_medium" />
 
             <ImageView
                 android:id="@+id/iv_anim"
-                android:layout_width="40px"
-                android:layout_height="40px"
+                android:layout_width="48px"
+                android:layout_height="48px"
                 android:visibility="invisible"
                 android:layout_gravity="center"
                 android:src="@drawable/anim_radio_fm"/>
@@ -51,16 +50,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginLeft="40px"
+            android:layout_marginLeft="32px"
             android:textColor="@color/selector_radio_type"
-            android:textSize="26sp"
+            android:textSize="32px"
             android:fontFamily="@font/alibabapuhuiti_3_65_medium" />
 
         <ImageView
             android:id="@+id/iv_fav"
             android:layout_width="40px"
             android:layout_height="40px"
-            android:layout_marginRight="40px"
+            android:layout_marginRight="34px"
             android:scaleType="center" />
 
 

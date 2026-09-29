@@ -109,7 +109,7 @@
         <FrameLayout
             android:id="@+id/custom_controls"
             android:layout_width="match_parent"
-            android:layout_height="72px"
+            android:layout_height="112px"
             android:layout_gravity="bottom"
             android:clipChildren="false"
             android:clipToPadding="false">
@@ -130,6 +130,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="48px"
                 android:layout_gravity="bottom"
+                android:layout_marginBottom="22px"
+                android:maxHeight="12px"
+                android:minHeight="12px"
                 android:progressDrawable="@drawable/video_seekbar_track"
                 android:thumb="@drawable/video_seekbar_thumb"
                 android:thumbOffset="0px" />
@@ -141,7 +144,7 @@
             android:layout_height="50px"
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="24px"
-            android:layout_marginBottom="48px"
+            android:layout_marginBottom="60px"
             android:fontFamily="@font/alibabapuhuiti_3_65_medium"
             android:gravity="center"
             android:text="1.0倍"

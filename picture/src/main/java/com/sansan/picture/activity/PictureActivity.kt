@@ -90,7 +90,6 @@ photoAdapter = PhotoAdapter(this).apply {
         pictureGalleryAdapter = PictureGalleryAdapter(this)
         pictureGalleryAdapter.setData(pictureList)
         binding.carouselRecyclerview.adapter = pictureGalleryAdapter
-
         pictureGalleryAdapter.setOnItemClickListener(galleryItemClickListener)
 
         binding.carouselRecyclerview.apply {
@@ -100,28 +99,13 @@ photoAdapter = PhotoAdapter(this).apply {
             setIntervalRatio(0.352f)
 
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-                // 滚动状态变化
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
-                    when (newState) {
-                        RecyclerView.SCROLL_STATE_IDLE -> {       // 0: 静止
-                            // 滚动停止，可恢复图片加载
-                            binding.flPicture.setPictureCanTouch(true)
-                        }
-
-                        RecyclerView.SCROLL_STATE_DRAGGING -> {  // 1: 拖拽中
-                            // 用户手指拖拽，可暂停图片加载
-                        }
-
-                        RecyclerView.SCROLL_STATE_SETTLING -> {  // 2: 惯性滚动
-                            // 手指离开后的惯性滚动
-                        }
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        binding.flPicture.setPictureCanTouch(true)
                     }
                 }
-
             })
-
         }
 
         binding.ivClose.setOnClickListener { finish() }
@@ -140,7 +124,11 @@ photoAdapter = PhotoAdapter(this).apply {
         binding.run {
             tvPictureDate.text = picture.dateTaken.toChineseDate()
             tvPictureTime.text = picture.dateTaken.toChineseTime()
-            tvPictureName.text = picture.name.truncateMiddle()
+            tvPictureName.text = if (isKy1045) {
+                picture.name.wrapEvery()
+            } else {
+                picture.name.truncateMiddle()
+            }
             tvPictureResolution.text = picture.width.toString() + "x" + picture.height.toString()
             tvPictureSize.text = picture.size.toKB2Decimal()
             tvPicturePath.text = ("路径:" + picture.path).wrapEvery()
@@ -243,6 +231,5 @@ photoAdapter = PhotoAdapter(this).apply {
 
         return newList
     }
-
 
 }

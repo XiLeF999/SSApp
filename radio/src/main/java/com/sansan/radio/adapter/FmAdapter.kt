@@ -19,6 +19,8 @@ class FmAdapter(
     private val mContext: Context
 ) : RecyclerView.Adapter<FmAdapter.ViewHolder>() {
 
+    private val isKy1045 = mContext.resources.getBoolean(R.bool.is_ky1045)
+
     private var fmList: List<StationInfo> = emptyList()
     private var onItemClickListener: OnItemClickListener? = null
 
@@ -50,8 +52,19 @@ class FmAdapter(
         val bean = fmList[position]
 
         holder.flItem.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            topMargin = if (position == 0) 0 else (-14)
+            if (isKy1045) {
+                height = if (bean.isSelect) 108 else 80
+                topMargin = if (bean.isSelect && position > 0) -14 else 0
+                bottomMargin = when {
+                    !bean.isSelect -> 0
+                    position == 0 -> 0
+                    else -> -14
+                }
+            } else {
+                topMargin = if (position == 0) 0 else -14
+            }
         }
+        holder.flItem.translationZ = if (isKy1045 && bean.isSelect) 1f else 0f
 
         val animation = holder.ivAnim.drawable as AnimationDrawable
         if(bean.isSelect){

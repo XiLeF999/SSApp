@@ -8,11 +8,13 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.SystemProperties;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -24,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -44,6 +47,9 @@ import java.util.List;
 
 public class MainActivity extends FragmentActivity {
 
+    private static final String TAG_FM_LIST = "radio_fm";
+    private static final String TAG_FAV_LIST = "radio_fav";
+    private static final String STATE_CURRENT_TYPE = "current_type";
     private static final int MSG_UPDATE_SCAN_UI = 5001;
     private static final int MSG_HIDE_SCAN_RESULT = 5003;
 
@@ -80,6 +86,7 @@ public class MainActivity extends FragmentActivity {
     private ImageView ivSearch;
     private TextView tvFmType;
     private TextView tvFavType;
+    private Typeface tabTypeface;
 
     private FmService mService = null;
 
@@ -90,7 +97,6 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTransparentStatusBar();
-
         isKy1045 = getResources().getBoolean(R.bool.is_ky1045);
 
         mHandler = new MainActivityHandler(getMainLooper(), this);
@@ -102,8 +108,17 @@ public class MainActivity extends FragmentActivity {
         startService(new Intent(MainActivity.this, FmService.class));
         mIsServiceBinded = bindService(new Intent(MainActivity.this, FmService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
 
-        fmListFragment = new FmListFragment();
-        favListFragment = new FavListFragment();
+        Fragment restoredFm = getSupportFragmentManager()
+                .findFragmentByTag(TAG_FM_LIST);
+        Fragment restoredFav = getSupportFragmentManager()
+                .findFragmentByTag(TAG_FAV_LIST);
+        fmListFragment = restoredFm instanceof FmListFragment
+                ? (FmListFragment) restoredFm : new FmListFragment();
+        favListFragment = restoredFav instanceof FavListFragment
+                ? (FavListFragment) restoredFav : new FavListFragment();
+        if (savedInstanceState != null) {
+            currentType = savedInstanceState.getInt(STATE_CURRENT_TYPE, 1);
+        }
 
         flSide = findViewById(R.id.fl_side);
         mRadioScaleView = findViewById(R.id.view_radio_scale);
@@ -129,12 +144,12 @@ public class MainActivity extends FragmentActivity {
         ivSearch = findViewById(R.id.iv_search);
         ivSearch.setOnClickListener(onClickListener);
         tvFmType = findViewById(R.id.tv_fm_type);
+        tabTypeface = tvFmType.getTypeface();
         tvFmType.setOnClickListener(onClickListener);
         tvFavType = findViewById(R.id.tv_fav_type);
         tvFavType.setOnClickListener(onClickListener);
 
-        tvFmType.setSelected(true);
-        changeFragment(1);
+        changeFragment(currentType);
 
         fmListFragment.setOnFmListFragmentListener(new FmListFragment.OnFmListFragmentListener() {
             @Override
@@ -584,6 +599,13 @@ public class MainActivity extends FragmentActivity {
         currentType = type;
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof FmListFragment && fragment != fmListFragment) {
+                transaction.remove(fragment);
+            } else if (fragment instanceof FavListFragment && fragment != favListFragment) {
+                transaction.remove(fragment);
+            }
+        }
         // 隐藏所有Fragment
         if (fmListFragment != null && fmListFragment.isAdded()) {
             transaction.hide(fmListFragment);
@@ -597,12 +619,14 @@ public class MainActivity extends FragmentActivity {
 
                 tvFmType.setSelected(true);
                 tvFavType.setSelected(false);
+                tvFmType.setTypeface(tabTypeface, Typeface.BOLD);
+                tvFavType.setTypeface(tabTypeface, Typeface.NORMAL);
 
                 if(fmListFragment != null){
                     if (fmListFragment.isAdded()) {
                         transaction.show(fmListFragment);
                     } else {
-                        transaction.add(R.id.fragment_radio, fmListFragment, "radio_fm");
+                        transaction.add(R.id.fragment_radio, fmListFragment, TAG_FM_LIST);
                     }
                 }
 
@@ -611,12 +635,14 @@ public class MainActivity extends FragmentActivity {
 
                 tvFmType.setSelected(false);
                 tvFavType.setSelected(true);
+                tvFmType.setTypeface(tabTypeface, Typeface.NORMAL);
+                tvFavType.setTypeface(tabTypeface, Typeface.BOLD);
 
                 if(favListFragment != null){
                     if (favListFragment.isAdded()) {
                         transaction.show(favListFragment);
                     } else {
-                        transaction.add(R.id.fragment_radio, favListFragment, "radio_fav");
+                        transaction.add(R.id.fragment_radio, favListFragment, TAG_FAV_LIST);
                     }
                 }
 
@@ -631,6 +657,12 @@ public class MainActivity extends FragmentActivity {
 
 
 
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(STATE_CURRENT_TYPE, currentType);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onDestroy() {

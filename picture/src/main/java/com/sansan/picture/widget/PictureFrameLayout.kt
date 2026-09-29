@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.FrameLayout
+import com.sansan.picture.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,10 +19,17 @@ class PictureFrameLayout @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     val pictureScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val isKy1045 = resources.getBoolean(R.bool.is_ky1045)
 
     var canTouch = true   //这个标志，用于处理触摸冲突
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        // PhotoView needs both tap sequences to recognize a double tap. The legacy
+        // inter-gesture lock can swallow the second DOWN on very fast 1045 taps.
+        if (isKy1045) {
+            return if (canTouch) super.dispatchTouchEvent(ev) else true
+        }
+
         val action = ev.actionMasked
 
         when (action) {

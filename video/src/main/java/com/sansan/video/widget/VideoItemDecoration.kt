@@ -18,7 +18,11 @@ class VideoItemDecoration(private val spanCount: Int, private val spacingX: Int,
             return
         }
         val params = view.layoutParams as? GridLayoutManager.LayoutParams ?: return
-        if (params.spanSize == spanCount) { outRect.bottom = spacingY; return }
+        if (params.spanSize == spanCount) {
+            // Date headers sit directly against the first video row.
+            outRect.bottom = 0
+            return
+        }
         val column = params.spanIndex
         outRect.left = column * spacingX / spanCount
         outRect.right = spacingX - (column + 1) * spacingX / spanCount
