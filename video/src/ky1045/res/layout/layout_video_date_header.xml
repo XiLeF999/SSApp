@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Keep the date row reserved even when the group is opened later. -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="32px"
     android:fontFamily="@font/alibabapuhuiti_3_65_medium"
     android:gravity="center_vertical"
     android:paddingStart="12px"

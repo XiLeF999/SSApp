@@ -321,6 +321,9 @@ class MainActivity : AppCompatActivity() {
                 tvManager.hide()
                 llManager.show()
                 tvSelectNum.show()
+                // RecyclerView is a later sibling and can cover the translated controls.
+                llManager.bringToFront()
+                tvSelectNum.bringToFront()
                 videoAdapter.setManager(true)
 
 

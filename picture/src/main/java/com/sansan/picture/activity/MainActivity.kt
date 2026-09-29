@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
     private var usbScanReceiver: BroadcastReceiver? = null
     // 定义列数配置
     private var columnCount = 5
+    private var showingFolderList = true
 
     private var scrollbarArea: View? = null
     private var scrollbarThumb: View? = null
@@ -101,6 +102,8 @@ class MainActivity : AppCompatActivity() {
 
         pictureFolderAdapter.setOnItemClickListener(object : PictureFolderAdapter.OnItemClickListener {
             override fun onItemClick(bean: PictureFolder, position: Int) {
+
+                showingFolderList = false
 
                 binding.rvFolderPicture.hide()
                 binding.rvPicture.show()
@@ -160,8 +163,7 @@ class MainActivity : AppCompatActivity() {
                     binding.rvFolderPicture.hide()
                     scrollbarArea?.hide()
                     binding.viewEmpty.show()
-
-                } else {
+                } else if (showingFolderList) {
                     binding.rvFolderPicture.show()
                     scrollbarArea?.show()
                     binding.viewEmpty.hide()
@@ -179,12 +181,10 @@ class MainActivity : AppCompatActivity() {
 
                 if (list.isEmpty()) {
                     binding.tvManager.hide()
-
                     binding.rvPicture.hide()
                     scrollbarArea?.hide()
                     binding.viewEmpty.show()
-
-                } else {
+                } else if (!showingFolderList) {
 
                     binding.tvManager.show()
 
@@ -241,6 +241,7 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
 
             tvAllPicture.setOnClickListener {
+                showingFolderList = true
 
                 tvAllPicture.isSelected = true
                 tvUsbPicture.isSelected = false
@@ -251,6 +252,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.hide()
                 rvPicture.hide()
+                scrollbarArea?.hide()
                 pictureAdapter.setData(emptyList())
                 tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
@@ -261,6 +263,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             tvUsbPicture.setOnClickListener {
+                showingFolderList = true
 
                 tvAllPicture.isSelected = false
                 tvUsbPicture.isSelected = true
@@ -271,6 +274,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.hide()
                 rvPicture.hide()
+                scrollbarArea?.hide()
                 pictureAdapter.setData(emptyList())
                 tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
@@ -280,6 +284,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             tvSdPicture.setOnClickListener {
+                showingFolderList = true
 
                 tvAllPicture.isSelected = false
                 tvUsbPicture.isSelected = false
@@ -290,6 +295,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.hide()
                 rvPicture.hide()
+                scrollbarArea?.hide()
                 pictureAdapter.setData(emptyList())
                 tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
@@ -299,6 +305,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             tvLocalPicture.setOnClickListener {
+                showingFolderList = true
 
                 tvAllPicture.isSelected = false
                 tvUsbPicture.isSelected = false
@@ -309,6 +316,7 @@ class MainActivity : AppCompatActivity() {
 
                 rvFolderPicture.hide()
                 rvPicture.hide()
+                scrollbarArea?.hide()
                 pictureAdapter.setData(emptyList())
                 tvSelectNum.hide()
                 pictureAdapter.setCancelManager()
